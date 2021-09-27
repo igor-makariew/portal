@@ -3,6 +3,7 @@ use frontend\assets\AppAsset;
 use yii\helpers\Html;
 use common\widgets\Alert;
 use yii\bootstrap4\Breadcrumbs;
+use yii\helpers\Url;
 
 AppAsset::register($this);
 ?>
@@ -15,6 +16,7 @@ AppAsset::register($this);
         <?php $this->registerCsrfMetaTags() ?>
         <title><?= Html::encode( $this->title )?></title>
         <?php $this->head() ?>
+        <?= $this->registerLinkTag(['rel' => 'icon', 'href' => Url::to(['images/favicons/favicon.ico'])]); ?>
     </head>
     <body>
     <?php $this->beginBody() ?>
@@ -47,7 +49,7 @@ AppAsset::register($this);
                 'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
             ]) ?>
             <?= Alert::widget() ?>
-            <?= $content ?>
+            <?= $content; ?>
         </div>
     </main>
 
