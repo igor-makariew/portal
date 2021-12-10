@@ -21,6 +21,9 @@ use frontend\models\ContactForm;
  */
 class SiteController extends Controller
 {
+
+    public $enableCsrfValidation = false;
+    
     /**
      * {@inheritdoc}
      */
@@ -28,11 +31,11 @@ class SiteController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'only' => ['logout', 'signup'],
                 'rules' => [
                     [
-                        'actions' => ['signup'],
+                        'actions' => ['signup', 'get'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -44,7 +47,7 @@ class SiteController extends Controller
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'logout' => ['post'],
                 ],
@@ -143,7 +146,72 @@ class SiteController extends Controller
      */
     public function actionAbout()
     {
-        return $this->render('about');
+        // работа с получением данных с сайта и http или https запросом
+        $url = 'https://api.monobank.ua/bank/currency';
+        $info = file_get_contents($url);
+        $info = json_decode($info, true);
+
+        // получение данных по api
+        $key = 'a17270d9f0faea27bbb038861d796120';
+        //$urlSer = 'https://api.openweathermap.org/data/2.5/weather';
+        $urlSer = 'http://engine.hotellook.com/api/v2/lookup.json';
+        $options = [
+            'query' => 'moscow',
+            'lang' => 'ru',
+            'lookFor' => 'both',
+            'limit' => 10
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $urlSer.'?'.http_build_query($options));
+        $res = curl_exec($ch);
+        $data = json_decode($res, true);
+        curl_close($ch);
+
+        return $this->render('about', [
+            'info' => $info,
+            'json' => $data
+         ]);
+    }
+
+    /**
+     * Displays about page.
+     *
+     * @return mixed
+     */
+    public function actionHotels()
+    {
+
+        return $this->render('hotels', [
+
+        ]);
+    }
+
+    /**
+     * comment
+     */
+    public function actionGet()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+
+        $urlSer = 'http://engine.hotellook.com/api/v2/lookup.json';
+        $options = [
+            'query' => $data['filter']['query'],
+            'lang' => $data['filter']['lang'],
+            'lookFor' => $data['filter']['lookFor'],
+            'limit' => $data['filter']['limit']
+        ];
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $urlSer.'?'.http_build_query($options));
+        $res = curl_exec($ch);
+        $response = json_decode($res, true);
+        curl_close($ch);
+
+
+        return $response;
     }
 
     /**
