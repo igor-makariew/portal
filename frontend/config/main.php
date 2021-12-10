@@ -40,10 +40,12 @@ return [
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
+//            'enableScriptParsing' => true, // не отрабатывает при true
             'showScriptName' => false,
             'rules' => [
-                '' => 'site/index',
-                '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
+                //'' => 'site/index',
+                //'<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
+                '<action:\w+>/' => 'site/<action>'
             ],
         ],
 

@@ -26,6 +26,10 @@ class AppAsset extends AssetBundle
         'css/style.css',
         'https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700"',
         'https://fonts.googleapis.com/css?family=Alex+Brush',
+        'css/materialdesignicons.min.css',
+        'css/fonts.googleapis.css',
+        'css/vuetify.min.css',
+        'css/font-awesome.min.css'
     ];
     public $js = [
         'js/jquery.min.js',
@@ -45,6 +49,9 @@ class AppAsset extends AssetBundle
         'https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false',
 //        'js/google-map.js', // проверить
         'js/main.js',
+        'js/vue.js',
+        'js/axios.min.js',
+        'js/vuetify.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',
