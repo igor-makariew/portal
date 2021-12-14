@@ -6,12 +6,9 @@ new Vue({
         valid: true,
         query: 'moscow',
         lang: 'ru',
-        lookFor: {name:'both'},
-        lookFors: [
-            {name: 'both'},
-            {name: 'city'},
-            {name: 'hotel'}
-            ],
+        langs: ['ru', 'en', 'th', 'de', 'es', 'fr', 'it', 'pl'],
+        lookFor: 'both',
+        lookFors: ['both', 'city', 'hotel'],
         limit: 10,
         hotels: [],
         show: false,
@@ -20,10 +17,6 @@ new Vue({
         fieldCity: [
             v => !!v || 'Город не введен',
             v => /^([A-Z,a-z]*)$/g.test(v) || 'Название города введено не корректно, используйте английский язык.'
-        ],
-        fieldLang: [
-            v => !!v || 'Язык не выбран',
-            v => /^([A-Z,a-z]{2,5})$/g.test(v) || 'Язык выбран не корректно, используйте английский язык.'
         ],
         fieldLimit: [
             v => !!v || 'Выберите количество результатов.',
@@ -51,6 +44,7 @@ new Vue({
             axios.post('/site/get', {
                 'filter': filter
             }).then( (response) => {
+                console.log(response.data.results);
                 if (response.data.results.hotels.length > 0) {
                     this.hotels = response.data.results.hotels;
                     this.listHotels = true;

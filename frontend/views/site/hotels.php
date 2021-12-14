@@ -53,12 +53,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <v-subheader>Выберите язык</v-subheader>
                             </v-col>
                             <v-col cols="8">
-                                <v-text-field
-                                        label="Language"
+                                <v-select
                                         v-model="lang"
-                                        suffix=""
-                                        :rules="fieldLang"
-                                ></v-text-field>
+                                        :items="langs"
+                                        item-text="title"
+                                        item-value="title"
+                                        label="Language"
+                                ></v-select>
                             </v-col>
                         </v-row>
 
