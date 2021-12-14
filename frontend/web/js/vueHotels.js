@@ -6,8 +6,8 @@ new Vue({
         valid: true,
         query: 'moscow',
         lang: 'ru',
-        defaultLooFor: {name:'both'},
-        lookFor: [
+        lookFor: {name:'both'},
+        lookFors: [
             {name: 'both'},
             {name: 'city'},
             {name: 'hotel'}
@@ -16,6 +16,7 @@ new Vue({
         hotels: [],
         show: false,
         listHotels: false,
+        showMessage: false,
         fieldCity: [
             v => !!v || 'Город не введен',
             v => /^([A-Z,a-z]*)$/g.test(v) || 'Название города введено не корректно, используйте английский язык.'
@@ -50,9 +51,15 @@ new Vue({
             axios.post('/site/get', {
                 'filter': filter
             }).then( (response) => {
-                this.hotels = response.data.results.hotels;
-                this.listHotels = true;
-                console.log(response.data.results.hotels);
+                if (response.data.results.hotels.length > 0) {
+                    this.hotels = response.data.results.hotels;
+                    this.listHotels = true;
+                    this.showMessage = false;
+                } else {
+                    this.listHotels = false;
+                    this.showMessage = true;
+                    this.message = 'По вашему запросу данных не найдено!!!'
+                }
             });
         },
 
