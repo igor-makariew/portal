@@ -200,7 +200,7 @@ class SiteController extends Controller
         $options = [
             'query' => $data['filter']['query'],
             'lang' => $data['filter']['lang'],
-            'lookFor' => $data['filter']['lookFor'],
+            'lookFor' => $data['filter']['lookFor']['name'],
             'limit' => $data['filter']['limit']
         ];
         $ch = curl_init();

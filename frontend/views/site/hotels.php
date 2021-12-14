@@ -68,8 +68,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             </v-col>
                             <v-col cols="8">
                                 <v-select
-                                        v-model="defaultLooFor"
-                                        :items="lookFor"
+                                        v-model="lookFor"
+                                        :items="lookFors"
                                         item-text="name"
                                         label="Params"
                                 ></v-select>
@@ -90,15 +90,14 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ></v-text-field>
                             </v-col>
                         </v-row>
-                        {{!valid}}
                         <v-col class="text-right" >
                             <v-btn :disabled="!valid" color="success" class="mr-4" @click="getHotels" @click="validate">
-                                Поиск
+                                Запрос
                             </v-btn>
                         </v-col>
                     </v-form>
 
-                    <v-template v-if="listHotels">
+                    <template v-if="listHotels">
                         <div class="mb-7"></div>
                             <v-row>
                                 <v-col
@@ -159,7 +158,19 @@ $this->params['breadcrumbs'][] = $this->title;
                                 </v-item>
                             </v-col>
                         </v-row>
-                    </v-template>
+                    </template>
+                    <template v-if="showMessage">
+                        <v-alert
+                                icon="mdi-home"
+                                border="bottom"
+                                color="info"
+                                dark
+                                transition="scale-transition"
+                                class="text-xl-center"
+                        >
+                            {{message}}
+                        </v-alert>
+                    </template>
                 </v-container>
             </v-item-group>
         </v-app>
