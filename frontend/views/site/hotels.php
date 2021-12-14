@@ -12,6 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?//= $this->registerCssFile(Yii::$app->urlManager->createUrl('/css/fonts.googleapis.css', ['depends' => ['frontend\assets\AppAsset']])); ?>
 <?//= $this->registerCssFile(Yii::$app->urlManager->createUrl('/css/materialdesignicons.min.css', ['depends' => ['frontend\assets\AppAsset']])); ?>
 <?//= $this->registerCssFile(Yii::$app->urlManager->createUrl('/css/vuetify.min.css', ['depends' => ['frontend\assets\AppAsset']])); ?>
+<?= $this->registerCssFile(Yii::$app->urlManager->createUrl('/css/hotels.css', ['depends' => ['frontend\assets\AppAsset']])); ?>
 
 <div class="hero-wrap js-fullheight" style="background-image: url('images/bg_5.jpg');">
     <div class="overlay"></div>
@@ -29,10 +30,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <section class="ftco-section ftco-degree-bg">
     <div id="appHotels">
-        <v-app id="inspire">
+        <v-app class="height-form">
             <v-item-group mandatory>
                 <v-container>
-                    <v-form ref="form" v-model="valid">
+                    <v-form ref="formValid"  v-model="valid">
                         <v-row>
                             <v-col cols="4">
                                 <v-subheader>Выберите город</v-subheader>
@@ -42,6 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         label="City"
                                         v-model="query"
                                         prefix="г."
+                                        :rules="fieldCity"
                                 ></v-text-field>
                             </v-col>
                         </v-row>
@@ -55,6 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         label="Language"
                                         v-model="lang"
                                         suffix=""
+                                        :rules="fieldLang"
                                 ></v-text-field>
                             </v-col>
                         </v-row>
@@ -64,11 +67,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <v-subheader>Объекты, выводимые в результатах</v-subheader>
                             </v-col>
                             <v-col cols="8">
-                                <v-text-field
+                                <v-select
+                                        v-model="defaultLooFor"
+                                        :items="lookFor"
+                                        item-text="name"
                                         label="Params"
-                                        v-model="lookFor"
-                                        suffix=""
-                                ></v-text-field>
+                                ></v-select>
                             </v-col>
                         </v-row>
 
@@ -82,24 +86,27 @@ $this->params['breadcrumbs'][] = $this->title;
                                         v-model="limit"
                                         type=""
                                         suffix=""
+                                        :rules="fieldLimit"
                                 ></v-text-field>
                             </v-col>
                         </v-row>
+                        {{!valid}}
                         <v-col class="text-right" >
-                            <v-btn :disabled="!valid" color="success" class="mr-4" @click="getHotels">
+                            <v-btn :disabled="!valid" color="success" class="mr-4" @click="getHotels" @click="validate">
                                 Поиск
                             </v-btn>
                         </v-col>
                     </v-form>
 
-                    <div class="mb-7"></div>
-                        <v-row>
-                            <v-col
-                                v-for="(hotel, index) in hotels"
-                                :key="index"
-                                cols="12"
-                                md="4"
-                            >
+                    <v-template v-if="listHotels">
+                        <div class="mb-7"></div>
+                            <v-row>
+                                <v-col
+                                    v-for="(hotel, index) in hotels"
+                                    :key="index"
+                                    cols="12"
+                                    md="4"
+                                >
                                 <v-item v-slot="{ active, toggle }">
                                     <v-card
                                             class="mx-auto"
@@ -152,6 +159,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 </v-item>
                             </v-col>
                         </v-row>
+                    </v-template>
                 </v-container>
             </v-item-group>
         </v-app>
