@@ -21,8 +21,9 @@ new Vue({
         fieldLimit: [
             v => !!v || 'Выберите количество результатов.',
             v => v > 0 || 'Количество должно быть больше 0',
-        ]
-
+        ],
+        loader: false,
+        crtSelectedItem: '',
     }),
 
     methods: {
@@ -41,12 +42,22 @@ new Vue({
                 'limit': this.limit,
             };
 
+            // let options = {
+            //     method: 'GET',
+            //     url: 'https://hotels4.p.rapidapi.com/locations/v2/search',
+            //     params: {query: 'new york', locale: 'en_US', currency: 'USD'},
+            //     headers: {
+            //         'x-rapidapi-host': 'hotels4.p.rapidapi.com',
+            //         'x-rapidapi-key': 'SIGN-UP-FOR-KEY'
+            //     }
+            // };
+            this.loader = true;
             axios.post('/site/get', {
                 'filter': filter
             }).then( (response) => {
-                console.log(response.data.results);
-                if (response.data.results.hotels.length > 0) {
-                    this.hotels = response.data.results.hotels;
+                console.log(response.data);
+                if (response.data.length > 0) {
+                    this.hotels = response.data;
                     this.listHotels = true;
                     this.showMessage = false;
                 } else {
@@ -54,6 +65,7 @@ new Vue({
                     this.showMessage = true;
                     this.message = 'По вашему запросу данных не найдено!!!'
                 }
+                this.loader = false;
             });
         },
 

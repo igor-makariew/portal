@@ -30,6 +30,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <section class="ftco-section ftco-degree-bg">
     <div id="appHotels">
+<!-- start preloader not work!!!-->
+        <div class="loader-wrap" v-if="loader">
+            <div class="loader"></div>
+            <div class="loader-mini"></div>
+        </div>
+<!-- end preloader -->
+
         <v-app class="height-form">
             <v-item-group mandatory>
                 <v-container>
@@ -106,6 +113,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     :key="index"
                                     cols="12"
                                     md="4"
+                                    crtSelectedItem="index"
                                 >
                                 <v-item v-slot="{ active, toggle }">
                                     <v-card
@@ -118,11 +126,11 @@ $this->params['breadcrumbs'][] = $this->title;
                                         ></v-img>
 
                                         <v-card-title>
-                                            {{hotel.label}}
+                                            {{hotel.label != '' ? hotel.label : hotel.hotelName}}
                                         </v-card-title>
 
                                         <v-card-subtitle>
-                                            {{hotel.locationName}}
+                                            {{hotel.locationName != '' ? hotel.locationName : `${hotel.location.name}, ${hotel.location.country}`}}
                                         </v-card-subtitle>
 
                                         <v-card-actions>
@@ -137,21 +145,22 @@ $this->params['breadcrumbs'][] = $this->title;
 
                                             <v-btn
                                                     icon
-                                                    @click="show = !show"
+                                                    @click="show = !show; crtSelectedItem = index"
                                             >
-                                                <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                                                <v-icon>{{ show &&  index == crtSelectedItem ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
                                             </v-btn>
                                         </v-card-actions>
 
                                         <v-expand-transition>
-                                            <div v-show="show">
+                                            <div v-show="show && crtSelectedItem == index">
                                                 <v-divider></v-divider>
 
                                                 <v-card-text>
-                                                    <p> Название отеля - {{hotel.fullName}}. </p>
+                                                    <p> Название отеля - {{hotel.fullName != '' ? hotel.fullName : hotel.hotelName}}. </p>
                                                     <p> Локация в базе - {{hotel.locationId}}. </p>
-                                                    <p> Локация: долгота - {{hotel.location.lat}}, широта - {{hotel.location.lon}}. </p>
-                                                    <p> Номер отеля в базе - {{hotel.id}}. </p>
+                                                    <p> Локация: долгота - {{hotel.location.lat != '' ? hotel.location.lat : hotel.location.geo.lat}}, широта - {{hotel.location.lon != '' ? hotel.location.lon : hotel.location.geo.lon}}. </p>
+                                                    <p> Номер отеля в базе - {{hotel.id != '' ? hotel.id : hotel.hotelId}}. </p>
+                                                    <p> Количество звёзд - {{hotel.stars != '' ? hotel.stars : 'не указано'}}. </p>
                                                 </v-card-text>
                                             </div>
                                         </v-expand-transition>
@@ -162,7 +171,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     </template>
                     <template v-if="showMessage">
                         <v-alert
-                                icon="mdi-home"
+                                icon="mdi-information"
                                 border="bottom"
                                 color="info"
                                 dark

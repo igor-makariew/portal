@@ -15,6 +15,8 @@ use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
+use yii\helpers\ArrayHelper;
+use common\models\hotels\Hotels;
 
 /**
  * Site controller
@@ -23,7 +25,7 @@ class SiteController extends Controller
 {
 
     public $enableCsrfValidation = false;
-    
+
     /**
      * {@inheritdoc}
      */
@@ -164,7 +166,7 @@ class SiteController extends Controller
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_URL, $urlSer.'?'.http_build_query($options));
+        curl_setopt($ch, CURLOPT_URL, $urlSer . '?' . http_build_query($options));
         $res = curl_exec($ch);
         $data = json_decode($res, true);
         curl_close($ch);
@@ -172,7 +174,7 @@ class SiteController extends Controller
         return $this->render('about', [
             'info' => $info,
             'json' => $data
-         ]);
+        ]);
     }
 
     /**
@@ -196,22 +198,70 @@ class SiteController extends Controller
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
         $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
 
-        $urlSer = 'http://engine.hotellook.com/api/v2/lookup.json';
-        $options = [
-            'query' => $data['filter']['query'],
-            'lang' => $data['filter']['lang'],
-            'lookFor' => $data['filter']['lookFor'],
-            'limit' => $data['filter']['limit']
+        $urlsSer = [
+            'param1' => 'http://engine.hotellook.com/api/v2/lookup.json',
+            'param2' => 'https://engine.hotellook.com/api/v2/cache.json'
         ];
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_URL, $urlSer.'?'.http_build_query($options));
-        $res = curl_exec($ch);
-        $response = json_decode($res, true);
-        curl_close($ch);
+        $options = [
+            'param1' => [
+                'query' => $data['filter']['query'],
+                'lang' => $data['filter']['lang'],
+                'lookFor' => $data['filter']['lookFor'],
+                'limit' => $data['filter']['limit']
+            ],
+            'param2' => [
+                'location' => $data['filter']['query'],
+                'currency' => 'rub',
+                'checkIn' => '2021-12-20',
+                'checkOut' => '2021-12-25',
+                'limit' => $data['filter']['limit']
+            ]
+        ];
+        // изменить на не последовательное а на синхронное!!!
+        foreach ($urlsSer as $index => $urlSer) {
+            $ch[$index] = curl_init();
+            curl_setopt($ch[$index], CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch[$index], CURLOPT_URL, $urlsSer[$index] . '?' . http_build_query($options[$index]));
+            $res[$index] = curl_exec($ch[$index]);
+            $response[$index] = json_decode($res[$index], true);
+            curl_close($ch[$index]);
+        }
+
+        $list = [];
+        foreach ($response as $listHotels) {
+            if ($listHotels['status'] == 'ok') {
+                $list = array_values($listHotels['results']['hotels']);
+            } else {
+                $result = array_values($listHotels);
+                $list = array_merge($list, $result);
+            }
+        }
+
+        $hotels = [];
+        $keysList = [];
+        $keys = [];
+        foreach ($list as $index => $hotel) {
+            $keysList = array_merge_recursive($keysList, array_keys($hotel));
+            $keys = array_unique($keysList);
+    }
+
+        $keysHotels = array_pad([], count($keys), '');
+        $paramsHotel = array_combine($keys, $keysHotels);
+        foreach ($list as $index => $hotel) {
+            foreach ($paramsHotel as $paramHotel => $value)
+                $hotels[$index][$paramHotel] =
+                     Hotels::isValueInArray($paramHotel, $hotel) ? $hotel[$paramHotel] : '';
+        }
+
+//        $ch = curl_init();
+//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//        curl_setopt($ch, CURLOPT_URL, $urlsSer.'?'.http_build_query($options));
+//        $res = curl_exec($ch);
+//        $response = json_decode($res, true);
+//        curl_close($ch);
 
 
-        return $response;
+        return $hotels;
     }
 
     /**
@@ -285,8 +335,8 @@ class SiteController extends Controller
      * Verify email address
      *
      * @param string $token
-     * @throws BadRequestHttpException
      * @return yii\web\Response
+     * @throws BadRequestHttpException
      */
     public function actionVerifyEmail($token)
     {
