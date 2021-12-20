@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 <!-- end preloader -->
 
-        <v-app class="height-form">
+        <v-app class="height-form" id="inspire">
             <v-item-group mandatory>
                 <v-container>
                     <v-form ref="formValid"  v-model="valid">
@@ -81,6 +81,50 @@ $this->params['breadcrumbs'][] = $this->title;
                                         item-text="name"
                                         label="Params"
                                 ></v-select>
+                            </v-col>
+                        </v-row>
+
+                        <v-row>
+                            <v-col cols="4">
+                                <v-subheader>Выберите валюту</v-subheader>
+                            </v-col>
+                            <v-col cols="8">
+                                <v-select
+                                    v-model="currency"
+                                    :items="currencies"
+                                    item-text="name"
+                                    label="Currency"
+                                ></v-select>
+                            </v-col>
+                        </v-row>
+
+                        <v-row>
+                            <v-col cols="4">
+                                <v-subheader>Выберите дату заселения</v-subheader>
+                            </v-col>
+                            <v-col cols="8">
+                                <v-date-picker
+                                        color="success"
+                                        v-model="dateStart"
+                                        full-width
+                                        class="mt-4"
+                                        @input="validateDate"
+                                ></v-date-picker>
+                            </v-col>
+                        </v-row>
+                            {{dateStart}}
+                        <v-row>
+                            <v-col cols="4">
+                                <v-subheader>Выберите дата выселения</v-subheader>
+                            </v-col>
+                            <v-col cols="8">
+                                <v-date-picker
+                                        color="success"
+                                        v-model="dateEnd"
+                                        full-width
+                                        class="mt-4"
+                                        @input="validateDate"
+                                ></v-date-picker>
                             </v-col>
                         </v-row>
 
@@ -160,7 +204,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     <p> Локация в базе - {{hotel.locationId}}. </p>
                                                     <p> Локация: долгота - {{hotel.location.lat != '' ? hotel.location.lat : hotel.location.geo.lat}}, широта - {{hotel.location.lon != '' ? hotel.location.lon : hotel.location.geo.lon}}. </p>
                                                     <p> Номер отеля в базе - {{hotel.id != '' ? hotel.id : hotel.hotelId}}. </p>
-                                                    <p> Количество звёзд - {{hotel.stars != '' ? hotel.stars : 'не указано'}}. </p>
+                                                    <template v-if="hotel.stars != ''">
+                                                        <p> Количество звёзд -  <v-icon v-for="star in hotel.stars"
+                                                            color="yellow"
+                                                            >{{'mdi-star-circle'}}</v-icon>
+                                                        </p>
+                                                    </template>
+                                                    <template v-else>
+                                                        <p> Количество звёзд - не указано </p>
+                                                    </template>
                                                 </v-card-text>
                                             </div>
                                         </v-expand-transition>

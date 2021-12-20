@@ -10,6 +10,13 @@ new Vue({
         lookFor: 'both',
         lookFors: ['both', 'city', 'hotel'],
         limit: 10,
+        currency: 'rub',
+        currencies: ['rub', 'usd', 'eur'],
+        // start calendar
+        currentDate: new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate(),
+        dateStart: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+        dateEnd:  new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + (new Date().getDate() + 1),
+        // end calendar
         hotels: [],
         show: false,
         listHotels: false,
@@ -27,8 +34,23 @@ new Vue({
     }),
 
     methods: {
-        validate () {
+        validate() {
             this.$refs.formValid.validate();
+        },
+
+        /**
+         * проверка корректности заполныямых дат
+         */
+        validateDate(dateStart, dateEnd) {
+            if (this.dateStart < this.currentDate) {
+                this.dateStart = this.currentDate;
+            }
+
+            if (this.dateEnd <= this.dateStart) {
+                let result = new Date(this.dateStart);
+                result.setDate(result.getDate() + 1);
+                this.dateEnd = result.getFullYear() + '-' + (result.getMonth() + 1) + '-' + result.getDate();
+            }
         },
 
         /**
@@ -40,7 +62,11 @@ new Vue({
                 'lang': this.lang,
                 'lookFor': this.lookFor,
                 'limit': this.limit,
+                'currency': this.currency,
+                'dateStart': this.dateStart,
+                'dateEnd': this.dateEnd,
             };
+
 
             // let options = {
             //     method: 'GET',
@@ -54,7 +80,7 @@ new Vue({
             this.loader = true;
             axios.post('/site/get', {
                 'filter': filter
-            }).then( (response) => {
+            }).then((response) => {
                 console.log(response.data);
                 if (response.data.length > 0) {
                     this.hotels = response.data;

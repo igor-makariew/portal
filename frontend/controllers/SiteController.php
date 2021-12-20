@@ -211,7 +211,7 @@ class SiteController extends Controller
             ],
             'param2' => [
                 'location' => $data['filter']['query'],
-                'currency' => 'rub',
+                'currency' => $data['filter']['currency'],
                 'checkIn' => '2021-12-20',
                 'checkOut' => '2021-12-25',
                 'limit' => $data['filter']['limit']
@@ -331,16 +331,6 @@ class SiteController extends Controller
 //
 //        }
 //        curl_multi_close($mch);
-
-
-//        foreach ($urlsSer as $index => $urlSer) {
-//            $ch[$index] = curl_init();
-//            curl_setopt($ch[$index], CURLOPT_RETURNTRANSFER, true);
-//            curl_setopt($ch[$index], CURLOPT_URL, $urlsSer[$index] . '?' . http_build_query($options[$index]));
-//            $res[$index] = curl_exec($ch[$index]);
-//            $response[$index] = json_decode($res[$index], true);
-//            curl_close($ch[$index]);
-//        }
 
         $list = [];
         foreach ($response as $listHotels) {
