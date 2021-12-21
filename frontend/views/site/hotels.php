@@ -30,7 +30,37 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <section class="ftco-section ftco-degree-bg">
     <div id="appHotels">
-        <v-app class="height-form">
+        <v-app class="height-form" id="inspire">
+<!--            <div class="text-center">-->
+<!--                <v-dialog-->
+<!--                        v-model="dialog"-->
+<!--                        width="500"-->
+<!--                >-->
+<!--                    <v-card>-->
+<!--                        <v-card-title class="text-h5 grey lighten-2">-->
+<!--                            Privacy Policy-->
+<!--                        </v-card-title>-->
+<!---->
+<!--                        <v-card-text>-->
+<!--                            {{hotels}}-->
+<!--                        </v-card-text>-->
+<!---->
+<!--                        <v-divider></v-divider>-->
+<!---->
+<!--                        <v-card-actions>-->
+<!--                            <v-spacer></v-spacer>-->
+<!--                            <v-btn-->
+<!--                                    color="primary"-->
+<!--                                    text-->
+<!--                                    @click="dialog = false"-->
+<!--                            >-->
+<!--                                OK-->
+<!--                            </v-btn>-->
+<!--                        </v-card-actions>-->
+<!--                    </v-card>-->
+<!--                </v-dialog>-->
+<!--            </div>-->
+
             <v-item-group mandatory>
                 <v-container>
                     <v-form ref="formValid"  v-model="valid">
@@ -53,12 +83,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <v-subheader>Выберите язык</v-subheader>
                             </v-col>
                             <v-col cols="8">
-                                <v-text-field
-                                        label="Language"
+                                <v-select
                                         v-model="lang"
-                                        suffix=""
-                                        :rules="fieldLang"
-                                ></v-text-field>
+                                        :items="langs"
+                                        item-text="title"
+                                        item-value="title"
+                                        label="Language"
+                                ></v-select>
                             </v-col>
                         </v-row>
 
@@ -73,6 +104,50 @@ $this->params['breadcrumbs'][] = $this->title;
                                         item-text="name"
                                         label="Params"
                                 ></v-select>
+                            </v-col>
+                        </v-row>
+
+                        <v-row>
+                            <v-col cols="4">
+                                <v-subheader>Выберите валюту</v-subheader>
+                            </v-col>
+                            <v-col cols="8">
+                                <v-select
+                                    v-model="currency"
+                                    :items="currencies"
+                                    item-text="name"
+                                    label="Currency"
+                                ></v-select>
+                            </v-col>
+                        </v-row>
+
+                        <v-row>
+                            <v-col cols="4">
+                                <v-subheader>Выберите дату заселения</v-subheader>
+                            </v-col>
+                            <v-col cols="8">
+                                <v-date-picker
+                                        color="success"
+                                        v-model="dateStart"
+                                        full-width
+                                        class="mt-4"
+                                        @input="validateDate"
+                                ></v-date-picker>
+                            </v-col>
+                        </v-row>
+                            {{dateStart}}
+                        <v-row>
+                            <v-col cols="4">
+                                <v-subheader>Выберите дата выселения</v-subheader>
+                            </v-col>
+                            <v-col cols="8">
+                                <v-date-picker
+                                        color="success"
+                                        v-model="dateEnd"
+                                        full-width
+                                        class="mt-4"
+                                        @input="validateDate"
+                                ></v-date-picker>
                             </v-col>
                         </v-row>
 
@@ -105,6 +180,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     :key="index"
                                     cols="12"
                                     md="4"
+                                    crtSelectedItem="index"
                                 >
                                 <v-item v-slot="{ active, toggle }">
                                     <v-card
@@ -117,11 +193,11 @@ $this->params['breadcrumbs'][] = $this->title;
                                         ></v-img>
 
                                         <v-card-title>
-                                            {{hotel.label}}
+                                            {{hotel.label != '' ? hotel.label : hotel.hotelName}}
                                         </v-card-title>
 
                                         <v-card-subtitle>
-                                            {{hotel.locationName}}
+                                            {{hotel.locationName != '' ? hotel.locationName : `${hotel.location.name}, ${hotel.location.country}`}}
                                         </v-card-subtitle>
 
                                         <v-card-actions>
@@ -136,21 +212,30 @@ $this->params['breadcrumbs'][] = $this->title;
 
                                             <v-btn
                                                     icon
-                                                    @click="show = !show"
+                                                    @click="show = !show; crtSelectedItem = index"
                                             >
-                                                <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                                                <v-icon>{{ show &&  index == crtSelectedItem ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
                                             </v-btn>
                                         </v-card-actions>
 
                                         <v-expand-transition>
-                                            <div v-show="show">
+                                            <div v-show="show && crtSelectedItem == index">
                                                 <v-divider></v-divider>
 
                                                 <v-card-text>
-                                                    <p> Название отеля - {{hotel.fullName}}. </p>
+                                                    <p> Название отеля - {{hotel.fullName != '' ? hotel.fullName : hotel.hotelName}}. </p>
                                                     <p> Локация в базе - {{hotel.locationId}}. </p>
-                                                    <p> Локация: долгота - {{hotel.location.lat}}, широта - {{hotel.location.lon}}. </p>
-                                                    <p> Номер отеля в базе - {{hotel.id}}. </p>
+                                                    <p> Локация: долгота - {{hotel.location.lat != '' ? hotel.location.lat : hotel.location.geo.lat}}, широта - {{hotel.location.lon != '' ? hotel.location.lon : hotel.location.geo.lon}}. </p>
+                                                    <p> Номер отеля в базе - {{hotel.id != '' ? hotel.id : hotel.hotelId}}. </p>
+                                                    <template v-if="hotel.stars != ''">
+                                                        <p> Количество звёзд -  <v-icon v-for="star in hotel.stars"
+                                                            color="yellow"
+                                                            >{{'mdi-star-circle'}}</v-icon>
+                                                        </p>
+                                                    </template>
+                                                    <template v-else>
+                                                        <p> Количество звёзд - не указано </p>
+                                                    </template>
                                                 </v-card-text>
                                             </div>
                                         </v-expand-transition>
@@ -161,7 +246,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     </template>
                     <template v-if="showMessage">
                         <v-alert
-                                icon="mdi-home"
+                                icon="mdi-information"
                                 border="bottom"
                                 color="info"
                                 dark
@@ -171,6 +256,33 @@ $this->params['breadcrumbs'][] = $this->title;
                             {{message}}
                         </v-alert>
                     </template>
+
+                    <!-- start preloader not work!!!-->
+                    <div class="loader-wrap text-center" v-if="loader">
+                        <v-progress-circular
+                                :rotate="-90"
+                                :size="100"
+                                :width="15"
+                                :value="value"
+                                :indeterminate="true"
+                                color="success"
+                        >
+                        </v-progress-circular>
+                    </div>
+                    <!-- end preloader -->
+
+                    <div class="mb-7"></div>
+<!-- Start pagination                   -->
+                    <template v-if="listHotels">
+                        <div class="text-center">
+                            <v-pagination
+                                v-model="page"
+                                :length="countPage"
+                                circle
+                            ></v-pagination>
+                        </div>
+                    </template>
+<!-- End pagination                   -->
                 </v-container>
             </v-item-group>
         </v-app>

@@ -15,6 +15,8 @@ use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
+use yii\helpers\ArrayHelper;
+use common\models\hotels\Hotels;
 
 /**
  * Site controller
@@ -23,7 +25,7 @@ class SiteController extends Controller
 {
 
     public $enableCsrfValidation = false;
-    
+
     /**
      * {@inheritdoc}
      */
@@ -164,7 +166,7 @@ class SiteController extends Controller
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_URL, $urlSer.'?'.http_build_query($options));
+        curl_setopt($ch, CURLOPT_URL, $urlSer . '?' . http_build_query($options));
         $res = curl_exec($ch);
         $data = json_decode($res, true);
         curl_close($ch);
@@ -172,7 +174,7 @@ class SiteController extends Controller
         return $this->render('about', [
             'info' => $info,
             'json' => $data
-         ]);
+        ]);
     }
 
     /**
@@ -196,19 +198,184 @@ class SiteController extends Controller
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
         $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
 
-        $urlSer = 'http://engine.hotellook.com/api/v2/lookup.json';
-        $options = [
-            'query' => $data['filter']['query'],
-            'lang' => $data['filter']['lang'],
-            'lookFor' => $data['filter']['lookFor']['name'],
-            'limit' => $data['filter']['limit']
+        $response = [
+            'hotels' => [],
+            'pagination' => [
+                'page' => '',
+                'rowPerPage' => '',
+                'countPage' => ''
+            ]
         ];
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_URL, $urlSer.'?'.http_build_query($options));
-        $res = curl_exec($ch);
-        $response = json_decode($res, true);
-        curl_close($ch);
+
+        $urlsSer = [
+            'param1' => 'http://engine.hotellook.com/api/v2/lookup.json',
+            'param2' => 'https://engine.hotellook.com/api/v2/cache.json'
+        ];
+        $options = [
+            'param1' => [
+                'query' => $data['filter']['query'],
+                'lang' => $data['filter']['lang'],
+                'lookFor' => $data['filter']['lookFor'],
+                'limit' => $data['filter']['limit']
+            ],
+            'param2' => [
+                'location' => $data['filter']['query'],
+                'currency' => $data['filter']['currency'],
+                'checkIn' => '2021-12-20',
+                'checkOut' => '2021-12-25',
+                'limit' => $data['filter']['limit']
+            ]
+        ];
+        // Скачивание сразу нескольких страниц
+        // инициализируем "контейнер" мультизапросов (мультикурл)
+        $multi_init = curl_multi_init();
+
+        // массив отдельных заданий
+        $jobs = [];
+
+        // проходим по каждому URL-адресу
+        foreach ($urlsSer as $index =>  $urlSer) {
+            // подключаем отдельный поток (URL-адрес)
+            $init = curl_init($urlSer. '?' . http_build_query($options[$index]));
+
+            // если произойдёт перенаправление, то перейти по нему
+            curl_setopt($init, CURLOPT_FOLLOWLOCATION, 1);
+
+            // curl_exec вернёт результат
+            curl_setopt($init, CURLOPT_RETURNTRANSFER, 1);
+
+            // таймаут соединения 10 секунд
+            curl_setopt($init, CURLOPT_CONNECTTIMEOUT, 10);
+
+            // таймаут ожидания также 10 секунд
+            curl_setopt($init, CURLOPT_TIMEOUT, 10);
+
+            // HTTP-заголовок ответа не будет возвращён
+            curl_setopt($init, CURLOPT_HEADER, 0);
+
+            // добавляем дескриптор потока в массив заданий
+            $jobs[$urlSer] = $init;
+
+            // добавляем дескриптор потока в мультикурл
+            curl_multi_add_handle($multi_init, $init);
+        }
+
+        // кол-во активных потоков
+        $thread = null;
+
+        // запускаем исполнение потоков
+        do {
+            $thread_exec = curl_multi_exec($multi_init, $thread);
+        }
+        while ($thread_exec == CURLM_CALL_MULTI_PERFORM);
+
+        // исполняем, пока есть активные потоки
+        while ($thread && ($thread_exec == CURLM_OK)) {
+
+            // если поток готов к взаимодествию
+            if (curl_multi_select($multi_init) != -1) {
+
+                // ждем, пока что-нибудь изменится
+                do {
+                    $thread_exec = curl_multi_exec($multi_init, $thread);
+
+                    // читаем информацию о потоке
+                    $info = curl_multi_info_read($multi_init);
+
+                    // если поток завершился
+                    if ($info['msg'] == CURLMSG_DONE) {
+
+                        $init = $info['handle'];
+
+                        // ищем URL страницы по дескриптору потока в массиве заданий
+                        $page = array_search($init, $jobs);
+
+                        // скачиваем содержимое страницы
+                        $jobs[$page] = curl_multi_getcontent($init);
+
+                        // распарисиваем и сохряняем ее
+                        $response[] = json_decode($jobs[$page], true);
+
+                        // удаляем поток из мультикурла
+                        curl_multi_remove_handle($multi_init, $init);
+
+                        // закрываем отдельный поток
+                        curl_close($init);
+
+                    }
+                }
+                while ($thread_exec == CURLM_CALL_MULTI_PERFORM);
+            }
+        }
+        // закрываем мультикурл
+        curl_multi_close($multi_init);
+
+        // изменить на не последовательное а на синхронное!!!
+//        $mch = curl_multi_init();
+//        $chs = [];
+//        foreach ($urlsSer as $index => $urlSer) {
+//            $chs[$index] = ($ch = curl_init());
+//            curl_setopt($ch, CURLOPT_URL, $urlsSer[$index] . '?' . http_build_query($options[$index]));
+//            curl_setopt($ch, CURLOPT_HEADER, 0 );
+//            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//            curl_multi_add_handle($mch, $ch);
+//        }
+//
+//        $prev_running = $running = null;
+//        do {
+//            curl_multi_exec($mch, $running);
+//            if ($running != $prev_running) {
+//                $info = curl_multi_info_read($mch);
+//                if (is_array($info) && ($ch = $info['handle'])) {
+//                    $content = curl_multi_getcontent( $ch );
+//                    $response[] = json_decode($content, true);
+//                }
+//                $prev_running = $running;
+//            }
+//        } while ($running > 0);
+//
+//        foreach ( $chs as $ch ) {
+//            curl_multi_remove_handle( $mch, $ch );
+//            curl_close( $ch );
+//
+//        }
+//        curl_multi_close($mch);
+
+        $list = [];
+        foreach ($response as $listHotels) {
+            if ($listHotels['status'] == 'ok') {
+                $list = array_values($listHotels['results']['hotels']);
+            } else {
+                $result = array_values($listHotels);
+                $list = array_merge($list, $result);
+            }
+        }
+
+        $hotels = [];
+        $keysList = [];
+        $keys = [];
+        foreach ($list as $index => $hotel) {
+            $keysList = array_merge_recursive($keysList, array_keys($hotel));
+            $keys = array_unique($keysList);
+    }
+
+        $keysHotels = array_pad([], count($keys), '');
+        $paramsHotel = array_combine($keys, $keysHotels);
+        foreach ($list as $index => $hotel) {
+            foreach ($paramsHotel as $paramHotel => $value)
+                $hotels[$index][$paramHotel] =
+                     Hotels::isValueInArray($paramHotel, $hotel) ? $hotel[$paramHotel] : '';
+        }
+
+        $page = $data['filter']['page'];
+        $rowPerPage = $data['filter']['rowPerPage'];
+        $offset = $page == 1 ? 0 : $page -1;
+        $countPage = (int) ceil(count($hotels) / $rowPerPage);
+
+        $response['pagination']['page'] = $page;
+        $response['pagination']['rowPerPage'] = $rowPerPage;
+        $response['pagination']['countPage'] = $countPage;
+        $response['hotels'] = array_splice($hotels, $offset, $rowPerPage);
 
 
         return $response;
@@ -285,8 +452,8 @@ class SiteController extends Controller
      * Verify email address
      *
      * @param string $token
-     * @throws BadRequestHttpException
      * @return yii\web\Response
+     * @throws BadRequestHttpException
      */
     public function actionVerifyEmail($token)
     {

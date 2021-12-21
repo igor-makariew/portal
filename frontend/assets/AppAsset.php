@@ -29,7 +29,8 @@ class AppAsset extends AssetBundle
         'css/materialdesignicons.min.css',
         'css/fonts.googleapis.css',
         'css/vuetify.min.css',
-        'css/font-awesome.min.css'
+        'css/font-awesome.min.css',
+        'css/preloder.css'
     ];
     public $js = [
         'js/jquery.min.js',
