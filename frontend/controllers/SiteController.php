@@ -198,6 +198,15 @@ class SiteController extends Controller
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
         $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
 
+        $response = [
+            'hotels' => [],
+            'pagination' => [
+                'page' => '',
+                'rowPerPage' => '',
+                'countPage' => ''
+            ]
+        ];
+
         $urlsSer = [
             'param1' => 'http://engine.hotellook.com/api/v2/lookup.json',
             'param2' => 'https://engine.hotellook.com/api/v2/cache.json'
@@ -358,15 +367,18 @@ class SiteController extends Controller
                      Hotels::isValueInArray($paramHotel, $hotel) ? $hotel[$paramHotel] : '';
         }
 
-//        $ch = curl_init();
-//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//        curl_setopt($ch, CURLOPT_URL, $urlsSer.'?'.http_build_query($options));
-//        $res = curl_exec($ch);
-//        $response = json_decode($res, true);
-//        curl_close($ch);
+        $page = $data['filter']['page'];
+        $rowPerPage = $data['filter']['rowPerPage'];
+        $offset = $page == 1 ? 0 : $page -1;
+        $countPage = (int) ceil(count($hotels) / $rowPerPage);
+
+        $response['pagination']['page'] = $page;
+        $response['pagination']['rowPerPage'] = $rowPerPage;
+        $response['pagination']['countPage'] = $countPage;
+        $response['hotels'] = array_splice($hotels, $offset, $rowPerPage);
 
 
-        return $hotels;
+        return $response;
     }
 
     /**

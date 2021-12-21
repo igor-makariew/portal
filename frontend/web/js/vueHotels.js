@@ -31,7 +31,27 @@ new Vue({
         ],
         loader: false,
         crtSelectedItem: '',
+        dialog: false,
+        //start preloder
+        interval: {},
+        value: 0,
+        //end preloder
+        page: 1,
+        countPage: 7,
+        rowPerPage: 6,
+
     }),
+
+    mounted () {
+
+    },
+
+    watch: {
+        page: function(newVal) {
+            this.page = newVal;
+            this.getHotels();
+        }
+    },
 
     methods: {
         validate() {
@@ -41,7 +61,7 @@ new Vue({
         /**
          * проверка корректности заполныямых дат
          */
-        validateDate(dateStart, dateEnd) {
+        validateDate() {
             if (this.dateStart < this.currentDate) {
                 this.dateStart = this.currentDate;
             }
@@ -65,6 +85,9 @@ new Vue({
                 'currency': this.currency,
                 'dateStart': this.dateStart,
                 'dateEnd': this.dateEnd,
+                'page': this.page,
+                'countPage': this.countPage,
+                'rowPerPage' : this.rowPerPage,
             };
 
 
@@ -81,9 +104,11 @@ new Vue({
             axios.post('/site/get', {
                 'filter': filter
             }).then((response) => {
+                this.dialog = true;
                 console.log(response.data);
-                if (response.data.length > 0) {
-                    this.hotels = response.data;
+                if (response.data.hotels.length > 0) {
+                    this.hotels = response.data.hotels;
+                    this.countPage = response.data.pagination.countPage
                     this.listHotels = true;
                     this.showMessage = false;
                 } else {
@@ -93,6 +118,13 @@ new Vue({
                 }
                 this.loader = false;
             });
+        },
+
+        /**
+         * рпгинация отелей
+         */
+        pagination() {
+
         },
 
         // testing
