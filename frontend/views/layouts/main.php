@@ -27,20 +27,150 @@ AppAsset::register($this);
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="oi oi-menu"></span> Menu
             </button>
+            <div id="appRegistration">
+                <div class="collapse navbar-collapse" id="ftco-nav">
+                    <ul class="navbar-nav ml-auto" id="active_menu">
+                        <li class="nav-item"><a href="<?= Url::to(['/site/index'])?>" class="nav-link">Home</a></li>
+                        <li class="nav-item"><a href="<?= Url::to(['/site/about'])?>" class="nav-link">About</a></li>
+                        <li class="nav-item"><a href="<?= Url::to(['/site/tour'])?>" class="nav-link">Tour</a></li>
+                        <li class="nav-item"><a href="<?= Url::to(['/site/hotels'])?>" class="nav-link">Hotels</a></li>
+                        <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
+                        <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+                        <li class="nav-item cta"><a href="contact.html" class="nav-link"><span>Add listing</span></a></li>
+                    </ul>
+                    <div id="appRegistration">
 
-            <div class="collapse navbar-collapse" id="ftco-nav">
-                <ul class="navbar-nav ml-auto" id="active_menu">
-                    <li class="nav-item"><a href="<?= Url::to(['/site/index'])?>" class="nav-link">Home</a></li>
-                    <li class="nav-item"><a href="<?= Url::to(['/site/about'])?>" class="nav-link">About</a></li>
-                    <li class="nav-item"><a href="<?= Url::to(['/site/tour'])?>" class="nav-link">Tour</a></li>
-                    <li class="nav-item"><a href="<?= Url::to(['/site/hotels'])?>" class="nav-link">Hotels</a></li>
-                    <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
-                    <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
-                    <li class="nav-item cta"><a href="contact.html" class="nav-link"><span>Add listing</span></a></li>
-                </ul>
+                        <!--  Подключение идет не через v-app а через div                       -->
+
+                        <div data-app="true" class="v-application height-form v-application--is-ltr ml-2" id="inspire">
+                            <v-icon
+                                    color="white"
+                                    style="cursor: pointer"
+                                    @click="windowRegistration"
+                            >{{ 'mdi-account'}}</v-icon>
+                            <div class="text-center">
+                                <v-dialog v-model="dialog" width="900">
+                                    <v-card>
+                                        <template v-if="checked === 'authorization'">
+                                            <v-card-title class="text-h5 grey lighten-2">
+                                                Авторизация
+                                            </v-card-title>
+                                        </template>
+                                        <template v-else>
+                                            <v-card-title class="text-h5 grey lighten-2">
+                                                Регистрация
+                                            </v-card-title>
+                                        </template>
+
+                                        <template v-if="checked === 'authorization'">
+                                            <v-card-text>
+                                                <div class="mt-5"></div>
+                                                <v-form v-model="valid">
+                                                    <v-text-field
+                                                            v-model="email"
+                                                            label="E-mail"
+                                                            required
+                                                    ></v-text-field>
+                                                    <v-text-field
+                                                            v-model="password"
+                                                            label="Пароль"
+                                                            required
+                                                    ></v-text-field>
+                                                    <v-container fluid>
+                                                        <v-radio-group
+                                                                v-model="checked"
+                                                                row
+                                                        >
+                                                            <v-radio
+                                                                    label="Регистрация"
+                                                                    value="registration"
+                                                            ></v-radio>
+                                                            <v-radio
+                                                                    label="Авторизация"
+                                                                    value="authorization"
+                                                            ></v-radio>
+                                                        </v-radio-group>
+                                                    </v-container>
+                                                    <v-col class="text-right">
+                                                        <v-btn
+                                                                :disabled="!valid"
+                                                                color="success"
+                                                                class="mr-4"
+                                                                click="submit"
+                                                        >Авторизация</v-btn>
+                                                    </v-col>
+                                                </v-form>
+                                            </v-card-text>
+                                        </template>
+
+                                        <template v-else>
+                                            <v-card-text>
+                                                <div class="mt-5"></div>
+                                                <v-form v-model="valid">
+                                                    <v-text-field
+                                                            v-model="name"
+                                                            label="Имя"
+                                                            required
+                                                    ></v-text-field>
+                                                    <v-text-field
+                                                            v-model="phone"
+                                                            label="Телефон"
+                                                    ></v-text-field>
+                                                    <v-text-field
+                                                            v-model="email"
+                                                            label="E-mail"
+                                                            required
+                                                    ></v-text-field>
+                                                    <v-text-field
+                                                            v-model="password"
+                                                            label="Пароль"
+                                                            required
+                                                    ></v-text-field>
+                                                    <v-container fluid>
+                                                        <v-radio-group
+                                                                v-model="checked"
+                                                                row
+                                                        >
+                                                            <v-radio
+                                                                    label="Регистрация"
+                                                                    value="registration"
+                                                            ></v-radio>
+                                                            <v-radio
+                                                                    label="Авторизация"
+                                                                    value="authorization"
+                                                            ></v-radio>
+                                                        </v-radio-group>
+                                                    </v-container>
+                                                    <v-col class="text-right">
+                                                        <v-btn
+                                                                :disabled="!valid"
+                                                                color="success"
+                                                                class="mr-4"
+                                                                click="submit"
+                                                        >Регистрация</v-btn>
+                                                    </v-col>
+                                                </v-form>
+                                            </v-card-text>
+                                        </template>
+
+                                        <v-divider></v-divider>
+
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn color="primary" text @click="dialog = false">
+                                                OK
+                                            </v-btn>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-dialog>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
+
     <!-- END nav -->
 
     <main role="main" class="flex-shrink-0">
@@ -115,6 +245,8 @@ AppAsset::register($this);
             </div>
         </div>
     </footer>
+
+    <?= $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/vueRegisration.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>
 
     <?php $this->endBody() ?>
     </body>
