@@ -60,9 +60,7 @@ class SignupForm extends Model
         $user->setPassword($this->password);
         $user->generateAuthKey();
         $user->generateEmailVerificationToken();
-
-//        return $user->save() && $this->sendEmail($user);
-        return $user->save();
+        return $user->save() && $this->sendEmail($user);
     }
 
     /**
@@ -78,9 +76,9 @@ class SignupForm extends Model
                 ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
                 ['user' => $user]
             )
-            ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
+            ->setFrom([Yii::$app->params['senderEmail'] => 'www.disigner@yandex.ru' . ' robot'])
             ->setTo($this->email)
-            ->setSubject('Account registration at ' . Yii::$app->name)
+            ->setSubject('Зарегистрирован аккаунт на сайте portal')
             ->send();
     }
 }

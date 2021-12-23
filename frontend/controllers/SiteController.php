@@ -413,49 +413,6 @@ class SiteController extends Controller
                 'res_status' => $res_status,
             ];
         }
-
-
-
-//        $model = new SignupForm();
-//        if ($model->load(Yii::$app->request->post()) && $model->signup()) {
-//            Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
-//            return $this->goHome();
-//        }
-//
-//        return $this->render('signup', [
-//            'model' => $model,
-//        ]);
-
-        $model = new SignupForm();
-        $message = [];
-        $res_status = true;
-
-        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
-
-        if (Yii::$app->request->isPost) {
-
-            $userData = json_decode(Yii::$app->request->getRawBody(), true)['data'];
-
-            if (!$userData['personalDataConfirm']) {
-                $message = ['personalDataConfirm' => false];
-                $res_status = false;
-            }
-
-            if ($res_status != false) {
-                $model->attributes = $userData;
-
-                if ($model->signup()) {
-                    $message = ['result_req' => 'Спасибо за регистрацию! Проверьте свой E-mail.'];
-                } else {
-                    $res_status = false;
-                    $message = ['error' => $model->getErrors()];
-                }
-            }
-            return [
-                'message' => $message,
-                'res_status' => $res_status,
-            ];
-        }
     }
 
     /**
@@ -522,11 +479,11 @@ class SiteController extends Controller
             throw new BadRequestHttpException($e->getMessage());
         }
         if (($user = $model->verifyEmail()) && Yii::$app->user->login($user)) {
-            Yii::$app->session->setFlash('success', 'Your email has been confirmed!');
+            Yii::$app->session->setFlash('success', 'Ваше email был подтвержден!');
             return $this->goHome();
         }
 
-        Yii::$app->session->setFlash('error', 'Sorry, we are unable to verify your account with provided token.');
+        Yii::$app->session->setFlash('error', 'К сожалению, мы не можем подтвердить вашу учетную запись с помощью предоставленного токена.');
         return $this->goHome();
     }
 
