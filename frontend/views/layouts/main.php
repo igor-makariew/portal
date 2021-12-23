@@ -96,7 +96,7 @@ AppAsset::register($this);
                                                                 :disabled="!valid"
                                                                 color="success"
                                                                 class="mr-4"
-                                                                click="submit"
+                                                                @click="authorization"
                                                         >Авторизация</v-btn>
                                                     </v-col>
                                                 </v-form>
@@ -110,6 +110,7 @@ AppAsset::register($this);
                                                     <v-text-field
                                                             v-model="name"
                                                             label="Имя"
+                                                            :rules="nameRules"
                                                             required
                                                     ></v-text-field>
                                                     <v-text-field
@@ -119,11 +120,14 @@ AppAsset::register($this);
                                                     <v-text-field
                                                             v-model="email"
                                                             label="E-mail"
+                                                            :rules="emailRules"
                                                             required
                                                     ></v-text-field>
                                                     <v-text-field
+                                                            type="password"
                                                             v-model="password"
                                                             label="Пароль"
+                                                            :rules="passwordRules"
                                                             required
                                                     ></v-text-field>
                                                     <v-container fluid>
@@ -146,21 +150,12 @@ AppAsset::register($this);
                                                                 :disabled="!valid"
                                                                 color="success"
                                                                 class="mr-4"
-                                                                click="submit"
+                                                                @click="registration"
                                                         >Регистрация</v-btn>
                                                     </v-col>
                                                 </v-form>
                                             </v-card-text>
                                         </template>
-
-                                        <v-divider></v-divider>
-
-                                        <v-card-actions>
-                                            <v-spacer></v-spacer>
-                                            <v-btn color="primary" text @click="dialog = false">
-                                                OK
-                                            </v-btn>
-                                        </v-card-actions>
                                     </v-card>
                                 </v-dialog>
                             </div>

@@ -17,6 +17,7 @@ use frontend\models\SignupForm;
 use frontend\models\ContactForm;
 use yii\helpers\ArrayHelper;
 use common\models\hotels\Hotels;
+use common\models\User;
 
 /**
  * Site controller
@@ -389,14 +390,72 @@ class SiteController extends Controller
     public function actionSignup()
     {
         $model = new SignupForm();
-        if ($model->load(Yii::$app->request->post()) && $model->signup()) {
-            Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
-            return $this->goHome();
+        $message = [];
+        $res_status = true;
+
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        if (Yii::$app->request->isPost) {
+            $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+
+            if ($res_status != false) {
+                $model->attributes = $data['data'];
+
+                if ($model->signup()) {
+                    $message = ['result_req' => 'Спасибо за регистрацию! Проверьте свой E-mail.'];
+                } else {
+                    $res_status = false;
+                    $message = ['error' => $model->getErrors()];
+                }
+            }
+
+            return [
+                'message' => $message,
+                'res_status' => $res_status,
+            ];
         }
 
-        return $this->render('signup', [
-            'model' => $model,
-        ]);
+
+
+//        $model = new SignupForm();
+//        if ($model->load(Yii::$app->request->post()) && $model->signup()) {
+//            Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
+//            return $this->goHome();
+//        }
+//
+//        return $this->render('signup', [
+//            'model' => $model,
+//        ]);
+
+        $model = new SignupForm();
+        $message = [];
+        $res_status = true;
+
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+
+        if (Yii::$app->request->isPost) {
+
+            $userData = json_decode(Yii::$app->request->getRawBody(), true)['data'];
+
+            if (!$userData['personalDataConfirm']) {
+                $message = ['personalDataConfirm' => false];
+                $res_status = false;
+            }
+
+            if ($res_status != false) {
+                $model->attributes = $userData;
+
+                if ($model->signup()) {
+                    $message = ['result_req' => 'Спасибо за регистрацию! Проверьте свой E-mail.'];
+                } else {
+                    $res_status = false;
+                    $message = ['error' => $model->getErrors()];
+                }
+            }
+            return [
+                'message' => $message,
+                'res_status' => $res_status,
+            ];
+        }
     }
 
     /**
