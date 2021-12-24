@@ -237,8 +237,8 @@ class SiteController extends Controller
             'param2' => [
                 'location' => $data['filter']['query'],
                 'currency' => $data['filter']['currency'],
-                'checkIn' => '2021-12-25',
-                'checkOut' => '2021-12-29',
+                'checkIn' => $data['filter']['dateStart'],
+                'checkOut' => $data['filter']['dateEnd'],
                 'limit' => $data['filter']['limit']
             ]
         ];
@@ -385,13 +385,13 @@ class SiteController extends Controller
 
         $page = $data['filter']['page'];
         $rowPerPage = $data['filter']['rowPerPage'];
-        $offset = $page == 1 ? 0 : $page -1;
+        $offset = $page == 1 ? 0 : ($page - 1)*$rowPerPage;
         $countPage = (int) ceil(count($hotels) / $rowPerPage);
 
         $response['pagination']['page'] = $page;
         $response['pagination']['rowPerPage'] = $rowPerPage;
         $response['pagination']['countPage'] = $countPage;
-        $response['hotels'] = array_splice($hotels, $offset, $rowPerPage);
+        $response['hotels'] = array_slice($hotels, $offset, $rowPerPage);
 
 
         return $response;

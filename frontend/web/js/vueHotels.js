@@ -121,10 +121,10 @@ new Vue({
         },
 
         /**
-         * рпгинация отелей
+         * отмена событий доделать данное
          */
-        pagination() {
-
+        stopClick(event) {
+            console.log(event)
         },
 
         // testing
