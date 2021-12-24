@@ -235,7 +235,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                                                 @input="stopClick"
                                                                 large
                                                         ></v-rating>
-
                                                     </template>
                                                     <template v-else>
                                                         <p> Количество звёзд - не указано </p>

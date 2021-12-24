@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\base\Model;
+use function Couchbase\basicEncoderV1;
 
 /**
  * Login form
@@ -11,6 +12,7 @@ use yii\base\Model;
 class LoginForm extends Model
 {
     public $username;
+    public $email;
     public $password;
     public $rememberMe = true;
 
@@ -23,12 +25,20 @@ class LoginForm extends Model
     public function rules()
     {
         return [
+            ['email', 'trim'],
+            ['email', 'required'],
+            ['email', 'email'],
+            ['email', 'string', 'max' => 255],
+
+            ['password', 'required'],
+            ['password', 'string', 'min' => 10],
+
             // username and password are both required
-            [['username', 'password'], 'required'],
+            // [['password'], 'required'],
             // rememberMe must be a boolean value
-            ['rememberMe', 'boolean'],
+            //['rememberMe', 'boolean'],
             // password is validated by validatePassword()
-            ['password', 'validatePassword'],
+            //['password', 'validatePassword'],
         ];
     }
 
@@ -57,7 +67,10 @@ class LoginForm extends Model
     public function login()
     {
         if ($this->validate()) {
-            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
+            $user = $this->getUser();
+            if ($user !== null && $user->status > User::STATUS_INACTIVE){
+                return Yii::$app->user->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0);
+            }
         }
         
         return false;
@@ -70,8 +83,18 @@ class LoginForm extends Model
      */
     protected function getUser()
     {
+        $basename = basename(Yii::getAlias('@app'));
+        $user = null;
+        if ($basename == 'backend') {
+            $user = User::findByUsername($this->username);
+        }
+
+        if ($basename == 'frontend') {
+            $user = User::findByEmail($this->email);
+        }
+
         if ($this->_user === null) {
-            $this->_user = User::findByUsername($this->username);
+            $this->_user = $user;
         }
 
         return $this->_user;

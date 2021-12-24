@@ -9,5 +9,25 @@ return [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'db' => [
+            'class' => 'yii\db\Connection',
+            'dsn' => 'mysql:host=localhost;dbname=portal',
+            'username' => 'admin',
+            'password' => 'admin',
+            'charset' => 'utf8',
+        ],
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            'viewPath' => '@common/mail',
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => 'smtp.yandex.ru',
+                'username' => 'www.disigner@yandex.ru',
+                'password' => 'cpytbivtybyihlre',
+                'port' => 465,
+                'encryption' => 'ssl',
+            ],
+            'useFileTransport' => false,
+        ],
     ],
 ];

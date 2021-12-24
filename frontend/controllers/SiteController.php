@@ -17,6 +17,7 @@ use frontend\models\SignupForm;
 use frontend\models\ContactForm;
 use yii\helpers\ArrayHelper;
 use common\models\hotels\Hotels;
+use common\models\User;
 
 /**
  * Site controller
@@ -90,20 +91,31 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
+        $response = [
+            'res' => false,
+            'msg' => 'Неверные данные для авторизации!'
+        ];
+
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
         if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
+            $response['res'] = true;
+            $response['msg'] = 'Пользователь уже авторизован.';
+            return $response;
         }
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $model->email = $data['data']['email'];
+        $model->password = $data['data']['password'];
+        $test = $model->login();
+        if (Yii::$app->request->isPost && $model->login()) {
+            $response['res'] = true;
+            $response['msg'] = 'Пользователь авторизован.';
+        } else {
+            $model->password = '';
         }
 
-        $model->password = '';
-
-        return $this->render('login', [
-            'model' => $model,
-        ]);
+        return $response;
     }
 
     /**
@@ -113,9 +125,13 @@ class SiteController extends Controller
      */
     public function actionLogout()
     {
-        Yii::$app->user->logout();
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        if (Yii::$app->request->isPost) {
+            Yii::$app->user->logout();
+            $response['res'] = true;
+        }
 
-        return $this->goHome();
+        return $response;
     }
 
     /**
@@ -389,14 +405,29 @@ class SiteController extends Controller
     public function actionSignup()
     {
         $model = new SignupForm();
-        if ($model->load(Yii::$app->request->post()) && $model->signup()) {
-            Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
-            return $this->goHome();
-        }
+        $message = [];
+        $res_status = true;
 
-        return $this->render('signup', [
-            'model' => $model,
-        ]);
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        if (Yii::$app->request->isPost) {
+            $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+
+            if ($res_status != false) {
+                $model->attributes = $data['data'];
+
+                if ($model->signup()) {
+                    $message = ['result_req' => 'Спасибо за регистрацию! Проверьте свой E-mail.'];
+                } else {
+                    $res_status = false;
+                    $message = ['error' => $model->getErrors()];
+                }
+            }
+
+            return [
+                'message' => $message,
+                'res_status' => $res_status,
+            ];
+        }
     }
 
     /**
@@ -463,11 +494,11 @@ class SiteController extends Controller
             throw new BadRequestHttpException($e->getMessage());
         }
         if (($user = $model->verifyEmail()) && Yii::$app->user->login($user)) {
-            Yii::$app->session->setFlash('success', 'Your email has been confirmed!');
+            Yii::$app->session->setFlash('success', 'Ваше email был подтвержден!');
             return $this->goHome();
         }
 
-        Yii::$app->session->setFlash('error', 'Sorry, we are unable to verify your account with provided token.');
+        Yii::$app->session->setFlash('error', 'К сожалению, мы не можем подтвердить вашу учетную запись с помощью предоставленного токена.');
         return $this->goHome();
     }
 

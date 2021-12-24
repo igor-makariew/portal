@@ -31,13 +31,13 @@ new Vue({
         ],
         loader: false,
         crtSelectedItem: '',
-        dialog: false,
+
         //start preloder
         interval: {},
         value: 0,
         //end preloder
         page: 1,
-        countPage: 7,
+        countPage: '',
         rowPerPage: 6,
 
     }),
