@@ -1,0 +1,7 @@
+.no-marker {
+    list-style-type: none;
+}
+
+.no-border {
+    box-shadow: 0 0 0 0 rgb(0 0 0 / 20%), 0 0 0 0 rgb(0 0 0 / 14%), 0 0 0 0 rgb(0 0 0 / 12%) !important;
+}

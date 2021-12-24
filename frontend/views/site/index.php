@@ -4,7 +4,8 @@
 
 $this->title = 'DirEngine - Free Bootstrap 4 Template by Colorlib';
 ?>
-
+<?php  //var_dump( basename(Yii::getAlias('@app'))); ?>
+<?php  //var_dump( basename(Yii::getAlias('@web'))); ?>
 <div class="hero-wrap js-fullheight" style="background-image: url('images/bg_1.jpg');">
     <div class="overlay"></div>
     <div class="container">
@@ -415,7 +416,6 @@ $this->title = 'DirEngine - Free Bootstrap 4 Template by Colorlib';
         </div>
     </div>
 </section>
-
 
 <section class="ftco-section">
     <div class="container">
