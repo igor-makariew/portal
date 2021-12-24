@@ -91,20 +91,31 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
+        $response = [
+            'res' => false,
+            'msg' => 'Неверные данные для авторизации!'
+        ];
+
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
         if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
+            $response['res'] = true;
+            $response['msg'] = 'Пользователь уже авторизован.';
+            return $response;
         }
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $model->email = $data['data']['email'];
+        $model->password = $data['data']['password'];
+        $test = $model->login();
+        if (Yii::$app->request->isPost && $model->login()) {
+            $response['res'] = true;
+            $response['msg'] = 'Пользователь авторизован.';
+        } else {
+            $model->password = '';
         }
 
-        $model->password = '';
-
-        return $this->render('login', [
-            'model' => $model,
-        ]);
+        return $response;
     }
 
     /**
@@ -114,9 +125,13 @@ class SiteController extends Controller
      */
     public function actionLogout()
     {
-        Yii::$app->user->logout();
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        if (Yii::$app->request->isPost) {
+            Yii::$app->user->logout();
+            $response['res'] = true;
+        }
 
-        return $this->goHome();
+        return $response;
     }
 
     /**
@@ -222,8 +237,8 @@ class SiteController extends Controller
             'param2' => [
                 'location' => $data['filter']['query'],
                 'currency' => $data['filter']['currency'],
-                'checkIn' => '2021-12-20',
-                'checkOut' => '2021-12-25',
+                'checkIn' => '2021-12-25',
+                'checkOut' => '2021-12-29',
                 'limit' => $data['filter']['limit']
             ]
         ];

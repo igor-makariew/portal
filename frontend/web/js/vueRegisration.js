@@ -3,6 +3,7 @@ new Vue({
     vuetify: new Vuetify(),
 
     data: () => ({
+        isGuest: true,
         name: '',
         phone: '',
         email: '',
@@ -22,13 +23,34 @@ new Vue({
         passwordRules: [
             v => !!v || 'Поле e-mail обязательно для заполнения',
             v => v.length >= 10 || 'Поле пароль должно быть не менее 10 символов',
+        ],
+        emailAutoRules: [
+            v => !!v || 'Поле e-mail обязательно для заполнения',
+            v => /.+@.+\..+/.test(v) || 'E-mail не верно заполнен',
+        ],
+        passwordAutoRules: [
+            v => !!v || 'Поле e-mail обязательно для заполнения',
+            v => v.length >= 10 || 'Поле пароль должно быть не менее 10 символов',
+        ],
+        emailAuto: '',
+        passwordAuto: '',
+        validAuto: false,
+        // start personal
+        items: [
+            { title: "Аккаутн", icon: "mdi-account", action: "Аккаутн"},
+            { title: "Выйти", icon: "mdi-logout", action: "Выйти" }
         ]
+        // end personal
     }),
 
+    mounted() {
+        this.isGuest = Boolean(Number(document.getElementById('appRegistration').dataset.guest));
+    },
+
     methods: {
-        validate() {
-            this.$refs.formValid.validate();
-        },
+        // validate() {
+        //     this.$refs.formValid.validate();
+        // },
 
         windowRegistration() {
             this.dialog = true;
@@ -70,8 +92,47 @@ new Vue({
 
         },
 
-        authorization() {
-
-        }
+        /**
+         * авторизация пользователя
+         */
+        authorization: async function() {
+            const data = {
+                'email': this.emailAuto,
+                'password': this.passwordAuto
+            }
+            if (this.emailAuto != '' && this.passwordAuto != '') {
+                await axios.post('/site/login', {
+                    data: data
+                }).then( (response) => {
+                    if (response.data.res) {
+                        this.dialog = false;
+                        this.isGuest = false;
+                        this.emailAuto = '';
+                        this.passwordAuto = '';
+                    } else {
+                        console.log(response.data.msg);
+                    }
+                }).catch( (error) => {
+                    console.log(error);
+                });
+            }
+        },
+        /**
+         * обрабатывает действия события
+         * @param action
+         */
+        menuActionClick(action) {
+            if (action === "Выйти") {
+                axios.post('/site/logout', {}).then( (response) => {
+                    if (response.data.res) {
+                        location.reload();
+                    }
+                }).catch( (error) => {
+                    console.log(error);
+                })
+            } else if (action === "Аккаутн") {
+                alert(Boolean(Number(document.getElementById('appRegistration').dataset.guest)))
+            }
+        },
     }
 })
