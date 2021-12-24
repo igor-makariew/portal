@@ -228,10 +228,14 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     <p> Локация: долгота - {{hotel.location.lat != '' ? hotel.location.lat : hotel.location.geo.lat}}, широта - {{hotel.location.lon != '' ? hotel.location.lon : hotel.location.geo.lon}}. </p>
                                                     <p> Номер отеля в базе - {{hotel.id != '' ? hotel.id : hotel.hotelId}}. </p>
                                                     <template v-if="hotel.stars != ''">
-                                                        <p> Количество звёзд -  <v-icon v-for="star in hotel.stars"
-                                                            color="yellow"
-                                                            >{{'mdi-star-circle'}}</v-icon>
-                                                        </p>
+                                                        <v-rating
+                                                                v-model="hotel.stars"
+                                                                background-color="orange lighten-3"
+                                                                color="orange"
+                                                                @input="stopClick"
+                                                                large
+                                                        ></v-rating>
+
                                                     </template>
                                                     <template v-else>
                                                         <p> Количество звёзд - не указано </p>
