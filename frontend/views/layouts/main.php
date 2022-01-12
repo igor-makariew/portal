@@ -229,6 +229,7 @@ AppAsset::register($this);
                             @click="windowBasket"
                     >{{'mdi-cart-outline'}}
                     </v-icon>
+                    <span class="basket-counter" v-if="countBasket.visible">{{countBasket.count}}</span>
                     <div class="text-center">
                         <v-dialog v-model="dialog" width="100%">
                             <v-card>

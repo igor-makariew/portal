@@ -21,7 +21,10 @@ new Vue({
         loader: false,
         countHotels: [],
         customer: [],
-
+        countBasket: {
+            count: 0,
+            visible: false
+        },
     }),
 
     created() {
@@ -93,6 +96,14 @@ new Vue({
                     }
                 });
             }
+
+            if (this.countHotels.length > 0) {
+                this.countBasket.count = this.countHotels.length;
+                this.countBasket.visible = true;
+            } else {
+                this.countBasket.visible = false;
+            }
+
             if (this.countHotels.length > 0) {
                 this.validBuy = true;
             } else {
@@ -125,6 +136,13 @@ new Vue({
                                 'email': hotel.email,
                                 'username': hotel.username
                             }
+                        }
+
+                        if (this.listHotels.length > 0) {
+                            this.countBasket.count = this.listHotels.length;
+                            this.countBasket.visible = true;
+                        } else {
+                            this.countBasket.visible = false;
                         }
                     });
                     this.loader = false;

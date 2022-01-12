@@ -110,7 +110,6 @@ new Vue({
                 'filter': filter
             }).then((response) => {
                 this.dialog = true;
-                console.log(response.data);
                 if (response.data.hotels.length > 0) {
                     this.hotels = response.data.hotels;
                     this.countPage = response.data.pagination.countPage
