@@ -14,7 +14,8 @@ new Vue({
         currencies: ['rub', 'usd', 'eur'],
         // start calendar
         currentDate: new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate(),
-        dateStart: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+        //dateStart: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+        dateStart: new Date().getFullYear() + '-' + (new Date().getMonth() + 1).toString().padStart(2, "0") + '-' + new Date().getDate(),
         dateEnd:  new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + (new Date().getDate() + 1),
         // end calendar
         hotels: [],
@@ -62,14 +63,18 @@ new Vue({
          * проверка корректности заполныямых дат
          */
         validateDate() {
-            if (this.dateStart < this.currentDate) {
-                this.dateStart = this.currentDate;
+            const start = new Date(this.dateStart);
+            const end = new Date(this.dateEnd);
+            const current = new Date(this.currentDate);
+
+            if (start < current) {
+                this.dateStart = current.getFullYear() + '-' + (current.getMonth() + 1).toString().padStart(2, "0") + '-' + current.getDate();
             }
 
-            if (this.dateEnd <= this.dateStart) {
-                let result = new Date(this.dateStart);
-                result.setDate(result.getDate() + 1);
-                this.dateEnd = result.getFullYear() + '-' + (result.getMonth() + 1) + '-' + result.getDate();
+            if (end <= start ) {
+                this.dateStart = start.getFullYear() + '-' + (start.getMonth() + 1).toString().padStart(2, "0") + '-' + start.getDate();
+                start.setDate(start.getDate() + 1);
+                this.dateEnd = start.getFullYear() + '-' + (start.getMonth() + 1).toString().padStart(2, "0") + '-' + start.getDate();
             }
         },
 
@@ -127,9 +132,23 @@ new Vue({
             console.log(event)
         },
 
-        // testing
-        getTesting() {
-            console.log('testing');
-        }
+        /**
+         * addToBasket
+         */
+        addToBasket(id, userId) {
+            const data = {
+                'hotelId': id,
+                'userId': userId
+            }
+
+            axios.post('/basket/add-basket', {
+                data: data
+            }).then( (response) => {
+                console.log(response);
+            }).catch((error) => {
+                console.log(error.message);
+            })
+        },
+
     }
 })

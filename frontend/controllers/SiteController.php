@@ -359,8 +359,10 @@ class SiteController extends Controller
 
         $list = [];
         foreach ($response as $listHotels) {
-            if ($listHotels['status'] == 'ok') {
-                $list = array_values($listHotels['results']['hotels']);
+            if (array_key_exists('status', $listHotels)) {
+                if ($listHotels['status'] == 'ok') {
+                    $list = array_values($listHotels['results']['hotels']);
+                }
             } else {
                 $result = array_values($listHotels);
                 $list = array_merge($list, $result);
@@ -381,6 +383,26 @@ class SiteController extends Controller
             foreach ($paramsHotel as $paramHotel => $value)
                 $hotels[$index][$paramHotel] =
                      Hotels::isValueInArray($paramHotel, $hotel) ? $hotel[$paramHotel] : '';
+        }
+
+        foreach ($hotels as $index => $hotel) {
+            $model = new Hotels();
+            $model->location_name = $hotel['locationName'];
+            $model->label = $hotel['label'];
+            $model->location = $model->arrayToJSON($hotel['location']);
+            $model->full_name = $hotel['fullName'];
+            $model->hotel_id = $hotel['id'] ?  $hotel['id'] :  $hotel['hotelId'];
+            $model->location_id =  $hotel['locationId'];
+            $model->hotel_name = $hotel['hotelName'];
+            $model->price_form =  $hotel['priceFrom'];
+            $model->price_percentile = $model->arrayToJSON($hotel['pricePercentile']);
+            $model->stars =  $hotel['stars'];
+            $model->price_avg =  $hotel['priceAvg'];
+            if ($model->validate() && $model->save()) {
+                $response['saveHotel'][$index] = true;
+            } else {
+                $response['saveHotel'][$index] = $model->getErrors();
+            }
         }
 
         $page = $data['filter']['page'];

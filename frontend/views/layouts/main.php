@@ -30,7 +30,7 @@ AppAsset::register($this);
                     aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="oi oi-menu"></span> Menu
             </button>
-            <div id="appRegistration" data-guest="<?= (int) Yii::$app->user->isGuest; ?>">
+<!--            <div id="appRegistration" data-guest="--><?//= (int) Yii::$app->user->isGuest; ?><!--" class="text-left">-->
                 <div class="collapse navbar-collapse" id="ftco-nav">
                     <ul class="navbar-nav ml-auto" id="active_menu">
                         <li class="nav-item"><a href="<?= Url::to(['/site/index']) ?>" class="nav-link">Home</a></li>
@@ -38,14 +38,13 @@ AppAsset::register($this);
                         <li class="nav-item"><a href="<?= Url::to(['/site/tour']) ?>" class="nav-link">Tour</a></li>
                         <li class="nav-item"><a href="<?= Url::to(['/site/hotels']) ?>" class="nav-link">Hotels</a></li>
                         <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
-                        <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+                        <li class="nav-item"><a href="<?= Url::to(['/basket/index'])?>" class="nav-link">Contact</a></li>
                         <li class="nav-item cta"><a href="contact.html" class="nav-link"><span>Add listing</span></a>
                         </li>
                     </ul>
-<!--                    <div >-->
 
                         <!--  Подключение идет не через v-app а через div                       -->
-
+                    <div id="appRegistration" data-guest="<?= (int) Yii::$app->user->isGuest; ?>">
                         <div data-app="true" class="v-application height-form v-application--is-ltr ml-2" id="inspire">
                             <template v-if="isGuest">
                                 <v-icon
@@ -55,7 +54,7 @@ AppAsset::register($this);
                                 >{{ 'mdi-account'}}
                                 </v-icon>
                                 <div class="text-center">
-                                    <v-dialog v-model="dialog" width="900">
+                                    <v-dialog v-model="dialog" width="100%">
                                         <v-card>
                                             <template v-if="checked === 'authorization'">
                                                 <v-card-title class="text-h5 grey lighten-2">
@@ -179,7 +178,7 @@ AppAsset::register($this);
                                 >{{ 'mdi-account'}}
                                 </v-icon>
                                 <div class="text-center">
-                                    <v-dialog v-model="dialog" >
+                                    <v-dialog v-model="dialog" width="100%">
                                         <v-card >
                                             <template>
                                                 <v-card-title class="text-h5 grey lighten-2">
@@ -219,7 +218,63 @@ AppAsset::register($this);
                                 </div>
                             </template>
                         </div>
-<!--                    </div>-->
+                    </div>
+                </div>
+<!--            </div>-->
+            <div id="appBasket">
+                <div data-app="true" class="v-application height-form v-application--is-ltr ml-2" id="inspire">
+                    <v-icon
+                            color="success"
+                            style="cursor: pointer"
+                            @click="windowBasket"
+                    >{{'mdi-cart-outline'}}
+                    </v-icon>
+                    <div class="text-center">
+                        <v-dialog v-model="dialog" width="100%">
+                            <v-card>
+                                <v-card-title class="text-h5 grey lighten-2">
+                                    Корзина
+                                </v-card-title>
+                                <v-card-text>
+                                    <div class="mt-5">
+                                        <v-data-table
+                                            :headers="headers"
+                                            :items="listHotels"
+                                            item-key="name"
+                                            class="elevation-1"
+                                            :hide-default-header="false"
+                                            :hide-default-footer="true"
+                                            disabled-pagination
+                                        >
+                                            <template v-slot:item.stars="{ item }">
+                                                <v-rating
+                                                    v-model="item.stars"
+                                                    background-color="orange lighten-3"
+                                                    color="orange"
+                                                    small
+                                                ></v-rating>
+                                            </template>
+
+                                            <template v-slot:item.check="{ item }">
+                                                <v-checkbox
+                                                    v-model="item.check"
+                                                    @click="countRows(item.check, item.name, item.price, item.stars)"
+                                                ></v-checkbox>
+                                            </template>
+                                        </v-data-table>
+                                    </div>
+                                    <div class="mt-5"></div>
+                                    <div class="text-right">
+                                        <v-btn
+                                                color="success"
+                                                @click="buyHotels()"
+                                                :disabled="!validBuy"
+                                        >Заказать</v-btn>
+                                    </div>
+                                </v-card-text>
+                            </v-card>
+                        </v-dialog>
+                    </div>
                 </div>
             </div>
         </div>
@@ -307,6 +362,7 @@ AppAsset::register($this);
     </footer>
 
     <?= $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/vueRegisration.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>
+    <?= $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/vueBasket.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>
 
     <?php $this->endBody() ?>
     </body>

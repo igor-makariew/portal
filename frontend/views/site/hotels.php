@@ -239,6 +239,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     <template v-else>
                                                         <p> Количество звёзд - не указано </p>
                                                     </template>
+                                                    <v-col class="text-right" >
+                                                        <v-btn
+                                                                color="success"
+                                                                @click="addToBasket(hotel.id != '' ? hotel.id : hotel.hotelId, <?= Yii::$app->user->identity->id?>)"
+                                                        >Заказать</v-btn>
+                                                    </v-col>
                                                 </v-card-text>
                                             </div>
                                         </v-expand-transition>
