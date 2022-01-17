@@ -3,8 +3,6 @@
 namespace common\models\customers;
 
 use Yii;
-use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "customers".
@@ -18,7 +16,7 @@ use yii\db\ActiveRecord;
  * @property string|null $price
  * @property string|null $date
  */
-class Customers extends ActiveRecord
+class Customers extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -40,28 +38,6 @@ class Customers extends ActiveRecord
         ];
     }
 
-    public function behaviors()
-    {
-        return [
-            //Использование поведения TimestampBehavior ActiveRecord
-            'timestamp' => [
-                'class' => TimestampBehavior::className(),
-                'attributes' => [
-                    ActiveRecord::EVENT_BEFORE_INSERT => ['date'],
-                    ActiveRecord::EVENT_BEFORE_UPDATE => false,
-
-                ],
-                'value' => new \yii\db\Expression('NOW()'),
-//                'value' => function(){
-//                    return gmdate("Y-m-d H:i:s");
-//                },
-
-
-            ],
-
-        ];
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -69,13 +45,13 @@ class Customers extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Имя',
+            'name' => 'Name',
             'email' => 'Email',
-            'title' => 'Название',
+            'title' => 'Title',
             'hotel' => 'Hotel',
-            'raiting' => 'Рейтинг',
-            'price' => 'Цена',
-            'date' => 'Дата',
+            'raiting' => 'Raiting',
+            'price' => 'Price',
+            'date' => 'Date',
         ];
     }
 }

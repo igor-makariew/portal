@@ -1,4 +1,4 @@
-new Vue({
+ new Vue({
     el: '#appBasket',
     vuetify: new Vuetify(),
 
@@ -25,26 +25,29 @@ new Vue({
             count: 0,
             visible: false
         },
+        allRows: 0,
+        //testingLet: ''
     }),
 
     created() {
         this.getBasket();
+        this.countInBasket();
     },
 
-    computed: {
-        // computedHotels: function() {
-            // return this.listHotels;
-            //const hotels = {...this.listHotels};
-            //return hotels;
-            //return Object.assign({}, this.listHotels);
-        // }
-    },
+    // computed: {
+    //
+    // },
+    //
+    // mounted: function() {
+    //
+    // },
 
     watch: {
-        // listHotels(newVal, oldVal) {
-        //     console.log('test');
+        // testingLet(newVal, oldVal) {
+        //     console.log(newVal, oldVal);
         //     deep: true
         // },
+
         // item: {
         //     handler: function(newVal, oldVal) {
         //         // console.log(newVal, oldVal);
@@ -52,6 +55,10 @@ new Vue({
         //     },
         //     deep: true
         // },
+
+        // testing(newVal, oldVal) {
+        //     console.log(newVal, oldVal)
+        // }
     },
 
     methods: {
@@ -121,14 +128,15 @@ new Vue({
                 .then( (response) => {
                     let userId = response.data.userId;
                     let hotels = Object.values(response.data.basket[userId]);
+                    console.log(response.data.basket[userId]);
                     hotels.forEach( (hotel, index) => {
                         if (Object.keys(hotel).indexOf('fullName') !== -1) {
                             this.listHotels[index] = {
-                                name: hotel.fullName != '' ? hotel.fullName : hotel.hotelName,
-                                label: hotel.label != '' ? hotel.label : hotel.hotelName,
-                                stars: hotel.stars != '' ? parseInt(hotel.stars) : 0,
-                                price: hotel.price != undefined ? hotel.price : 'Уточняется',
-                                check: false,
+                                'name': hotel.fullName != '' ? hotel.fullName : hotel.hotelName,
+                                'label': hotel.label != '' ? hotel.label : hotel.hotelName,
+                                'stars': hotel.stars != '' ? parseInt(hotel.stars) : 0,
+                                'price': hotel.price != undefined ? hotel.price : 'Уточняется',
+                                'check': false,
                             }
                         }
                         if (Object.keys(hotel).indexOf('email') !== -1) {
@@ -138,6 +146,7 @@ new Vue({
                             }
                         }
 
+                        this.allRows = this.listHotels.length
                         if (this.listHotels.length > 0) {
                             this.countBasket.count = this.listHotels.length;
                             this.countBasket.visible = true;
@@ -149,6 +158,17 @@ new Vue({
                 }).catch( (error) => {
                 console.log(error.message);
             })
+        },
+
+        /**
+         * количество заказов в корзине
+         */
+        async countInBasket() {
+            return await axios('/basket/get-basket', {})
+                .then( (response) => {
+                    const countBasket = document.getElementById('countBasket');
+                    countBasket.innerText = Object.keys(response.data.basket[countBasket.getAttribute("data-userid")]).length - 1;
+                })
         }
     }
 

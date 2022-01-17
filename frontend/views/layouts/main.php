@@ -229,7 +229,8 @@ AppAsset::register($this);
                             @click="windowBasket"
                     >{{'mdi-cart-outline'}}
                     </v-icon>
-                    <span class="basket-counter" v-if="countBasket.visible">{{countBasket.count}}</span>
+<!--                    <span class="basket-counter" id="countBasket" v-if="countBasket.visible">{{countBasket.count}}</span>-->
+                    <span class="basket-counter" id="countBasket" data-userid="<?= Yii::$app->user->identity->id;?>"></span>
                     <div class="text-center">
                         <v-dialog v-model="dialog" width="100%">
                             <v-card>
@@ -246,6 +247,10 @@ AppAsset::register($this);
                                             :hide-default-header="false"
                                             :hide-default-footer="true"
                                             disabled-pagination
+                                            :items-per-page="allRows"
+                                            :footer-props="{
+                                                itemsPerPageText: 'Количество заказов на странице'
+                                            }"
                                         >
                                             <template v-slot:item.stars="{ item }">
                                                 <v-rating

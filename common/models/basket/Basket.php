@@ -75,6 +75,12 @@ class Basket extends Model {
         return $this->session->get('basket');
     }
 
+    /**
+     * Удаление товаров из корзины
+     *
+     * @param array $hotels
+     * @return bool|mixed
+     */
     public function removeFromBasket(array $hotels)
     {
         $this->session = Yii::$app->session;

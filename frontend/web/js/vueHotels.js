@@ -40,7 +40,6 @@ new Vue({
         page: 1,
         countPage: '',
         rowPerPage: 6,
-
     }),
 
     mounted () {
@@ -140,13 +139,15 @@ new Vue({
                 'userId': userId
             }
 
-            axios.post('/basket/add-basket', {
-                data: data
-            }).then( (response) => {
-                console.log(response);
-            }).catch((error) => {
-                console.log(error.message);
-            })
+             axios.post('/basket/add-basket', {
+                 data: data
+             }).then( (response) => {
+                 const countBasket = document.getElementById('countBasket');
+                 countBasket.innerText = Object.keys(response.data.basket[userId]).length - 1;
+                 //this.$emit('toggle', response); // название события
+             }).catch((error) => {
+                 console.log(error.message);
+             })
         },
 
     }
