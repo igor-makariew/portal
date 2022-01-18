@@ -17,16 +17,18 @@
             { text: 'Цена', sortable: false, value: 'price'},
             { text: 'Подтверждение', sortable: false, value: 'check' },
         ],
-        validBuy: false,
+        validHotel: false,
         loader: false,
-        countHotels: [],
+        countCheckedHotels: [],
         customer: [],
         countBasket: {
             count: 0,
             visible: false
         },
         allRows: 0,
-        //testingLet: ''
+        modalWindow: false,
+        prompt: false,
+        showBasket: false,
     }),
 
     created() {
@@ -66,9 +68,59 @@
             this.dialog = true;
         },
 
+        /**
+         * удаление выбранных отелей
+         */
+        deleteHotels() {
+            const data = {
+                'countHotels': this.countCheckedHotels,
+                'customer': this.customer
+            }
+            if (this.prompt) {
+                this.modalWindow = false;
+                axios.post('/basket/delete', {
+                    'data': data
+                }).then( (response) => {
+                    if (response.data.res) {
+                        this.prompt = false;
+                        this.listHotels.forEach( (hotel, index) => {
+                            let found = this.countCheckedHotels.find( param => {
+                                return param.name == hotel.name;
+                            });
+                            if (found != undefined) {
+                                this.listHotels.splice(index, 1);
+                            }
+                            const countBasket = document.getElementById('countBasket');
+                            countBasket.innerText =  this.listHotels.length > 0 ? this.listHotels.length : '';
+                        })
+                    } else {
+                        alert(response.data.message);
+                    }
+                }).catch( (error) => {
+                    console.log(error.message)
+                })
+            }
+        },
+
+        /**
+         * закрытие окна подтвержения удаления
+         */
+        closeModal(paramBool) {
+             if (paramBool) {
+                 this.modalWindow = false;
+                 this.prompt = true;
+                 this.deleteHotels();
+             } else {
+                 this.modalWindow = false;
+             }
+        },
+
+        /**
+         * зазазать выбранные отели
+         */
         buyHotels() {
             const data = {
-                'countHotels': this.countHotels,
+                'countHotels': this.countCheckedHotels,
                 'customer': this.customer
             }
             axios.post('/basket/buy', {
@@ -92,29 +144,29 @@
         /**
          * подсчет выбранных строк в корзине
          */
-        countRows(check, name, price, stars) {
+        countCheckedRows(check, name, price, stars) {
             if (check) {
                 let obj = Object.assign({}, {'name': name}, {'price': price}, {'raiting': stars});
-                this.countHotels.push(obj);
+                this.countCheckedHotels.push(obj);
             } else {
-                this.countHotels.forEach( (hotel, index) => {
+                this.countCheckedHotels.forEach( (hotel, index) => {
                     if (hotel.name == name && hotel.price == price) {
-                        this.countHotels.splice(index,1);
+                        this.countCheckedHotels.splice(index,1);
                     }
                 });
             }
 
-            if (this.countHotels.length > 0) {
-                this.countBasket.count = this.countHotels.length;
+            if (this.countCheckedHotels.length > 0) {
+                this.countBasket.count = this.listHotels.length - this.countCheckedHotels.length;
                 this.countBasket.visible = true;
             } else {
                 this.countBasket.visible = false;
             }
 
-            if (this.countHotels.length > 0) {
-                this.validBuy = true;
+            if (this.countCheckedHotels.length > 0) {
+                this.validHotel = true;
             } else {
-                this.validBuy = false;
+                this.validHotel = false;
             }
 
         },
@@ -128,7 +180,7 @@
                 .then( (response) => {
                     let userId = response.data.userId;
                     let hotels = Object.values(response.data.basket[userId]);
-                    console.log(response.data.basket[userId]);
+                    // console.log(response.data.basket[userId]);
                     hotels.forEach( (hotel, index) => {
                         if (Object.keys(hotel).indexOf('fullName') !== -1) {
                             this.listHotels[index] = {
@@ -154,6 +206,7 @@
                             this.countBasket.visible = false;
                         }
                     });
+                    this.showBasket = true;
                     this.loader = false;
                 }).catch( (error) => {
                 console.log(error.message);
@@ -167,7 +220,8 @@
             return await axios('/basket/get-basket', {})
                 .then( (response) => {
                     const countBasket = document.getElementById('countBasket');
-                    countBasket.innerText = Object.keys(response.data.basket[countBasket.getAttribute("data-userid")]).length - 1;
+                    countBasket.innerText = Object.keys(response.data.basket[countBasket.getAttribute("data-userid")]).length - 1 > 0 ?
+                        Object.keys(response.data.basket[countBasket.getAttribute("data-userid")]).length - 1 : '';
                 })
         }
     }

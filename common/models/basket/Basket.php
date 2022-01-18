@@ -102,7 +102,7 @@ class Basket extends Model {
         }
 
         $this->session->set('basket', $this->basket);
-        return $this->session->get('basket');
+        return true;
 
     }
 

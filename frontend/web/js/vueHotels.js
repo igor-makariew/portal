@@ -20,7 +20,7 @@ new Vue({
         // end calendar
         hotels: [],
         show: false,
-        listHotels: false,
+        visiblyHotels: false,
         showMessage: false,
         fieldCity: [
             v => !!v || 'Город не введен',
@@ -112,10 +112,10 @@ new Vue({
                 if (response.data.hotels.length > 0) {
                     this.hotels = response.data.hotels;
                     this.countPage = response.data.pagination.countPage
-                    this.listHotels = true;
+                    this.visiblyHotels = true;
                     this.showMessage = false;
                 } else {
-                    this.listHotels = false;
+                    this.visiblyHotels = false;
                     this.showMessage = true;
                     this.message = 'По вашему запросу данных не найдено!!!'
                 }

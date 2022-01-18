@@ -53,6 +53,11 @@ class BasketController extends Controller
         return  $response;
     }
 
+    /**
+     * заказы отелей
+     *
+     * @return array
+     */
     public function actionBuy()
     {
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
@@ -88,9 +93,34 @@ class BasketController extends Controller
         }
         $modelBasket = new Basket();
 //        $response['basket'] = $modelBasket->removeFromBasket($countHotels);
-        $response['basket'] = $modelBasket->removeFromBasket($countHotels);
+        if ($modelBasket->removeFromBasket($countHotels)) {
+            $response['basket'] = $modelBasket->getBasket();
+        }
 
         return $response;
+    }
+
+    /**
+     * удаление заказов из корзины
+     *
+     * @return array
+     */
+    public function actionDelete() {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $response = [
+            'res' => false,
+            'message' => 'Не получилось удалить Ваши заказы. Сообщите по email - www.disigner@yandex.ru'
+        ];
+        $deletedHotels = $data['data']['countHotels'];
+        $modelBasket = new Basket();
+        if ($modelBasket->removeFromBasket($deletedHotels)) {
+            $response['basket'] = $modelBasket->getBasket();
+            $response['res'] = true;
+            $response['userId'] = Yii::$app->user->identity->id;
+        }
+        return $response;
+
     }
 
 }

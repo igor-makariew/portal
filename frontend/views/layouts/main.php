@@ -223,12 +223,14 @@ AppAsset::register($this);
 <!--            </div>-->
             <div id="appBasket">
                 <div data-app="true" class="v-application height-form v-application--is-ltr ml-2" id="inspire">
-                    <v-icon
+                    <div v-if="showBasket">
+                        <v-icon
                             color="success"
                             style="cursor: pointer"
                             @click="windowBasket"
-                    >{{'mdi-cart-outline'}}
-                    </v-icon>
+                        >{{'mdi-cart-outline'}}
+                        </v-icon>
+                    </div>
 <!--                    <span class="basket-counter" id="countBasket" v-if="countBasket.visible">{{countBasket.count}}</span>-->
                     <span class="basket-counter" id="countBasket" data-userid="<?= Yii::$app->user->identity->id;?>"></span>
                     <div class="text-center">
@@ -239,42 +241,82 @@ AppAsset::register($this);
                                 </v-card-title>
                                 <v-card-text>
                                     <div class="mt-5">
-                                        <v-data-table
-                                            :headers="headers"
-                                            :items="listHotels"
-                                            item-key="name"
-                                            class="elevation-1"
-                                            :hide-default-header="false"
-                                            :hide-default-footer="true"
-                                            disabled-pagination
-                                            :items-per-page="allRows"
-                                            :footer-props="{
-                                                itemsPerPageText: 'Количество заказов на странице'
-                                            }"
-                                        >
-                                            <template v-slot:item.stars="{ item }">
-                                                <v-rating
-                                                    v-model="item.stars"
-                                                    background-color="orange lighten-3"
-                                                    color="orange"
-                                                    small
-                                                ></v-rating>
-                                            </template>
-
-                                            <template v-slot:item.check="{ item }">
-                                                <v-checkbox
-                                                    v-model="item.check"
-                                                    @click="countRows(item.check, item.name, item.price, item.stars)"
-                                                ></v-checkbox>
-                                            </template>
-                                        </v-data-table>
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">Название</th>
+                                                <th scope="col">Отель</th>
+                                                <th scope="col">Рейтинг</th>
+                                                <th scope="col">Цена</th>
+                                                <th scope="col">Подтверждение</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr v-for="(hotel, index) in listHotels">
+                                                <td>{{hotel.name}}</td>
+                                                <td>{{hotel.label}}</td>
+                                                <td>
+                                                    <v-rating
+                                                        v-model="hotel.stars"
+                                                        background-color="orange lighten-3"
+                                                        color="orange"
+                                                        small
+                                                        readonly
+                                                    ></v-rating>
+                                                </td>
+                                                <td>{{hotel.price}}</td>
+                                                <td>
+                                                    <v-checkbox
+                                                        v-model="hotel.check"
+                                                        @click="countCheckedRows(hotel.check, hotel.name, hotel.price, hotel.stars)"
+                                                    ></v-checkbox>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
-                                    <div class="mt-5"></div>
+                                    <div class="mt-9"></div>
                                     <div class="text-right">
+                                        <v-row>
+                                            <v-dialog
+                                                    v-model="modalWindow"
+                                                    persistent
+                                                    max-width="390"
+                                            >
+                                                <v-card>
+                                                    <v-card-title class="text-h5">
+                                                        Удаление выбранных отелей.
+                                                    </v-card-title>
+                                                    <v-card-text>Вы действительно хотите удалить выбранные отели?</v-card-text>
+                                                    <v-card-actions>
+                                                        <v-spacer></v-spacer>
+                                                        <v-btn
+                                                            color="primary"
+                                                            text
+                                                            @click="closeModal(false)"
+                                                        >
+                                                            Отмена
+                                                        </v-btn>
+                                                        <v-btn
+                                                            color="error"
+                                                            text
+                                                            @click="closeModal(true)"
+                                                        >
+                                                            Удалить
+                                                        </v-btn>
+                                                    </v-card-actions>
+                                                </v-card>
+                                            </v-dialog>
+                                        </v-row>
+                                        <v-btn
+                                                color="error"
+                                                @click="modalWindow = true"
+                                                :disabled="!validHotel"
+                                        >Удалить</v-btn>
                                         <v-btn
                                                 color="success"
                                                 @click="buyHotels()"
-                                                :disabled="!validBuy"
+                                                :disabled="!validHotel"
                                         >Заказать</v-btn>
                                     </div>
                                 </v-card-text>

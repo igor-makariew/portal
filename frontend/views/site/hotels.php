@@ -172,7 +172,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </v-col>
                     </v-form>
 
-                    <template v-if="listHotels">
+                    <template v-if="visiblyHotels">
                         <div class="mb-7"></div>
                             <v-row>
                                 <v-col
@@ -284,7 +284,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <div class="mb-7"></div>
 <!-- Start pagination                   -->
-                    <template v-if="listHotels">
+                    <template v-if="visiblyHotels">
                         <div class="text-center">
                             <v-pagination
                                 v-model="page"
