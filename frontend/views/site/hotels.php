@@ -239,14 +239,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     <template v-else>
                                                         <p> Количество звёзд - не указано </p>
                                                     </template>
-                                                    <div id="appBasket">
-                                                        <v-col class="text-right" >
-                                                            <v-btn
-                                                                    color="success"
-                                                                    @click="addToBasket(hotel.id != '' ? hotel.id : hotel.hotelId, <?= Yii::$app->user->identity->id?>)"
-                                                            >Заказать</v-btn>
-                                                        </v-col>
-                                                    </div>
+                                                    <v-col class="text-right" >
+                                                        <v-btn
+                                                                color="success"
+                                                                @click="addToBasket(hotel.id != '' ? hotel.id : hotel.hotelId, <?= Yii::$app->user->identity->id?>)"
+                                                        >Заказать</v-btn>
+                                                    </v-col>
                                                 </v-card-text>
                                             </div>
                                         </v-expand-transition>
@@ -301,4 +299,4 @@ $this->params['breadcrumbs'][] = $this->title;
 </section>
 
 <?= $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/vueHotels.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>
-<?= $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/vueBasket.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>
+<?php // $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/vueBasket.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>

@@ -18,6 +18,10 @@
             { text: 'Подтверждение', sortable: false, value: 'check' },
         ],
         validHotel: false,
+        //start preloder
+        interval: {},
+        value: 0,
+        //end preloder
         loader: false,
         countCheckedHotels: [],
         customer: [],
@@ -25,26 +29,35 @@
             count: 0,
             visible: false
         },
-        allRows: 0,
         modalWindow: false,
         prompt: false,
-        showBasket: false,
     }),
 
     created() {
         this.getBasket();
-        this.countInBasket();
+        // this.countInBasket();
     },
 
-    // computed: {
-    //
-    // },
+    computed: {
+        // testing2: function() {
+        //     return this.countBasket.count = parseInt(document.getElementById('countBasket').textContent);
+        // }
+    },
     //
     // mounted: function() {
     //
     // },
 
     watch: {
+        // testing(newVal) {
+        //     alert(`yes, computed property changed: ${newVal}`);
+        // }
+        // testing2: {
+        //     handler: function(newVal, oldVal) {
+        //         console.log(newVal, oldVal)
+        //     },
+        //     deep: true
+        // }
         // testingLet(newVal, oldVal) {
         //     console.log(newVal, oldVal);
         //     deep: true
@@ -65,7 +78,13 @@
 
     methods: {
         windowBasket() {
-            this.dialog = true;
+            //this.dialog = true;
+           // window.location.href = '/basket';
+
+        },
+
+        testing() {
+            return parseInt(document.getElementById('countBasket').textContent);
         },
 
         /**
@@ -78,6 +97,7 @@
             }
             if (this.prompt) {
                 this.modalWindow = false;
+                this.loader = true;
                 axios.post('/basket/delete', {
                     'data': data
                 }).then( (response) => {
@@ -93,6 +113,9 @@
                             const countBasket = document.getElementById('countBasket');
                             countBasket.innerText =  this.listHotels.length > 0 ? this.listHotels.length : '';
                         })
+                        this.validHotel = false;
+                        this.loader = false;
+                        this.countCheckedHotels = [];
                     } else {
                         alert(response.data.message);
                     }
@@ -135,7 +158,6 @@
                     });
                 });
                 this.dialog = false;
-                console.log(response);
             }).catch( (error) => {
                 console.log(error.message)
             })
@@ -144,24 +166,24 @@
         /**
          * подсчет выбранных строк в корзине
          */
-        countCheckedRows(check, name, price, stars) {
+        countCheckedRows(check, name) {
+            console.log(check, name);
             if (check) {
-                let obj = Object.assign({}, {'name': name}, {'price': price}, {'raiting': stars});
+                let obj = Object.assign({}, {'name': name}, );
                 this.countCheckedHotels.push(obj);
             } else {
                 this.countCheckedHotels.forEach( (hotel, index) => {
-                    if (hotel.name == name && hotel.price == price) {
-                        this.countCheckedHotels.splice(index,1);
-                    }
+                    this.countCheckedHotels.splice(index,1);
                 });
             }
 
-            if (this.countCheckedHotels.length > 0) {
-                this.countBasket.count = this.listHotels.length - this.countCheckedHotels.length;
-                this.countBasket.visible = true;
-            } else {
-                this.countBasket.visible = false;
-            }
+            // if (this.countCheckedHotels.length > 0) {
+            //     this.countBasket.count = this.listHotels.length - this.countCheckedHotels.length;
+            //     this.countBasket.visible = true;
+            // } else {
+            //     this.countBasket.count = this.listHotels.length;
+            //     this.countBasket.visible = false;
+            // }
 
             if (this.countCheckedHotels.length > 0) {
                 this.validHotel = true;
@@ -180,7 +202,6 @@
                 .then( (response) => {
                     let userId = response.data.userId;
                     let hotels = Object.values(response.data.basket[userId]);
-                    // console.log(response.data.basket[userId]);
                     hotels.forEach( (hotel, index) => {
                         if (Object.keys(hotel).indexOf('fullName') !== -1) {
                             this.listHotels[index] = {
@@ -198,15 +219,9 @@
                             }
                         }
 
-                        this.allRows = this.listHotels.length
-                        if (this.listHotels.length > 0) {
-                            this.countBasket.count = this.listHotels.length;
-                            this.countBasket.visible = true;
-                        } else {
-                            this.countBasket.visible = false;
-                        }
+                        const countBasket = document.getElementById('countBasket');
+                        countBasket.innerText =  this.listHotels.length > 0 ? this.listHotels.length : '';
                     });
-                    this.showBasket = true;
                     this.loader = false;
                 }).catch( (error) => {
                 console.log(error.message);

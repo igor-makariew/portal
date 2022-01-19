@@ -106,6 +106,18 @@ class Basket extends Model {
 
     }
 
+    public function getCountBasket() {
+        $basket = $this->getBasket();
+        $count = [];
+        foreach ($basket[Yii::$app->user->identity->id] as $index => $countItem) {
+            if ($index !== 'user') {
+                $count[$index] = $countItem;
+            }
+        }
+
+        return count($count);
+    }
+
     /**
      * @param int $id
      * @param int $hotelId

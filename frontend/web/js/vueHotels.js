@@ -144,7 +144,6 @@ new Vue({
              }).then( (response) => {
                  const countBasket = document.getElementById('countBasket');
                  countBasket.innerText = Object.keys(response.data.basket[userId]).length - 1;
-                 //this.$emit('toggle', response); // название события
              }).catch((error) => {
                  console.log(error.message);
              })

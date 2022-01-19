@@ -5,6 +5,7 @@ use yii\helpers\Html;
 use common\widgets\Alert;
 use yii\bootstrap4\Breadcrumbs;
 use yii\helpers\Url;
+use frontend\widgets\countBasket;
 
 AppAsset::register($this);
 ?>
@@ -221,108 +222,16 @@ AppAsset::register($this);
                     </div>
                 </div>
 <!--            </div>-->
-            <div id="appBasket">
+            <div id="appIconBasket">
                 <div data-app="true" class="v-application height-form v-application--is-ltr ml-2" id="inspire">
-                    <div v-if="showBasket">
-                        <v-icon
-                            color="success"
-                            style="cursor: pointer"
-                            @click="windowBasket"
-                        >{{'mdi-cart-outline'}}
-                        </v-icon>
-                    </div>
-<!--                    <span class="basket-counter" id="countBasket" v-if="countBasket.visible">{{countBasket.count}}</span>-->
-                    <span class="basket-counter" id="countBasket" data-userid="<?= Yii::$app->user->identity->id;?>"></span>
-                    <div class="text-center">
-                        <v-dialog v-model="dialog" width="100%">
-                            <v-card>
-                                <v-card-title class="text-h5 grey lighten-2">
-                                    Корзина
-                                </v-card-title>
-                                <v-card-text>
-                                    <div class="mt-5">
-                                        <table class="table table-striped">
-                                            <thead>
-                                            <tr>
-                                                <th scope="col">Название</th>
-                                                <th scope="col">Отель</th>
-                                                <th scope="col">Рейтинг</th>
-                                                <th scope="col">Цена</th>
-                                                <th scope="col">Подтверждение</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr v-for="(hotel, index) in listHotels">
-                                                <td>{{hotel.name}}</td>
-                                                <td>{{hotel.label}}</td>
-                                                <td>
-                                                    <v-rating
-                                                        v-model="hotel.stars"
-                                                        background-color="orange lighten-3"
-                                                        color="orange"
-                                                        small
-                                                        readonly
-                                                    ></v-rating>
-                                                </td>
-                                                <td>{{hotel.price}}</td>
-                                                <td>
-                                                    <v-checkbox
-                                                        v-model="hotel.check"
-                                                        @click="countCheckedRows(hotel.check, hotel.name, hotel.price, hotel.stars)"
-                                                    ></v-checkbox>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="mt-9"></div>
-                                    <div class="text-right">
-                                        <v-row>
-                                            <v-dialog
-                                                    v-model="modalWindow"
-                                                    persistent
-                                                    max-width="390"
-                                            >
-                                                <v-card>
-                                                    <v-card-title class="text-h5">
-                                                        Удаление выбранных отелей.
-                                                    </v-card-title>
-                                                    <v-card-text>Вы действительно хотите удалить выбранные отели?</v-card-text>
-                                                    <v-card-actions>
-                                                        <v-spacer></v-spacer>
-                                                        <v-btn
-                                                            color="primary"
-                                                            text
-                                                            @click="closeModal(false)"
-                                                        >
-                                                            Отмена
-                                                        </v-btn>
-                                                        <v-btn
-                                                            color="error"
-                                                            text
-                                                            @click="closeModal(true)"
-                                                        >
-                                                            Удалить
-                                                        </v-btn>
-                                                    </v-card-actions>
-                                                </v-card>
-                                            </v-dialog>
-                                        </v-row>
-                                        <v-btn
-                                                color="error"
-                                                @click="modalWindow = true"
-                                                :disabled="!validHotel"
-                                        >Удалить</v-btn>
-                                        <v-btn
-                                                color="success"
-                                                @click="buyHotels()"
-                                                :disabled="!validHotel"
-                                        >Заказать</v-btn>
-                                    </div>
-                                </v-card-text>
-                            </v-card>
-                        </v-dialog>
-                    </div>
+                        <a href="<?= Url::to(['/basket/index'])?>">
+                            <v-icon
+                                color="success"
+                                style="cursor: pointer"
+                            >{{'mdi-cart-outline'}}
+                            </v-icon>
+                        </a>
+                    <span class="basket-counter" id="countBasket" data-userid="<?= Yii::$app->user->identity->id;?>"><?= countBasket::widget()?></span>
                 </div>
             </div>
         </div>
@@ -410,7 +319,8 @@ AppAsset::register($this);
     </footer>
 
     <?= $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/vueRegisration.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>
-    <?= $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/vueBasket.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>
+    <?php // $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/vueBasket.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>
+    <?= $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/vueIconBasket.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>
 
     <?php $this->endBody() ?>
     </body>
