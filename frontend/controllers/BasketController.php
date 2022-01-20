@@ -8,6 +8,7 @@ use Yii;
 use common\models\basket\Basket;
 use common\models\hotels\Hotels;
 use common\models\customers\Customers;
+use yii\behaviors\TimestampBehavior;
 
 class BasketController extends Controller
 {
@@ -88,6 +89,7 @@ class BasketController extends Controller
             $modelCustomer->hotel = $order['name'];
             $modelCustomer->raiting = $order['raiting'];
             $modelCustomer->price = $order['price'];
+            $modelCustomer->user_id = Yii::$app->user->identity->id;
             if ($modelCustomer->save() && $modelCustomer->validate()) {
                 $response['buy'][$index]['order'] = true;
                 $response['buy'][$index]['hotel'] = $order['name'];

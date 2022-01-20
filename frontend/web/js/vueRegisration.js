@@ -37,14 +37,82 @@ new Vue({
         validAuto: false,
         // start personal
         items: [
-            { title: "Аккаутн", icon: "mdi-account", action: "Аккаутн"},
+            { title: "Аккаунт", icon: "mdi-account", action: "Аккаунт"},
+            { title: "Заказы", icon: "mdi-cart-outline", action: "Заказы"},
             { title: "Выйти", icon: "mdi-logout", action: "Выйти" }
-        ]
+        ],
+        titleMenu: 'Аккаунт',
+
+        dialogWindow: false,
+        dialogDelete: false,
+        headers: [
+            {
+                text: '№',
+                align: 'start',
+                sortable: false,
+                value: 'number',
+            },
+            { text: 'Название', value: 'title' },
+            { text: 'Цена', value: 'price' },
+            {
+                text: 'Дата заказа',
+                value: 'date',
+                sortable: false
+            },
+            { text: 'Рейтинг', value: 'raiting' },
+            {
+                text: 'Действие',
+                value: 'actions',
+                sortable: false
+            },
+        ],
+        desserts: [],
+        editedIndex: -1,
+        editedItem: {
+            number: 1,
+            id: 1,
+            name: '',
+            price: 0,
+            date: '',
+            raiting: 0,
+        },
+        defaultItem: {
+            number: 1,
+            id: 1,
+            name: '',
+            price: 0,
+            date: '',
+            raiting: 0,
+        },
+        //start preloder
+        interval: {},
+        value: 0,
+        //end preloder
+        loader: false,
         // end personal
     }),
 
     mounted() {
         this.isGuest = Boolean(Number(document.getElementById('appRegistration').dataset.guest));
+    },
+
+    computed: {
+        formTitle () {
+            return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        },
+    },
+
+    watch: {
+        dialog (val) {
+            val || this.close()
+        },
+        dialogDelete (val) {
+            val || this.closeDelete()
+        },
+    },
+
+    created () {
+         //this.initialize()
     },
 
     methods: {
@@ -130,9 +198,94 @@ new Vue({
                 }).catch( (error) => {
                     console.log(error);
                 })
-            } else if (action === "Аккаутн") {
+            } else if (action === "Аккаунт") {
+                this.titleMenu = 'Аккаунт';
                 alert(Boolean(Number(document.getElementById('appRegistration').dataset.guest)))
+            } else if (action === "Заказы") {
+                this.titleMenu = 'Заказы';
+                this.loader = true;
+                axios.post('/orders/orders-user',{})
+                    .then( (response) => {
+                        Object.keys(response.data.customer).forEach( (key) => {
+                            this.desserts[key] = {
+                                'number': parseInt(key) + 1,
+                                'id': response.data.customer[key].id,
+                                'title': response.data.customer[key].title,
+                                'price': response.data.customer[key].price,
+                                'date': response.data.customer[key].date,
+                                'raiting': response.data.customer[key].raiting,
+                            }
+                        })
+                        this.loader = false;
+                    }).catch( (error) => {
+                        console.log(error.message);
+                })
             }
         },
+
+        initialize () {
+             this.desserts;
+        },
+
+        editItem (item) {
+            this.editedIndex = this.desserts.indexOf(item)
+            this.editedItem = Object.assign({}, item)
+            this.dialog = true
+        },
+
+        deleteItem (item) {
+            this.editedIndex = this.desserts.indexOf(item);
+            this.editedItem = Object.assign({}, item);
+            this.dialogDelete = true
+        },
+
+        deleteItemConfirm () {
+            const data = {
+                'deleteItem': this.editedItem.id
+            };
+            axios.post('/orders/delete-item', {
+                'data': data
+            }).then( (response) => {
+                if(response.data.res) {
+                    this.desserts.splice(this.editedIndex, 1);
+                    Object.keys(this.desserts).forEach( (key) => {
+                        this.desserts[key].number = parseInt(key) + 1;
+
+                    });
+                    this.closeDelete()
+                } else {
+                    console.log('Удаление сейчас не возможно!');
+                }
+            }).catch( (error) => {
+                console.log(error.message);
+            });
+        },
+
+        close () {
+            this.dialog = false
+            this.$nextTick(() => {
+                this.editedItem = Object.assign({}, this.defaultItem)
+                this.editedIndex = -1
+            })
+        },
+
+        closeDelete () {
+            this.dialogDelete = false
+            this.$nextTick(() => {
+                this.editedItem = Object.assign({}, this.defaultItem)
+                this.editedIndex = -1
+            })
+        },
+
+        save () {
+            if (this.editedIndex > -1) {
+                Object.assign(this.desserts[this.editedIndex], this.editedItem)
+            } else {
+                this.desserts.push(this.editedItem)
+            }
+            this.close()
+        },
+
+
     }
 })
