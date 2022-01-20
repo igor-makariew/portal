@@ -149,15 +149,24 @@
             axios.post('/basket/buy', {
                 'data': data
             }).then( (response) => {
-                let buyHotels = Object.values(response.data.buy);
-                buyHotels.forEach( (buyHotel) => {
+                if (response.data.res) {
                     this.listHotels.forEach( (hotel, index) => {
-                        if (buyHotel.hotel == hotel.name) {
-                            this.listHotels.splice(index, 1)
+                        let found = this.countCheckedHotels.find( param => {
+                            return param.name == hotel.name;
+                        });
+                        if (found != undefined) {
+                            this.listHotels.splice(index, 1);
                         }
-                    });
-                });
+                    })
+                } else {
+                    console.log('error');
+                }
+
+                const countBasket = document.getElementById('countBasket');
+                countBasket.innerText =  this.listHotels.length > 0 ? this.listHotels.length : '';
+                this.countCheckedHotels = [];
                 this.dialog = false;
+                console.log(this.listHotels);
             }).catch( (error) => {
                 console.log(error.message)
             })
@@ -166,10 +175,9 @@
         /**
          * подсчет выбранных строк в корзине
          */
-        countCheckedRows(check, name) {
-            console.log(check, name);
+        countCheckedRows(check, name, price, raiting) {
             if (check) {
-                let obj = Object.assign({}, {'name': name}, );
+                let obj = Object.assign({}, {'name': name}, {'price': price}, {'raiting': raiting} );
                 this.countCheckedHotels.push(obj);
             } else {
                 this.countCheckedHotels.forEach( (hotel, index) => {

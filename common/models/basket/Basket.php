@@ -106,6 +106,11 @@ class Basket extends Model {
 
     }
 
+    /**
+     * Подсчитываем количество заказов в корзине
+     *
+     * @return int
+     */
     public function getCountBasket() {
         $basket = $this->getBasket();
         $count = [];
@@ -127,6 +132,20 @@ class Basket extends Model {
     public function validateHotel(int $id, int $hotelId, array $hotels ): bool
     {
         return array_key_exists($hotelId, $hotels[$id]);
+    }
+
+    public function sendUserEmail($nameUser, $email, $countHotels)
+    {
+        return Yii::$app
+            ->mailer
+            ->compose(
+                'order',
+                ['nameUser' => $nameUser, 'countHotels' => $countHotels],
+            )
+            ->setFrom([Yii::$app->params['senderEmail'] => 'www.disigner@yandex.ru' . ' robot'])
+            ->setTo($email)
+            ->setSubject('Спасибо что выбрали нас' . $nameUser)
+            ->send();
     }
 }
 

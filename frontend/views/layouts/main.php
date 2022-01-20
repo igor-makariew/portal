@@ -231,7 +231,7 @@ AppAsset::register($this);
                             >{{'mdi-cart-outline'}}
                             </v-icon>
                         </a>
-                    <span class="basket-counter" id="countBasket" data-userid="<?= Yii::$app->user->identity->id;?>"><?= countBasket::widget()?></span>
+                    <span class="basket-counter" id="countBasket" data-userid="<?= Yii::$app->user->identity->id;?>"><?= countBasket::widget() > 0 ? countBasket::widget() : ''?></span>
                 </div>
             </div>
         </div>

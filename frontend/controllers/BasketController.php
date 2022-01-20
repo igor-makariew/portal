@@ -68,11 +68,13 @@ class BasketController extends Controller
             'buy'=>[
                 'hotel' => '',
                 'order' => '',
-                'error' => ''
+                'error' => '',
+                'res' => false
             ],
         ];
         $countHotels = $data['data']['countHotels'];
         $customer = $data['data']['customer'];
+
         foreach ($countHotels as $index => $hotel) {
             $countHotels[$index]['username'] = $customer['username'];
             $countHotels[$index]['email'] = $customer['email'];
@@ -93,10 +95,11 @@ class BasketController extends Controller
                 $response['buy'][$index]['error'] = $modelCustomer->getErrors();
             }
         }
+
         $modelBasket = new Basket();
-//        $response['basket'] = $modelBasket->removeFromBasket($countHotels);
-        if ($modelBasket->removeFromBasket($countHotels)) {
-            $response['basket'] = $modelBasket->getBasket();
+        $modelBasket->sendUserEmail($customer['username'], $customer['email'], $countHotels);
+        if ($modelBasket->removeFromBasket($countHotels) && $modelBasket->sendUserEmail($customer['username'], $customer['email'], $countHotels)) {
+            $response['res'] = true;
         }
 
         return $response;

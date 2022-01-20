@@ -52,7 +52,7 @@
                             <td>
                                 <v-checkbox
                                     v-model="hotel.check"
-                                    @click="countCheckedRows(hotel.check, hotel.name)"
+                                    @click="countCheckedRows(hotel.check, hotel.name, hotel.price, hotel.raiting)"
                                 ></v-checkbox>
                             </td>
                         </tr>
