@@ -172,7 +172,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </v-col>
                     </v-form>
 
-                    <template v-if="listHotels">
+                    <template v-if="visiblyHotels">
                         <div class="mb-7"></div>
                             <v-row>
                                 <v-col
@@ -239,6 +239,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     <template v-else>
                                                         <p> Количество звёзд - не указано </p>
                                                     </template>
+                                                    <v-col class="text-right" >
+                                                        <v-btn
+                                                                color="success"
+                                                                @click="addToBasket(hotel.id != '' ? hotel.id : hotel.hotelId, <?= Yii::$app->user->identity->id?>)"
+                                                        >Заказать</v-btn>
+                                                    </v-col>
                                                 </v-card-text>
                                             </div>
                                         </v-expand-transition>
@@ -276,7 +282,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <div class="mb-7"></div>
 <!-- Start pagination                   -->
-                    <template v-if="listHotels">
+                    <template v-if="visiblyHotels">
                         <div class="text-center">
                             <v-pagination
                                 v-model="page"
@@ -293,3 +299,4 @@ $this->params['breadcrumbs'][] = $this->title;
 </section>
 
 <?= $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/vueHotels.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>
+<?php // $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/vueBasket.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>

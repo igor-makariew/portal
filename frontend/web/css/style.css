@@ -9339,3 +9339,13 @@ textarea.form-control {
   100% {
     stroke-dasharray: 89, 200;
     stroke-dashoffset: -136px; } }
+
+.basket-counter {
+    color:#4caf50;
+    background-color: #a9fd00;
+    border-radius: 7px;
+    padding: 0 7px;
+    position: absolute;
+    margin-left: 20px;
+    margin-top: -15px;
+}
