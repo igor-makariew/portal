@@ -198,12 +198,14 @@ new Vue({
             this.loader = true;
             axios.post('/user/get-user', {})
                 .then( (response) => {
-                    this.personalDate.nameEdit = response.data.username;
-                    this.personalDate.emailEdit = response.data.email;
-                    this.personalDate.phoneEdit = response.data.phone;
-                    this.validNameEdit = response.data.username;
-                    this.validEmailEdit = response.data.email;
-                    this.validPhoneEdit = response.data.phone;
+                    if (response.data.res) {
+                        this.personalDate.nameEdit = response.data.user.username;
+                        this.personalDate.emailEdit = response.data.user.email;
+                        this.personalDate.phoneEdit = response.data.user.phone;
+                        this.validNameEdit = response.data.user.username;
+                        this.validEmailEdit = response.data.user.email;
+                        this.validPhoneEdit = response.data.user.phone;
+                    }
                     this.validEdit = false;
                     this.loader = false;
                 }).catch( (error) => {

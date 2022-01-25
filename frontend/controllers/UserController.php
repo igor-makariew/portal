@@ -24,7 +24,16 @@ class UserController extends \yii\web\Controller
     public function actionGetUser()
     {
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
-        return User::find()->select('username, phone, email, password_hash')->where(['id' => Yii::$app->user->identity->id])->one();
+        $response = [
+            'res' => false,
+            'user' => []
+        ];
+        if (!Yii::$app->user->isGuest) {
+            $response['res'] = true;
+            $response['user'] = User::find()->select('username, phone, email, password_hash')->where(['id' => Yii::$app->user->identity->id])->one();
+        }
+
+        return $response;
     }
 
     public function actionUpdate()
