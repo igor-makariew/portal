@@ -89,6 +89,34 @@ new Vue({
         value: 0,
         //end preloder
         loader: false,
+        dialogView: false,
+        cardViewItem: {},
+        search: '',
+        validEdit: true,
+        personalDate: {
+            'nameEdit': '',
+            'emailEdit': '',
+            'phoneEdit': ''
+        },
+        nameEdit: '',
+        emailEdit: '',
+        phoneEdit: '',
+        nameEditRules: [
+            v => !!v || 'Имя обязательно для заполнения.',
+            v => (v && v.length <= 15) || 'Имя должно быть не больше 15 символов.',
+        ],
+        emailEditRules: [
+            v => !!v || 'E-mail обязателен для заполнения.',
+            v => /.+@.+\..+/.test(v) || 'Электронная почта не корректная.',
+        ],
+        phoneEditRules: [
+            // v => !!v || 'Телефон обязателен для заполнения',
+            // v => /^\+?[78][-\(]?\d{3}\)?-?\d{3}-?\d{2}-?\d{2}$/.test(v) || 'Телефон не корректный.'
+        ],
+        dialogEdit: false,
+        validNameEdit: '',
+        validEmailEdit: '',
+        validPhoneEdit: '',
         // end personal
     }),
 
@@ -98,8 +126,12 @@ new Vue({
 
     computed: {
         formTitle () {
-            return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+            return this.editedIndex === -1 ? 'Создать новую запись' : 'Редактировать запись'
         },
+
+        editPersonalDate: function() {
+            return Object.assign({}, this.personalDate)
+        }
     },
 
     watch: {
@@ -109,6 +141,16 @@ new Vue({
         dialogDelete (val) {
             val || this.closeDelete()
         },
+        editPersonalDate: {
+            handler(val) {
+                if (this.validNameEdit == val.nameEdit && this.validEmailEdit == val.emailEdit && this.validPhoneEdit == val.phoneEdit) {
+                    this.validEdit = false;
+                } else {
+                    this.validEdit = true;
+                }
+            },
+            deep: true
+        }
     },
 
     created () {
@@ -116,14 +158,62 @@ new Vue({
     },
 
     methods: {
-        // validate() {
-        //     this.$refs.formValid.validate();
-        // },
+        validate() {
+            this.$refs.formValid.validate();
+        },
 
         windowRegistration() {
             this.dialog = true;
+            this.getParamUser();
         },
 
+        updateEdit() {
+            const data = {
+                'name': this.personalDate.nameEdit,
+                'email': this.personalDate.emailEdit,
+                'phone': this.personalDate.phoneEdit,
+            }
+            this.dialogEdit = true;
+
+            axios.post('/user/update', {
+                'data': data
+            }).then( (response) => {
+                if (response.data.res) {
+                    this.dialogEdit = false;
+                    this.validNameEdit = response.data.personalDate.username;
+                    this.validEmailEdit = this.personalDate.email;
+                    this.validPhoneEdit = this.personalDate.phone;
+                } else {
+                    console.log(response.data.error);
+                }
+            }).catch( (error) => {
+                console.log(error.message);
+            })
+        },
+
+        /**
+         * получение параметров зарегестрированного пользователя
+         */
+        getParamUser() {
+            this.loader = true;
+            axios.post('/user/get-user', {})
+                .then( (response) => {
+                    this.personalDate.nameEdit = response.data.username;
+                    this.personalDate.emailEdit = response.data.email;
+                    this.personalDate.phoneEdit = response.data.phone;
+                    this.validNameEdit = response.data.username;
+                    this.validEmailEdit = response.data.email;
+                    this.validPhoneEdit = response.data.phone;
+                    this.validEdit = false;
+                    this.loader = false;
+                }).catch( (error) => {
+                    console.log(error.message);
+            })
+        },
+
+        /**
+         * регистрация пользователя
+         */
         registration() {
             const data = {
                 'user': this.name,
@@ -185,6 +275,7 @@ new Vue({
                 });
             }
         },
+
         /**
          * обрабатывает действия события
          * @param action
@@ -200,7 +291,7 @@ new Vue({
                 })
             } else if (action === "Аккаунт") {
                 this.titleMenu = 'Аккаунт';
-                alert(Boolean(Number(document.getElementById('appRegistration').dataset.guest)))
+                this.getParamUser();
             } else if (action === "Заказы") {
                 this.titleMenu = 'Заказы';
                 this.loader = true;
@@ -259,6 +350,16 @@ new Vue({
             }).catch( (error) => {
                 console.log(error.message);
             });
+        },
+
+        /**
+         * Показ карточки заказа
+         *
+         * @param item
+         */
+        viewItem(item) {
+            this.cardViewItem = Object.assign({}, item);
+            this.dialogView = true;
         },
 
         close () {

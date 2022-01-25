@@ -31,6 +31,13 @@ class OrdersController extends \yii\web\Controller
         return $response;
     }
 
+    /**
+     * Удаление выбранного заказа в списке заказы пользователя
+     *
+     * @return array
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
     public function actionDeleteItem() {
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
         $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
@@ -44,5 +51,4 @@ class OrdersController extends \yii\web\Controller
 
         return $response;
     }
-
 }

@@ -112,12 +112,18 @@ class Basket extends Model {
      * @return int
      */
     public function getCountBasket() {
-        $basket = $this->getBasket();
         $count = [];
-        foreach ($basket[Yii::$app->user->identity->id] as $index => $countItem) {
-            if ($index !== 'user') {
-                $count[$index] = $countItem;
+        if (!Yii::$app->user->isGuest) {
+            $basket = $this->getBasket();
+            if (count($basket) > 0) {
+                foreach ($basket[Yii::$app->user->identity->id] as $index => $countItem) {
+                    if ($index !== 'user') {
+                        $count[$index] = $countItem;
+                    }
+                }
             }
+
+            return count($count);
         }
 
         return count($count);

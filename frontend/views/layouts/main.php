@@ -49,7 +49,7 @@ AppAsset::register($this);
                         <div data-app="true" class="v-application height-form v-application--is-ltr ml-2" id="inspire">
                             <template v-if="isGuest">
                                 <v-icon
-                                        color="white"
+                                        color="blue"
                                         style="cursor: pointer"
                                         @click="windowRegistration"
                                 >{{ 'mdi-account'}}
@@ -209,6 +209,67 @@ AppAsset::register($this);
                                                                         <h1>{{titleMenu}}</h1>
                                                                     </div>
                                                                 </v-img>
+                                                                <div v-if="titleMenu == 'Аккаунт'">
+                                                                    <!-- start preloader not work!!!-->
+                                                                    <div class="loader-wrap text-center" v-if="loader">
+                                                                        <v-progress-circular
+                                                                                :rotate="-90"
+                                                                                :size="100"
+                                                                                :width="15"
+                                                                                :value="value"
+                                                                                :indeterminate="true"
+                                                                                color="success"
+                                                                        >
+                                                                        </v-progress-circular>
+                                                                    </div>
+                                                                    <!-- end preloader -->
+
+                                                                    <v-dialog v-model="dialogEdit" max-width="620px">
+                                                                        <v-card>
+                                                                            <v-card-title class="text-h5">Ваши персональные данные успешно обновлены</v-card-title>
+                                                                            <v-card-actions>
+                                                                                <v-spacer></v-spacer>
+                                                                                <v-btn color="blue darken-1" text @click="dialogEdit = false">OK</v-btn>
+                                                                                <v-spacer></v-spacer>
+                                                                            </v-card-actions>
+                                                                        </v-card>
+                                                                    </v-dialog>
+
+                                                                    <div v-if="!loader" class="form-width-parent">
+                                                                        <v-form
+                                                                                ref="formEdit"
+                                                                                class="form-width-child"
+                                                                        >
+                                                                            <v-text-field
+                                                                                    v-model="personalDate.nameEdit"
+                                                                                    :counter="15"
+                                                                                    :rules="nameEditRules"
+                                                                                    label="Имя"
+                                                                            ></v-text-field>
+
+                                                                            <v-text-field
+                                                                                    v-model="personalDate.emailEdit"
+                                                                                    :rules="emailEditRules"
+                                                                                    label="E-mail"
+                                                                            ></v-text-field>
+
+                                                                            <v-text-field
+                                                                                    v-model="personalDate.phoneEdit"
+                                                                                    :rules="phoneEditRules"
+                                                                                    label="Телефон"
+                                                                            ></v-text-field>
+
+                                                                            <v-btn
+                                                                                    :disabled="!validEdit"
+                                                                                    color="success"
+                                                                                    class="mr-4"
+                                                                                    @click="updateEdit"
+                                                                            >
+                                                                                Сохранить
+                                                                            </v-btn>
+                                                                        </v-form>
+                                                                    </div>
+                                                                </div>
                                                                 <div v-if="titleMenu == 'Заказы'">
                                                                     <!-- start preloader not work!!!-->
                                                                     <div class="loader-wrap text-center" v-if="loader">
@@ -227,120 +288,31 @@ AppAsset::register($this);
                                                                         <v-data-table
                                                                                 :headers="headers"
                                                                                 :items="desserts"
-                                                                                sort-by="calories"
+                                                                                sort-by="number"
                                                                                 class="elevation-1"
                                                                                 :footer-props="{
                                                                                     itemsPerPageText: 'Количество заказов на странице',
                                                                                     itemsPerPageOptions:[30, 60, 90, -1]
                                                                                 }"
+                                                                                :search="search"
                                                                         >
                                                                             <template v-slot:top>
                                                                                 <v-toolbar
                                                                                         flat
                                                                                 >
                                                                                     <v-toolbar-title>Мои заказы</v-toolbar-title>
-                                                                                    <v-divider
-                                                                                            class="mx-4"
-                                                                                            inset
-                                                                                            vertical
-                                                                                    ></v-divider>
                                                                                     <v-spacer></v-spacer>
-                                                                                    <v-dialog
-                                                                                            v-model="dialogWindow"
-                                                                                            max-width="500px"
-                                                                                    >
-                                                                                        <template v-slot:activator="{ on, attrs }">
-                                                                                            <v-btn
-                                                                                                    color="primary"
-                                                                                                    dark
-                                                                                                    class="mb-2"
-                                                                                                    v-bind="attrs"
-                                                                                                    v-on="on"
-                                                                                            >
-                                                                                                New Item
-                                                                                            </v-btn>
-                                                                                        </template>
-                                                                                        <v-card>
-                                                                                            <v-card-title>
-                                                                                                <span class="text-h5">{{ formTitle }}</span>
-                                                                                            </v-card-title>
 
-                                                                                            <v-card-text>
-                                                                                                <v-container>
-                                                                                                    <v-row>
-                                                                                                        <v-col
-                                                                                                                cols="12"
-                                                                                                                sm="6"
-                                                                                                                md="4"
-                                                                                                        >
-                                                                                                            <v-text-field
-                                                                                                                    v-model="editedItem.name"
-                                                                                                                    label="Dessert name"
-                                                                                                            ></v-text-field>
-                                                                                                        </v-col>
-                                                                                                        <v-col
-                                                                                                                cols="12"
-                                                                                                                sm="6"
-                                                                                                                md="4"
-                                                                                                        >
-                                                                                                            <v-text-field
-                                                                                                                    v-model="editedItem.calories"
-                                                                                                                    label="Calories"
-                                                                                                            ></v-text-field>
-                                                                                                        </v-col>
-                                                                                                        <v-col
-                                                                                                                cols="12"
-                                                                                                                sm="6"
-                                                                                                                md="4"
-                                                                                                        >
-                                                                                                            <v-text-field
-                                                                                                                    v-model="editedItem.fat"
-                                                                                                                    label="Fat (g)"
-                                                                                                            ></v-text-field>
-                                                                                                        </v-col>
-                                                                                                        <v-col
-                                                                                                                cols="12"
-                                                                                                                sm="6"
-                                                                                                                md="4"
-                                                                                                        >
-                                                                                                            <v-text-field
-                                                                                                                    v-model="editedItem.carbs"
-                                                                                                                    label="Carbs (g)"
-                                                                                                            ></v-text-field>
-                                                                                                        </v-col>
-                                                                                                        <v-col
-                                                                                                                cols="12"
-                                                                                                                sm="6"
-                                                                                                                md="4"
-                                                                                                        >
-                                                                                                            <v-text-field
-                                                                                                                    v-model="editedItem.protein"
-                                                                                                                    label="Protein (g)"
-                                                                                                            ></v-text-field>
-                                                                                                        </v-col>
-                                                                                                    </v-row>
-                                                                                                </v-container>
-                                                                                            </v-card-text>
+                                                                                        <v-text-field
+                                                                                                v-model="search"
+                                                                                                append-icon="mdi-magnify"
+                                                                                                label="Поиск"
+                                                                                                single-line
+                                                                                                hide-details
+                                                                                                class="hidden-xs-only"
+                                                                                        ></v-text-field>
 
-                                                                                            <v-card-actions>
-                                                                                                <v-spacer></v-spacer>
-                                                                                                <v-btn
-                                                                                                        color="blue darken-1"
-                                                                                                        text
-                                                                                                        @click="close"
-                                                                                                >
-                                                                                                    Cancel
-                                                                                                </v-btn>
-                                                                                                <v-btn
-                                                                                                        color="blue darken-1"
-                                                                                                        text
-                                                                                                        @click="save"
-                                                                                                >
-                                                                                                    Save
-                                                                                                </v-btn>
-                                                                                            </v-card-actions>
-                                                                                        </v-card>
-                                                                                    </v-dialog>
+                                                                                    <v-spacer></v-spacer>
                                                                                     <v-dialog v-model="dialogDelete" max-width="600px">
                                                                                         <v-card>
                                                                                             <v-card-title class="text-h5">Вы уверены, что хотите удалить этот элемент?</v-card-title>
@@ -348,6 +320,41 @@ AppAsset::register($this);
                                                                                                 <v-spacer></v-spacer>
                                                                                                 <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
                                                                                                 <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
+                                                                                                <v-spacer></v-spacer>
+                                                                                            </v-card-actions>
+                                                                                        </v-card>
+                                                                                    </v-dialog>
+                                                                                    <v-dialog
+                                                                                            v-model="dialogView"
+                                                                                            persistent
+                                                                                            max-width="600px"
+                                                                                    >
+                                                                                        <v-card>
+                                                                                            <v-card-title class="text-h5">{{cardViewItem.title}}</v-card-title>
+                                                                                            <v-card-actions>
+                                                                                                <v-spacer></v-spacer>
+                                                                                                <v-card-text class="text--primary">
+                                                                                                    <div><v-rating
+                                                                                                                v-model="cardViewItem.raiting"
+                                                                                                                background-color="orange lighten-3"
+                                                                                                                color="orange"
+                                                                                                                small
+                                                                                                                readonly
+                                                                                                        ></v-rating></div>
+                                                                                                    <div><h3>Дата - {{cardViewItem.date}}</h3></div>
+                                                                                                    <div><h3>Цена - {{cardViewItem.price}}</h3></div>
+                                                                                                    <v-spacer></v-spacer>
+                                                                                                    <v-spacer></v-spacer>
+                                                                                                    <div class="text-right">
+                                                                                                        <v-btn
+                                                                                                                color="blue darken-1"
+                                                                                                                text
+                                                                                                                @click="dialogView = false"
+                                                                                                        >
+                                                                                                            Закрыть
+                                                                                                        </v-btn>
+                                                                                                    </div>
+                                                                                                </v-card-text>
                                                                                                 <v-spacer></v-spacer>
                                                                                             </v-card-actions>
                                                                                         </v-card>
@@ -366,7 +373,15 @@ AppAsset::register($this);
                                                                             <template v-slot:item.actions="{ item }">
                                                                                 <v-icon
                                                                                         small
+                                                                                        @click="viewItem(item)"
+                                                                                        color="primary"
+                                                                                >
+                                                                                    mdi-eye-outline
+                                                                                </v-icon>
+                                                                                <v-icon
+                                                                                        small
                                                                                         @click="deleteItem(item)"
+                                                                                        color="red"
                                                                                 >
                                                                                     mdi-delete
                                                                                 </v-icon>
