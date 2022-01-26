@@ -107,7 +107,6 @@ class SiteController extends Controller
         $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
         $model->email = $data['data']['email'];
         $model->password = $data['data']['password'];
-        $test = $model->login();
         if (Yii::$app->request->isPost && $model->login()) {
             $response['res'] = true;
             $response['msg'] = 'Пользователь авторизован.';

@@ -30,12 +30,17 @@ class UserController extends \yii\web\Controller
         ];
         if (!Yii::$app->user->isGuest) {
             $response['res'] = true;
-            $response['user'] = User::find()->select('username, phone, email, password_hash')->where(['id' => Yii::$app->user->identity->id])->one();
+            $response['user'] = User::find()->select('username, phone, email')->where(['id' => Yii::$app->user->identity->id])->one();
         }
 
         return $response;
     }
 
+    /**
+     * Редактироване личных данных пользователем
+     *
+     * @return array
+     */
     public function actionUpdate()
     {
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
@@ -54,6 +59,29 @@ class UserController extends \yii\web\Controller
             $response['res'] = true;
         } else {
             $response['error'] = $modelUser->getErrors();
+        }
+
+        return $response;
+    }
+
+    public function actionEditPassword()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $response = [
+            'res' => false,
+            'message' => ''
+        ];
+
+        if (!Yii::$app->user->isGuest) {
+            $modelUser = User::find()->where(['id' => Yii::$app->user->identity->id])->one();
+            if (!$modelUser->validatePassword($data['data']['editPassword'])) {
+                $response['message'] = 'Вы ввели не корректный пароль.';
+            } else {
+                $modelUser->setPassword($data['data']['newEditPassword']);
+                $modelUser->save();
+                $response['res'] = true;
+            }
         }
 
         return $response;

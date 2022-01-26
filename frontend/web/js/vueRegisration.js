@@ -21,15 +21,15 @@ new Vue({
             v => /.+@.+\..+/.test(v) || 'E-mail не верно заполнен',
         ],
         passwordRules: [
-            v => !!v || 'Поле e-mail обязательно для заполнения',
-            v => v.length >= 10 || 'Поле пароль должно быть не менее 10 символов',
+            v => !!v || 'Поле пароль обязательно для заполнения',
+            v => (v && v.length >= 10) || 'Поле пароль должно быть не менее 10 символов',
         ],
         emailAutoRules: [
             v => !!v || 'Поле e-mail обязательно для заполнения',
             v => /.+@.+\..+/.test(v) || 'E-mail не верно заполнен',
         ],
         passwordAutoRules: [
-            v => !!v || 'Поле e-mail обязательно для заполнения',
+            v => !!v || 'Поле пароль обязательно для заполнения',
             v => v.length >= 10 || 'Поле пароль должно быть не менее 10 символов',
         ],
         emailAuto: '',
@@ -117,6 +117,20 @@ new Vue({
         validNameEdit: '',
         validEmailEdit: '',
         validPhoneEdit: '',
+        dialogEditPassword: false,
+        editPassword: '',
+        newEditPassword: '',
+        repeatNewEditPassword: '',
+        editPasswordRules: [
+            v => !!v || 'Введите ваш пароль.',
+        ],
+        newEditPasswordRules: [
+            v => !!v || 'Введите новый пароль.',
+            v => (v && v.length >= 10) || 'Поле пароль должно быть не менее 10 символов',
+        ],
+        validEdiPassword: true,
+        dialogAlert: false,
+        dialogAlertTitle: '',
         // end personal
     }),
 
@@ -131,7 +145,12 @@ new Vue({
 
         editPersonalDate: function() {
             return Object.assign({}, this.personalDate)
-        }
+        },
+
+        confirmPasswordRules() {
+            // return this.newEditPassword === this.newEditPassword || "Пароли должны совпадать.";
+            return this.repeatNewEditPassword;
+        },
     },
 
     watch: {
@@ -150,7 +169,7 @@ new Vue({
                 }
             },
             deep: true
-        }
+        },
     },
 
     created () {
@@ -179,16 +198,49 @@ new Vue({
                 'data': data
             }).then( (response) => {
                 if (response.data.res) {
-                    this.dialogEdit = false;
+                    this.personalDate.emailEdit = response.data.personalDate.email;
+                    this.personalDate.phoneEdit = response.data.personalDate.phone;
+                    this.personalDate.nameEdit = response.data.personalDate.username;
                     this.validNameEdit = response.data.personalDate.username;
-                    this.validEmailEdit = this.personalDate.email;
-                    this.validPhoneEdit = this.personalDate.phone;
+                    this.validPhoneEdit = response.data.personalDate.phone;
+                    this.validEmailEdit = response.data.personalDate.email;
+                    this.dialogEdit = false;
+                    this.validEdit = false;
                 } else {
                     console.log(response.data.error);
                 }
             }).catch( (error) => {
                 console.log(error.message);
             })
+        },
+        /**
+         * редактирование пароля пользователя
+         */
+        editPasswordUser() {
+            const data = {
+                'editPassword': this.editPassword,
+                'newEditPassword': this.newEditPassword,
+                'repeatNewEditPassword': this.repeatNewEditPassword
+            }
+
+            axios.post('/user/edit-password', {
+                'data': data
+            }).then( (response) => {
+                if (response.data.res) {
+                    this.dialogAlertTitle = 'Пароль был успешно сохранен';
+                    this.dialogAlert = true;
+                    this.editPassword = '';
+                    this.newEditPassword = '';
+                    this.repeatNewEditPassword = '';
+                    this.dialogEditPassword = false
+                } else {
+                    this.dialogAlertTitle = response.data.message;
+                    this.dialogAlert = true;
+                }
+            }).catch( (error) => {
+                console.log(error.message)
+            })
+
         },
 
         /**
@@ -212,6 +264,16 @@ new Vue({
                     console.log(error.message);
             })
         },
+
+        /**
+         * откытие окна редактирования пароля
+         */
+        dialogEditPass() {
+            this.dialogEditPassword = true;
+        },
+        /**
+         * редактирование пароля пользователя
+         */
 
         /**
          * регистрация пользователя

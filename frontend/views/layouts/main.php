@@ -47,6 +47,18 @@ AppAsset::register($this);
                         <!--  Подключение идет не через v-app а через div                       -->
                     <div id="appRegistration" data-guest="<?= (int) Yii::$app->user->isGuest; ?>">
                         <div data-app="true" class="v-application height-form v-application--is-ltr ml-2" id="inspire">
+
+                            <v-dialog v-model="dialogAlert" max-width="700px">
+                                <v-card>
+                                    <v-card-title class="text-h5 text-justify">{{dialogAlertTitle}}</v-card-title>
+                                    <v-card-actions>
+                                        <v-spacer></v-spacer>
+                                        <v-btn color="blue darken-1" text @click="dialogAlert = false">OK</v-btn>
+                                        <v-spacer></v-spacer>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-dialog>
+
                             <template v-if="isGuest">
                                 <v-icon
                                         color="blue"
@@ -226,7 +238,7 @@ AppAsset::register($this);
 
                                                                     <v-dialog v-model="dialogEdit" max-width="620px">
                                                                         <v-card>
-                                                                            <v-card-title class="text-h5">Ваши персональные данные успешно обновлены</v-card-title>
+                                                                            <v-card-title class="text-h5">Ваши персональные данные успешно обновлены.</v-card-title>
                                                                             <v-card-actions>
                                                                                 <v-spacer></v-spacer>
                                                                                 <v-btn color="blue darken-1" text @click="dialogEdit = false">OK</v-btn>
@@ -259,6 +271,74 @@ AppAsset::register($this);
                                                                                     label="Телефон"
                                                                             ></v-text-field>
 
+                                                    <!--    start диалоговое окно для редактирования пароля пользователя    -->
+                                                                            <v-dialog
+                                                                                    v-model="dialogEditPassword"
+                                                                                    persistent
+                                                                                    max-width="900px"
+                                                                            >
+                                                                                <v-card>
+                                                                                    <v-card-title>
+                                                                                        <span class="text-h5">Редактирование пароля пользователя</span>
+                                                                                    </v-card-title>
+                                                                                    <v-card-text>
+                                                                                        <v-form v-model="validEdiPassword">
+                                                                                            <v-container>
+                                                                                                <v-row>
+                                                                                                    <v-col cols="12">
+                                                                                                        <v-text-field
+                                                                                                                v-model="editPassword"
+                                                                                                                label="Пароль"
+                                                                                                                type="password"
+                                                                                                                :rules="editPasswordRules"
+                                                                                                        ></v-text-field>
+                                                                                                    </v-col>
+
+                                                                                                    <v-col cols="12">
+                                                                                                        <v-text-field
+                                                                                                                v-model="newEditPassword"
+                                                                                                                label="Новый пароль"
+                                                                                                                require
+                                                                                                                type="password"
+                                                                                                                :rules="newEditPasswordRules"
+                                                                                                        ></v-text-field>
+                                                                                                    </v-col>
+                                                                                                    <v-col cols="12">
+                                                                                                        <v-text-field
+                                                                                                                v-model="repeatNewEditPassword"
+                                                                                                                label="Новый пароль еще раз"
+                                                                                                                require
+                                                                                                                type="password"
+                                                                                                                :rules="[(newEditPassword == repeatNewEditPassword) || 'Пароли должны совпадать']"
+                                                                                                        ></v-text-field>
+                                                                                                    </v-col>
+                                                                                                    <v-btn
+                                                                                                            color="blue darken-1"
+                                                                                                            text
+                                                                                                            @click="dialogEditPassword = false"
+                                                                                                    >
+                                                                                                        Close
+                                                                                                    </v-btn>
+                                                                                                    <v-btn
+                                                                                                            color="blue darken-1"
+                                                                                                            text
+                                                                                                            :disabled="!validEdiPassword"
+                                                                                                            @click="editPasswordUser"
+                                                                                                    >
+                                                                                                        Save
+                                                                                                    </v-btn>
+                                                                                                </v-row>
+                                                                                            </v-container>
+                                                                                        </v-form>
+                                                                                    </v-card-text>
+                                                                                </v-card>
+                                                                            </v-dialog>
+                                                                <!--    end диалоговое окно для редактирования пароля пользователя    -->
+
+                                                                            <div class="mb-5 mr-4">
+                                                                                <a href="#" class="text-xl-center" @click="dialogEditPass">Изменить пароль</a>
+                                                                            </div>
+                                                                            <v-spacer></v-spacer>
                                                                             <v-btn
                                                                                     :disabled="!validEdit"
                                                                                     color="success"
