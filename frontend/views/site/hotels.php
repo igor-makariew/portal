@@ -239,6 +239,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     <template v-else>
                                                         <p> Количество звёзд - не указано </p>
                                                     </template>
+                                                    <template>
+                                                        Добавить в избранное -  <v-icon
+                                                                                    :color="iconFavorite"
+                                                                                    @click="addFavorite(hotel)"
+                                                        >{{ 'mdi-star-circle' }}</v-icon>
+                                                    </template>
                                                     <v-col class="text-right" >
                                                         <v-btn
                                                                 color="success"
@@ -299,4 +305,3 @@ $this->params['breadcrumbs'][] = $this->title;
 </section>
 
 <?= $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/vueHotels.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>
-<?php // $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/vueBasket.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>
