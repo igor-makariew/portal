@@ -40,6 +40,9 @@ new Vue({
         page: 1,
         countPage: '',
         rowPerPage: 6,
+        // satrt favorite
+        iconFavorite: '',
+        // end favorite
     }),
 
     mounted () {
@@ -148,6 +151,22 @@ new Vue({
                  console.log(error.message);
              })
         },
+
+        /**
+         * Добавление карточки в избраннное
+         *
+         * @param hotel
+         */
+        addFavorite(hotel) {
+            this.iconFavorite = this.iconFavorite == '' ? 'green' : '';
+            let id = hotel.id == '' ? hotel.hotelId : hotel.id;
+            const data = {
+                'id': id,
+                'date': new Date
+            }
+
+            console.log(data);
+        }
 
     }
 })

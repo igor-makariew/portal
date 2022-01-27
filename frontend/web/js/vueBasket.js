@@ -35,58 +35,17 @@
 
     created() {
         this.getBasket();
-        // this.countInBasket();
     },
 
     computed: {
-        // testing2: function() {
-        //     return this.countBasket.count = parseInt(document.getElementById('countBasket').textContent);
-        // }
+
     },
-    //
-    // mounted: function() {
-    //
-    // },
 
     watch: {
-        // testing(newVal) {
-        //     alert(`yes, computed property changed: ${newVal}`);
-        // }
-        // testing2: {
-        //     handler: function(newVal, oldVal) {
-        //         console.log(newVal, oldVal)
-        //     },
-        //     deep: true
-        // }
-        // testingLet(newVal, oldVal) {
-        //     console.log(newVal, oldVal);
-        //     deep: true
-        // },
 
-        // item: {
-        //     handler: function(newVal, oldVal) {
-        //         // console.log(newVal, oldVal);
-        //         console.log('test');
-        //     },
-        //     deep: true
-        // },
-
-        // testing(newVal, oldVal) {
-        //     console.log(newVal, oldVal)
-        // }
     },
 
     methods: {
-        windowBasket() {
-            //this.dialog = true;
-           // window.location.href = '/basket';
-
-        },
-
-        testing() {
-            return parseInt(document.getElementById('countBasket').textContent);
-        },
-
         /**
          * удаление выбранных отелей
          */
@@ -208,28 +167,33 @@
             this.loader = true;
             axios.post('/basket/get-basket', {})
                 .then( (response) => {
-                    let userId = response.data.userId;
-                    let hotels = Object.values(response.data.basket[userId]);
-                    hotels.forEach( (hotel, index) => {
-                        if (Object.keys(hotel).indexOf('fullName') !== -1) {
-                            this.listHotels[index] = {
-                                'name': hotel.fullName != '' ? hotel.fullName : hotel.hotelName,
-                                'label': hotel.label != '' ? hotel.label : hotel.hotelName,
-                                'stars': hotel.stars != '' ? parseInt(hotel.stars) : 0,
-                                'price': hotel.price != undefined ? hotel.price : 'Уточняется',
-                                'check': false,
-                            }
-                        }
-                        if (Object.keys(hotel).indexOf('email') !== -1) {
-                            this.customer = {
-                                'email': hotel.email,
-                                'username': hotel.username
-                            }
-                        }
+                    if (response.data.res) {
+                        let userId = response.data.userId;
+                        if (Object.keys(response.data.basket).length > 0) {
+                            let hotels = Object.values(response.data.basket[userId]);
+                            hotels.forEach( (hotel, index) => {
+                                if (Object.keys(hotel).indexOf('fullName') !== -1) {
+                                    this.listHotels[index] = {
+                                        'name': hotel.fullName != '' ? hotel.fullName : hotel.hotelName,
+                                        'label': hotel.label != '' ? hotel.label : hotel.hotelName,
+                                        'stars': hotel.stars != '' ? parseInt(hotel.stars) : 0,
+                                        'price': hotel.price != undefined ? hotel.price : 'Уточняется',
+                                        'check': false,
+                                    }
+                                }
+                                if (Object.keys(hotel).indexOf('email') !== -1) {
+                                    this.customer = {
+                                        'email': hotel.email,
+                                        'username': hotel.username
+                                    }
+                                }
 
-                        const countBasket = document.getElementById('countBasket');
-                        countBasket.innerText =  this.listHotels.length > 0 ? this.listHotels.length : '';
-                    });
+                                const countBasket = document.getElementById('countBasket');
+                                countBasket.innerText =  this.listHotels.length > 0 ? this.listHotels.length : '';
+                            });
+                        }
+                    }
+
                     this.loader = false;
                 }).catch( (error) => {
                 console.log(error.message);

@@ -49,10 +49,19 @@ class BasketController extends Controller
      */
     public function actionGetBasket() {
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
-        $model = new Basket();
-        $response['basket'] = $model->getBasket();
-        $response['userId'] = Yii::$app->user->identity->id;
-        return  $response;
+        $response = [
+            'res' => false,
+        ];
+
+        if (!Yii::$app->user->isGuest) {
+            $model = new Basket();
+            $response['res'] = true;
+            $response['basket'] = $model->getBasket();
+            $response['userId'] = Yii::$app->user->identity->id;
+            return  $response;
+        }
+
+        return $response;
     }
 
     /**
@@ -88,6 +97,7 @@ class BasketController extends Controller
             $modelCustomer->hotel = $order['name'];
             $modelCustomer->raiting = $order['raiting'];
             $modelCustomer->price = $order['price'];
+            $modelCustomer->user_id = Yii::$app->user->identity->id;
             if ($modelCustomer->save() && $modelCustomer->validate()) {
                 $response['buy'][$index]['order'] = true;
                 $response['buy'][$index]['hotel'] = $order['name'];

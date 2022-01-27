@@ -3,6 +3,9 @@
 namespace common\models\customers;
 
 use Yii;
+use yii\db\ActiveRecord;
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "customers".
@@ -15,8 +18,9 @@ use Yii;
  * @property int|null $raiting
  * @property string|null $price
  * @property string|null $date
+ * @property int|null $user_id
  */
-class Customers extends \yii\db\ActiveRecord
+class Customers extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -32,7 +36,7 @@ class Customers extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['raiting'], 'integer'],
+            [['raiting', 'user_id'], 'integer'],
             [['date'], 'safe'],
             [['name', 'email', 'title', 'hotel', 'price'], 'string', 'max' => 255],
         ];
@@ -52,6 +56,32 @@ class Customers extends \yii\db\ActiveRecord
             'raiting' => 'Raiting',
             'price' => 'Price',
             'date' => 'Date',
+            'user_id' => 'User Id'
+        ];
+    }
+
+    /**
+     * Метод расширяет возможности класса Customers, внедряя дополительные
+     * свойства и методы. Кроме того, позволяет реагировать на события,
+     * создаваемые классом Order или его родителями
+     */
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::class,
+                'attributes' => [
+                    // при вставке новой записи присвоить атрибутам created
+                    // и updated значение метки времени UNIX
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['date'], //,'updated'],
+                    // при обновлении существующей записи  присвоить атрибуту
+                    // updated значение метки времени UNIX
+                    ActiveRecord::EVENT_BEFORE_UPDATE => false,
+                ],
+                // если вместо метки времени UNIX используется DATETIME
+                'value' => new Expression('NOW()'),
+            ],
+
         ];
     }
 }
