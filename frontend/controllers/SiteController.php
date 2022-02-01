@@ -18,6 +18,7 @@ use frontend\models\ContactForm;
 use yii\helpers\ArrayHelper;
 use common\models\hotels\Hotels;
 use common\models\User;
+use common\models\favoriteProducts\FavoriteProducts;
 
 /**
  * Site controller
@@ -374,14 +375,19 @@ class SiteController extends Controller
         foreach ($list as $index => $hotel) {
             $keysList = array_merge_recursive($keysList, array_keys($hotel));
             $keys = array_unique($keysList);
-    }
+        }
 
+        $modelFavorite = new FavoriteProducts();
         $keysHotels = array_pad([], count($keys), '');
         $paramsHotel = array_combine($keys, $keysHotels);
         foreach ($list as $index => $hotel) {
             foreach ($paramsHotel as $paramHotel => $value)
                 $hotels[$index][$paramHotel] =
                      Hotels::isValueInArray($paramHotel, $hotel) ? $hotel[$paramHotel] : '';
+                    if (!Yii::$app->user->isGuest) {
+                        $id = $hotel['id'] != '' ? $hotel['id'] : $hotel['hotelId'];
+                        $hotels[$index]['favorite'] = $modelFavorite->getProduct(Yii::$app->user->identity->id, $id);
+                    }
         }
 
         foreach ($hotels as $index => $hotel) {

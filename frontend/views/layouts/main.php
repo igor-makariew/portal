@@ -59,11 +59,23 @@ AppAsset::register($this);
                                 </v-card>
                             </v-dialog>
 
+                            <v-dialog v-model="dialogConfirm" max-width="700px">
+                                <v-card>
+                                    <v-card-title class="text-h5 text-justify">{{dialogConfirmTitle}}</v-card-title>
+                                    <v-card-actions>
+                                        <v-spacer></v-spacer>
+                                        <v-btn color="blue darken-1" text @click="dialogConfirm = false">Отмена</v-btn>
+                                        <v-btn color="blue darken-1" text @click="deleteFavoriteHotel()">Удалить</v-btn>
+                                        <v-spacer></v-spacer>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-dialog>
+
                             <template v-if="isGuest">
                                 <v-icon
-                                        color="blue"
-                                        style="cursor: pointer"
-                                        @click="windowRegistration"
+                                    color="blue"
+                                    style="cursor: pointer"
+                                    @click="windowRegistration"
                                 >{{ 'mdi-account'}}
                                 </v-icon>
                                 <div class="text-center">
@@ -184,12 +196,14 @@ AppAsset::register($this);
                                 </div>
                                 </template>
                             <template v-else>
-                                <v-icon
-                                        color="success"
-                                        style="cursor: pointer"
-                                        @click="windowRegistration"
-                                >{{ 'mdi-account'}}
-                                </v-icon>
+                                <a href="<?= Url::to(['/user/index'])?>">
+                                    <v-icon
+                                            color="success"
+                                            style="cursor: pointer"
+
+                                    >{{ 'mdi-account'}}
+                                    </v-icon>
+                                </a>
                                 <div class="text-center">
                                     <v-dialog v-model="dialog" width="100%">
                                         <v-card >
@@ -475,6 +489,111 @@ AppAsset::register($this);
                                                                                 </v-btn>
                                                                             </template>
                                                                         </v-data-table>
+                                                                    </div>
+                                                                </div>
+                                                                <div v-if="titleMenu == 'Избранное'">
+                                                                    <!-- start preloader not work!!!-->
+                                                                    <div class="loader-wrap text-center" v-if="loader">
+                                                                        <v-progress-circular
+                                                                                :rotate="-90"
+                                                                                :size="100"
+                                                                                :width="15"
+                                                                                :value="value"
+                                                                                :indeterminate="true"
+                                                                                color="success"
+                                                                        >
+                                                                        </v-progress-circular>
+                                                                    </div>
+                                                                    <!-- end preloader -->
+
+                                                                    <div v-if="!loader">
+                                                                        <div v-if="favoriteProducts.length == 0">
+                                                                            <h3>Вы не добавили отелей в избранное!</h3>
+                                                                        </div>
+                                                                        <v-row>
+                                                                            <v-col
+                                                                                    v-for="(hotel, index) in favoriteProducts"
+                                                                                    :key="index"
+                                                                                    cols="12"
+                                                                                    md="3"
+                                                                                    crtSelectedItem="index"
+                                                                            ><v-item v-slot="{ active, toggle }">
+                                                                                    <v-card
+                                                                                            class="mx-auto"
+                                                                                            max-width="320"
+                                                                                    >
+                                                                                        <v-img
+                                                                                                src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+                                                                                                height="200px"
+                                                                                        ></v-img>
+
+                                                                                        <v-card-title>
+                                                                                            {{hotel.label != '' ? hotel.label : hotel.hotelName}}
+                                                                                        </v-card-title>
+
+                                                                                        <v-card-subtitle>
+                                                                                            {{hotel.locationName != '' ? hotel.locationName : `${hotel.location.name}, ${hotel.location.country}`}}
+                                                                                        </v-card-subtitle>
+
+                                                                                        <v-card-actions>
+                                                                                            <v-btn
+                                                                                                    color="orange lighten-2"
+                                                                                                    text
+                                                                                            >
+                                                                                                Information
+                                                                                            </v-btn>
+
+                                                                                            <v-spacer></v-spacer>
+
+                                                                                            <v-btn
+                                                                                                    icon
+                                                                                                    @click="show = !show; crtSelectedItem = index"
+                                                                                            >
+                                                                                                <v-icon>{{ show &&  index == crtSelectedItem ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                                                                                            </v-btn>
+                                                                                        </v-card-actions>
+
+                                                                                        <v-expand-transition>
+                                                                                            <div v-show="show && crtSelectedItem == index">
+                                                                                                <v-divider></v-divider>
+
+                                                                                                <v-card-text class="text-left">
+                                                                                                    <p> Название отеля - {{hotel.full_name != '' ? hotel.full_name : hotel.hotel_name}}. </p>
+                                                                                                    <p> Локация в базе - {{hotel.location_id}}. </p>
+                                                                                                    <p> Локация: долгота - {{hotel.location.lat != '' ? hotel.location.lat : hotel.location.geo.lat}}, широта - {{hotel.location.lon != '' ? hotel.location.lon : hotel.location.geo.lon}}. </p>
+                                                                                                    <p> Номер отеля в базе - {{hotel.hotel_id}}. </p>
+                                                                                                    <template v-if="hotel.stars != ''">
+                                                                                                        <v-rating
+                                                                                                                v-model="hotel.stars"
+                                                                                                                background-color="orange lighten-3"
+                                                                                                                color="orange"
+                                                                                                                @input="stopClick"
+                                                                                                                large
+                                                                                                        ></v-rating>
+                                                                                                    </template>
+                                                                                                    <template v-else>
+                                                                                                        <p> Количество звёзд - не указано </p>
+                                                                                                    </template>
+                                                                                                    <template>
+                                                                                                        Удалить из избранного -  <v-icon
+                                                                                                                :color="hotel.hotel_id != null ? 'green' : ''"
+                                                                                                                @click="deleteConfirmFavorite(hotel.hotel_id)"
+                                                                                                        >{{ 'mdi-star-circle' }}</v-icon>
+                                                                                                    </template>
+                                                                                                    <v-col class="text-right" >
+                                                                                                        <v-btn
+                                                                                                                color="success"
+                                                                                                                @click="addToBasket(hotel.id != '' ? hotel.id : hotel.hotelId, <?= Yii::$app->user->identity->id?>)"
+                                                                                                        >Заказать</v-btn>
+                                                                                                    </v-col>
+                                                                                                </v-card-text>
+                                                                                            </div>
+                                                                                        </v-expand-transition>
+                                                                                    </v-card>
+                                                                                </v-item>
+                                                                            </v-col>
+                                                                        </v-row>
+
                                                                     </div>
                                                                 </div>
                                                             </v-col>
