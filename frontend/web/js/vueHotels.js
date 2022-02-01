@@ -16,7 +16,7 @@ new Vue({
         currentDate: new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate(),
         //dateStart: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
         dateStart: new Date().getFullYear() + '-' + (new Date().getMonth() + 1).toString().padStart(2, "0") + '-' + new Date().getDate(),
-        dateEnd:  new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + (new Date().getDate() + 1),
+        dateEnd:  new Date().getFullYear() + '-' + (new Date(Date.now() + 24*60*60*1000).getMonth() + 1) + '-' + (new Date(Date.now() + 24*60*60*1000).getDate()),
         // end calendar
         hotels: [],
         show: false,
@@ -43,10 +43,21 @@ new Vue({
         // satrt favorite
         iconFavorite: '',
         // end favorite
+        dialogAlert: false,
+        dialogAlertTitle: '',
     }),
 
-    mounted () {
+    created () {
 
+    },
+
+    mounted () {
+        // var addDays = 3;
+        // var date = new Date()
+        // date.setDate(date.getDate() + addDays);
+        // console.log(date);
+        // this.dateEnd.setDate(this.dateEnd.getDate() + 1);
+        // console.log(this.dateEnd);
     },
 
     watch: {
@@ -153,7 +164,7 @@ new Vue({
         },
 
         /**
-         * Добавление карточки в избраннное
+         * Добавление карточки продукта в избраннное
          *
          * @param hotel
          */
@@ -164,8 +175,25 @@ new Vue({
                 'id': id,
                 'date': new Date
             }
+            this.loader = true;
 
-            console.log(data);
+            axios.post('/favorite/add-favorite', {
+                'data': data
+            }).then( (response) => {
+                if (response.data.res) {
+                    Object.values(this.hotels).forEach( (value) => {
+                        if (value.id == data.id || value.hotelId == data.id) {
+                            value.favorite = 'green';
+                        }
+                    });
+                } else {
+                    this.dialogAlert = true;
+                    this.dialogAlertTitle = 'Данный отель уже добавлен в раздел избранное!';
+                }
+                this.loader = false;
+            }).catch( (error) => {
+                console.log(error.message);
+            })
         }
 
     }

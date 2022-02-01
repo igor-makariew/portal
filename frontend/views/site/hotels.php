@@ -31,35 +31,16 @@ $this->params['breadcrumbs'][] = $this->title;
 <section class="ftco-section ftco-degree-bg">
     <div id="appHotels">
         <v-app class="height-form" id="inspire">
-<!--            <div class="text-center">-->
-<!--                <v-dialog-->
-<!--                        v-model="dialog"-->
-<!--                        width="500"-->
-<!--                >-->
-<!--                    <v-card>-->
-<!--                        <v-card-title class="text-h5 grey lighten-2">-->
-<!--                            Privacy Policy-->
-<!--                        </v-card-title>-->
-<!---->
-<!--                        <v-card-text>-->
-<!--                            {{hotels}}-->
-<!--                        </v-card-text>-->
-<!---->
-<!--                        <v-divider></v-divider>-->
-<!---->
-<!--                        <v-card-actions>-->
-<!--                            <v-spacer></v-spacer>-->
-<!--                            <v-btn-->
-<!--                                    color="primary"-->
-<!--                                    text-->
-<!--                                    @click="dialog = false"-->
-<!--                            >-->
-<!--                                OK-->
-<!--                            </v-btn>-->
-<!--                        </v-card-actions>-->
-<!--                    </v-card>-->
-<!--                </v-dialog>-->
-<!--            </div>-->
+            <v-dialog v-model="dialogAlert" max-width="700px">
+                <v-card>
+                    <v-card-title class="text-h5 text-justify">{{dialogAlertTitle}}</v-card-title>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue darken-1" text @click="dialogAlert = false">OK</v-btn>
+                        <v-spacer></v-spacer>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
 
             <v-item-group mandatory>
                 <v-container>
@@ -135,7 +116,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ></v-date-picker>
                             </v-col>
                         </v-row>
-                            {{dateStart}}
+
                         <v-row>
                             <v-col cols="4">
                                 <v-subheader>Выберите дата выселения</v-subheader>
@@ -241,7 +222,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     </template>
                                                     <template>
                                                         Добавить в избранное -  <v-icon
-                                                                                    :color="iconFavorite"
+                                                                                    :color="hotel.favorite != null ? 'green' : ''"
                                                                                     @click="addFavorite(hotel)"
                                                         >{{ 'mdi-star-circle' }}</v-icon>
                                                     </template>

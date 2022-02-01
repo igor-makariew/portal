@@ -1,41 +1,8 @@
 new Vue({
-    el: '#appRegistration',
+    el: '#appPersonalArea',
     vuetify: new Vuetify(),
 
     data: () => ({
-        isGuest: true,
-        name: '',
-        phone: '',
-        email: '',
-        password: '',
-        checked: 'authorization',
-        valid: false,
-        dialog: false,
-        message: '',
-        nameRules: [
-            v => !!v || 'Поле имя обязательно для заполнения',
-            v => (v && v.length <= 16) || 'Имя должно ыть меньше 16 символов',
-        ],
-        emailRules: [
-            v => !!v || 'Поле e-mail обязательно для заполнения',
-            v => /.+@.+\..+/.test(v) || 'E-mail не верно заполнен',
-        ],
-        passwordRules: [
-            v => !!v || 'Поле пароль обязательно для заполнения',
-            v => (v && v.length >= 10) || 'Поле пароль должно быть не менее 10 символов',
-        ],
-        emailAutoRules: [
-            v => !!v || 'Поле e-mail обязательно для заполнения',
-            v => /.+@.+\..+/.test(v) || 'E-mail не верно заполнен',
-        ],
-        passwordAutoRules: [
-            v => !!v || 'Поле пароль обязательно для заполнения',
-            v => v.length >= 10 || 'Поле пароль должно быть не менее 10 символов',
-        ],
-        emailAuto: '',
-        passwordAuto: '',
-        validAuto: false,
-        // start personal
         items: [
             { title: "Аккаунт", icon: "mdi-account", action: "Аккаунт"},
             { title: "Заказы", icon: "mdi-cart-outline", action: "Заказы"},
@@ -180,17 +147,13 @@ new Vue({
     },
 
     created () {
-         //this.initialize()
+        //this.initialize()
+        this.getParamUser();
     },
 
     methods: {
         validate() {
             this.$refs.formValid.validate();
-        },
-
-        windowRegistration() {
-            this.dialog = true;
-            this.getParamUser();
         },
 
         updateEdit() {
@@ -268,7 +231,7 @@ new Vue({
                     this.validEdit = false;
                     this.loader = false;
                 }).catch( (error) => {
-                    console.log(error.message);
+                console.log(error.message);
             })
         },
 
@@ -283,71 +246,6 @@ new Vue({
          */
 
         /**
-         * регистрация пользователя
-         */
-        registration() {
-            const data = {
-                'user': this.name,
-                'phone': this.phone,
-                'email': this.email,
-                'password': this.password,
-            };
-
-            axios.post('/site/signup',{
-                'data': data
-            }).then( (response) => {
-                this.dialog = false;
-                if(response.data.res_status) {
-                    this.message = response.data.message.result_req;
-                    this.name = '';
-                    this.phone = '';
-                    this.email = '';
-                    this.password = '';
-                    alert(this.message);
-                } else {
-                    let keys = Object.keys(response.data.message.error);
-                    if(keys.length > 0) {
-                        let row = '';
-                        for (let key of keys) {
-                            row += response.data.message.error[key] + '\n';
-                        }
-                        this.message = row;
-                    } else {
-                        this.message = response.data.message.error;
-                    }
-                    alert(this.message);
-                }
-            });
-
-        },
-
-        /**
-         * авторизация пользователя
-         */
-        authorization: async function() {
-            const data = {
-                'email': this.emailAuto,
-                'password': this.passwordAuto
-            }
-            if (this.emailAuto != '' && this.passwordAuto != '') {
-                await axios.post('/site/login', {
-                    data: data
-                }).then( (response) => {
-                    if (response.data.res) {
-                        this.dialog = false;
-                        this.isGuest = false;
-                        this.emailAuto = '';
-                        this.passwordAuto = '';
-                    } else {
-                        console.log(response.data.msg);
-                    }
-                }).catch( (error) => {
-                    console.log(error);
-                });
-            }
-        },
-
-        /**
          * обрабатывает действия события
          * @param action
          */
@@ -355,7 +253,8 @@ new Vue({
             if (action === "Выйти") {
                 axios.post('/site/logout', {}).then( (response) => {
                     if (response.data.res) {
-                        location.reload();
+                        // location.reload();
+                        location.href = '/';
                     }
                 }).catch( (error) => {
                     console.log(error);
@@ -380,7 +279,7 @@ new Vue({
                         })
                         this.loader = false;
                     }).catch( (error) => {
-                        console.log(error.message);
+                    console.log(error.message);
                 })
             } else if (action === "Избранное") {
                 this.titleMenu = 'Избранное';
@@ -403,7 +302,7 @@ new Vue({
                         this.favoriteProducts = favorites;
                         this.loader = false;
                     }).catch( (error) => {
-                        console.log(error.message)
+                    console.log(error.message)
                 })
             }
         },
@@ -436,7 +335,7 @@ new Vue({
                     const favorites = Object.assign({}, this.favoriteProducts);
                     Object.keys(favorites).forEach( (key) => {
                         if (data.hotel_id == favorites[key].hotel_id) {
-                           this.favoriteProducts.splice(key, 1);
+                            this.favoriteProducts.splice(key, 1);
                         }
                         this.show = !this.show;
                         this.crtSelectedItem = key
@@ -450,7 +349,7 @@ new Vue({
         },
 
         initialize () {
-             this.desserts;
+            this.desserts;
         },
 
         editItem (item) {
