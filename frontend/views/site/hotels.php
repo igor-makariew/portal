@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <section class="ftco-section ftco-degree-bg">
     <div id="appHotels">
-        <v-app class="height-form" id="inspire">
+        <v-app class="height-form" >
             <v-dialog v-model="dialogAlert" max-width="700px">
                 <v-card>
                     <v-card-title class="text-h5 text-justify">{{dialogAlertTitle}}</v-card-title>
@@ -185,6 +185,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             <v-btn
                                                     color="orange lighten-2"
                                                     text
+                                                    @click="informationHotel(hotel)"
                                             >
                                                 Information
                                             </v-btn>
@@ -281,8 +282,64 @@ $this->params['breadcrumbs'][] = $this->title;
 <!-- End pagination                   -->
                 </v-container>
             </v-item-group>
+
+            <div class="container">
+                <div class="home-demo">
+                    <h3>Вы смотрели:</h3>
+                    <div class="owl-carousel owl-theme">
+                        <div class="item" v-for="item in items" :viewSelectedItem="item" :key="item">
+                            <v-card
+                                    class="mx-auto"
+                                    max-width="344"
+                            >
+                                <v-img
+                                        src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+                                        height="200px"
+                                ></v-img>
+
+                                <v-card-title>
+                                    Top western road trips - {{item}}
+                                </v-card-title>
+
+                                <v-card-subtitle>
+                                    1,000 miles of wonder
+                                </v-card-subtitle>
+
+                                <v-card-actions>
+                                    <v-btn
+                                            color="orange lighten-2"
+                                            text
+                                    >
+                                        Explore
+                                    </v-btn>
+
+                                    <v-spacer></v-spacer>
+
+                                    <v-btn
+                                            icon
+                                            @click = "show = !show; viewSelectedItem = item"
+                                    ><v-icon>{{ show && item == viewSelectedItem ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                                    </v-btn>
+                                </v-card-actions>
+
+                                <v-expand-transition>
+                                    <div v-show="show && viewSelectedItem == item">
+                                        <v-divider></v-divider>
+
+                                        <v-card-text>
+                                            I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
+                                        </v-card-text>
+                                    </div>
+                                </v-expand-transition>
+                            </v-card>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </v-app>
     </div>
 </section>
 
 <?= $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/vueHotels.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>
+<?= $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/js-carousel.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>

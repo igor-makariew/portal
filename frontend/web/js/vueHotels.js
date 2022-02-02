@@ -45,10 +45,23 @@ new Vue({
         // end favorite
         dialogAlert: false,
         dialogAlertTitle: '',
+        // start corousel
+        items: 7,
+        viewSelectedItem:'',
+        // end corousel
     }),
 
     created () {
-
+        $(function() {
+            // Owl Carousel
+            const owl = $(".owl-carousel");
+            owl.owlCarousel({
+                items: 4,
+                margin: 10,
+                // loop: true,
+                nav: true
+            });
+        });
     },
 
     mounted () {
@@ -65,6 +78,10 @@ new Vue({
             this.page = newVal;
             this.getHotels();
         }
+    },
+
+    computed: {
+
     },
 
     methods: {
@@ -194,7 +211,18 @@ new Vue({
             }).catch( (error) => {
                 console.log(error.message);
             })
-        }
+        },
 
+        /**
+         *
+         * @param hotel
+         */
+        informationHotel(hotel) {
+            const data = {
+                'id': hotel.id
+            }
+            console.log(hotel);
+        }
     }
 })
+
