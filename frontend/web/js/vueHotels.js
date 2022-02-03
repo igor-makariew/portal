@@ -15,7 +15,7 @@ new Vue({
         // start calendar
         currentDate: new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate(),
         //dateStart: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-        dateStart: new Date().getFullYear() + '-' + (new Date().getMonth() + 1).toString().padStart(2, "0") + '-' + new Date().getDate(),
+        dateStart: new Date().getFullYear() + '-' + (new Date().getMonth() + 1).toString().padStart(2, "0") + '-' + ('0' + new Date().getDate()).slice(-2),
         dateEnd:  new Date().getFullYear() + '-' + (new Date(Date.now() + 24*60*60*1000).getMonth() + 1) + '-' + (new Date(Date.now() + 24*60*60*1000).getDate()),
         // end calendar
         hotels: [],
@@ -48,6 +48,16 @@ new Vue({
         // start corousel
         items: 7,
         viewSelectedItem:'',
+        dialogHotel: false,
+        dialogHotelName: '',
+        dialogHotelId: '',
+        dialogHotelLocationName: '',
+        dialogHotelLocationId: '',
+        dialogHotelStars: '',
+        dialogHotelPriceAvg: '',
+        dialogHotelPriceFrom: '',
+        dialogHotelLabel: '',
+
         // end corousel
     }),
 
@@ -219,9 +229,18 @@ new Vue({
          */
         informationHotel(hotel) {
             const data = {
-                'id': hotel.id
+                'id': hotel.id != '' ? hotel.id : hotel.hotelId
             }
-            console.log(hotel);
+            this.dialogHotel = true;
+            this.dialogHotelName = hotel.fullName != '' ? hotel.fullName : hotel.hotelName + ', ' + hotel.location.name + ", " + hotel.location.country;
+            this.dialogHotelId = hotel.id != '' ? hotel.id : hotel.hotelId;
+            this.dialogHotelLocationName = hotel.locationName != '' ? hotel.locationName : hotel.location.name + ". " + hotel.location.country;
+            this.dialogHotelLocationId = hotel.locationId;
+            this.dialogHotelStars = hotel.stars != ''  ? hotel.stars : 0;
+            this.dialogHotelPriceAvg = hotel.priceAvg != '' ? hotel.priceAvg : 'Не указана';
+            this.dialogHotelPriceFrom = hotel.priceFrom != '' ? hotel.priceFrom : 'Не указана';
+            this.dialogHotelLabel = hotel.label != '' ? hotel.label : hotel.hotelName;
+
         }
     }
 })
