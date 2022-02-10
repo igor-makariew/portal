@@ -62,12 +62,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     <!-- end preloader -->
                 </template>
                 <template v-if="!loaderSlider && items > 0">
+                    <h3 class="mb-3">Слайдер из отфильтрованных вами отелей</h3>
                     <div class="home-demo">
                         <div class="owl-carousel owl-theme">
                             <div class="item" v-for="(viewHotel, index) in items" :viewSelectedItem="viewHotel" :key="viewHotel">
                                 <v-card
                                         class="mx-auto"
                                         max-width="344"
+                                        height="400"
                                 >
                                     <v-img
                                             src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"

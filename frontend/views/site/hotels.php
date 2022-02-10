@@ -212,6 +212,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <v-card
                                             class="mx-auto"
                                             max-width="344"
+                                            height="360"
                                     >
                                         <v-img
                                                 src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"

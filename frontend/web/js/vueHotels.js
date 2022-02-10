@@ -58,8 +58,6 @@ new Vue({
         dialogHotelPriceAvg: '',
         dialogHotelPriceFrom: '',
         dialogHotelLabel: '',
-        viewedHotel: [],
-        listViewedHotels: [],
         loaderListViewed: false,
         countViewedHotels: [],
         visibleFunction: false,
@@ -92,105 +90,9 @@ new Vue({
                 let old = Object.keys(before).length;
                 if (val > 1) {
                     if (val > old) {
-                        let ids = Object.assign({}, after);
-                        this.visibleFunction = false;
-                        this.showViewedHostels(ids);
-                        this.loaderListViewed = true;
-                        setTimeout( () => {
-                            // let block = this.$el.querySelectorAll('.item');
-                            let listHotels = this.$el.querySelectorAll('#list > div');
-                            $(".owl-carousel").remove();
-                            let listDiv = '';
-                            for (let i = 0; i < listHotels.length; i++) {
-                                listDiv += listHotels[i].outerHTML;
-                            }
-                            $(".home-demo").append('<div class="owl-carousel owl-theme">' + listDiv + '</div>');
-                            console.log(this.$el.querySelector('.owl-carousel'));
 
-                            // let addSlider = block[block.length - 1];
-                            // let blockAppend = '';
-                            // block[block.length - 1].remove();
-                            // if (block.length < 5) {
-                            //     blockAppend = '<div class="owl-item active" style="width: 270px; margin-right: 10px;">' +
-                            //         addSlider.outerHTML +
-                            //         '</div>';
-                            //     $(".owl-stage").append(blockAppend);
-                            // } else {
-                            //     blockAppend = '<div class="owl-item" style="width: 270px; margin-right: 10px;">' + addSlider.outerHTML + '</div>';
-                            //     $(".owl-stage").append(blockAppend);
-                            // }
-                            const owl = $(".owl-carousel");
-                            if (this.items == listHotels.length) {
-                                owl.owlCarousel({
-                                    items: 4,
-                                    margin: 10,
-                                    loop:false,
-                                    nav: true,
-                                    // navText: [
-                                    //     '<svg width="35" height="35" viewBox="0 0 24 24"><path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z"/></svg>',
-                                    //     '<svg width="35" height="35" viewBox="0 0 24 24"><path d="M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z"/></svg>'
-                                    //     ],
-                                    autoplay: true,
-                                    autoplayTimeout: 3000
-                                });
-                            }
-                        }, 3000);
-
-                        // setTimeout( () => {
-                        //     const owl = $(".owl-carousel");
-                        //     console.log(owl);
-                        //     owl.owlCarousel({
-                        //         items: 4,
-                        //         margin: 10,
-                        //         nav: true
-                        //     });
-                        // },5000);
                     }
                 }
-
-                // $(function() {
-                //     const owl = $(".owl-item active");
-                //
-                //     let lastBlock, block, blockDiv, newBlock;
-                //     if ($(".owl-carousel").find('.owl-stage').length > 0) {
-                //         console.log($(".owl-carousel"));
-                //         block = $(".owl-carousel").find('.owl-stage');
-                //         blockDiv = document.createElement('div');
-                //         blockDiv.classList.add('owl-item', 'active');
-                //         blockDiv.style.width = '270px';
-                //         blockDiv.style.marginRight = '10px';
-                //         block.append(blockDiv);
-                //         newBlock = $(".item");
-                //         console.log(newBlock);
-                //     }
-                //     // console.log($(".owl-carousel").find('.item'));
-                //     // console.log($(".own-carousel"));
-                //     if ($(".own-carousel").children(".item").length > 0) {
-                //         lastBlock = $(".own-carousel").children(".item");
-                //         $(".own-carousel").children(".item").remove();
-                //         // console.log(lastBlock);
-                //         block[0].lastChild.appendChild(lastBlock);
-                //     }
-                // })
-
-                // let lastBlock, block, blockDiv;
-                // if ($(".owl-carousel").find('.owl-stage').length > 0) {
-                //     console.log($(".owl-carousel"));
-                //     block = $(".owl-carousel").find('.owl-stage');
-                //     blockDiv = document.createElement('div');
-                //     blockDiv.classList.add('owl-item', 'active');
-                //     blockDiv.style.width = '270px';
-                //     blockDiv.style.marginRight = '10px';
-                //     block.append(blockDiv);
-                // }
-                // console.log($(".owl-carousel").find('.item'));
-                // console.log($(".own-carousel"));
-                // if ($(".own-carousel").children(".item").length > 0) {
-                //     lastBlock = $(".own-carousel").children(".item");
-                //     $(".own-carousel").children(".item").remove();
-                //     console.log(lastBlock);
-                //     block[0].lastChild.appendChild(lastBlock);
-                // }
             },
             deep: true
         }
@@ -198,9 +100,9 @@ new Vue({
     },
 
     computed: {
-        listHotels() {
-            return Object.assign({}, this.viewedHotel);
-        }
+        // listHotels() {
+        //     return Object.assign({}, this.viewedHotel);
+        // }
     },
 
     methods: {
@@ -340,31 +242,31 @@ new Vue({
          *
          * @param hotel
          */
-        informationHotel(hotel) {
-            const data = {
-                'id': hotel.id != '' ? hotel.id : hotel.hotelId
-            }
-
-
-            this.loader = true;
-            axios.post('/favorite/viewed-hotel', {
-                'data': data
-            }).then( (response) => {
-                this.viewedHotel = response.data;
-                this.dialogHotel = true;
-                this.dialogHotelName = hotel.fullName != '' ? hotel.fullName : hotel.hotelName + ', ' + hotel.location.name + ", " + hotel.location.country;
-                this.dialogHotelId = hotel.id != '' ? hotel.id : hotel.hotelId;
-                this.dialogHotelLocationName = hotel.locationName != '' ? hotel.locationName : hotel.location.name + ". " + hotel.location.country;
-                this.dialogHotelLocationId = hotel.locationId;
-                this.dialogHotelStars = hotel.stars != ''  ? hotel.stars : 0;
-                this.dialogHotelPriceAvg = hotel.priceAvg != '' ? hotel.priceAvg : 'Не указана';
-                this.dialogHotelPriceFrom = hotel.priceFrom != '' ? hotel.priceFrom : 'Не указана';
-                this.dialogHotelLabel = hotel.label != '' ? hotel.label : hotel.hotelName;
-                this.loader = false;
-            }).catch( (error) => {
-                console.log(error.message);
-            })
-        },
+        // informationHotel(hotel) {
+        //     const data = {
+        //         'id': hotel.id != '' ? hotel.id : hotel.hotelId
+        //     }
+        //
+        //
+        //     this.loader = true;
+        //     axios.post('/favorite/viewed-hotel', {
+        //         'data': data
+        //     }).then( (response) => {
+        //         this.viewedHotel = response.data;
+        //         this.dialogHotel = true;
+        //         this.dialogHotelName = hotel.fullName != '' ? hotel.fullName : hotel.hotelName + ', ' + hotel.location.name + ", " + hotel.location.country;
+        //         this.dialogHotelId = hotel.id != '' ? hotel.id : hotel.hotelId;
+        //         this.dialogHotelLocationName = hotel.locationName != '' ? hotel.locationName : hotel.location.name + ". " + hotel.location.country;
+        //         this.dialogHotelLocationId = hotel.locationId;
+        //         this.dialogHotelStars = hotel.stars != ''  ? hotel.stars : 0;
+        //         this.dialogHotelPriceAvg = hotel.priceAvg != '' ? hotel.priceAvg : 'Не указана';
+        //         this.dialogHotelPriceFrom = hotel.priceFrom != '' ? hotel.priceFrom : 'Не указана';
+        //         this.dialogHotelLabel = hotel.label != '' ? hotel.label : hotel.hotelName;
+        //         this.loader = false;
+        //     }).catch( (error) => {
+        //         console.log(error.message);
+        //     })
+        // },
 
         showViewedHostels(ids = null) {
             const data = {
@@ -386,8 +288,7 @@ new Vue({
                     }
                 }
 
-                this.listViewedHotels = viewedHotel;
-                this.items = this.listViewedHotels.length;
+                this.items = viewedHotel.length;
                 this.loaderListViewed = false;
                 if (this.visibleFunction ) {
                     $(function() {

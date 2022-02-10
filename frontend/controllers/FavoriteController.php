@@ -124,6 +124,8 @@ class FavoriteController extends Controller
             'res' => false,
             'dataHotel' => [],
         ];
+        new HistoryUser($data['data']['id']);
+
         $dataHotel = Hotels::find()->where(['hotel_id' => $data['data']['id']])->one();
         if (!empty($dataHotel)) {
             $response['res'] = true;
