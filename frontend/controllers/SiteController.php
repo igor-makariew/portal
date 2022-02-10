@@ -19,6 +19,7 @@ use yii\helpers\ArrayHelper;
 use common\models\hotels\Hotels;
 use common\models\User;
 use common\models\favoriteProducts\FavoriteProducts;
+use common\models\listFilterHotel\ListFilterHotel;
 
 /**
  * Site controller
@@ -419,7 +420,7 @@ class SiteController extends Controller
         $response['pagination']['rowPerPage'] = $rowPerPage;
         $response['pagination']['countPage'] = $countPage;
         $response['hotels'] = array_slice($hotels, $offset, $rowPerPage);
-
+        $modelListFilterHotel = new ListFilterHotel($hotels);
 
         return $response;
     }

@@ -15,10 +15,11 @@ new Vue({
         // start calendar
         currentDate: new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate(),
         //dateStart: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-        dateStart: new Date().getFullYear() + '-' + (new Date().getMonth() + 1).toString().padStart(2, "0") + '-' + new Date().getDate(),
+        dateStart: new Date().getFullYear() + '-' + (new Date().getMonth() + 1).toString().padStart(2, "0") + '-' + ('0' + new Date().getDate()).slice(-2),
         dateEnd:  new Date().getFullYear() + '-' + (new Date(Date.now() + 24*60*60*1000).getMonth() + 1) + '-' + (new Date(Date.now() + 24*60*60*1000).getDate()),
         // end calendar
         hotels: [],
+        links: [],
         show: false,
         visiblyHotels: false,
         showMessage: false,
@@ -45,10 +46,27 @@ new Vue({
         // end favorite
         dialogAlert: false,
         dialogAlertTitle: '',
+        // start carousel
+        items: 0,
+        viewSelectedItem:'',
+        dialogHotel: false,
+        dialogHotelName: '',
+        dialogHotelId: '',
+        dialogHotelLocationName: '',
+        dialogHotelLocationId: '',
+        dialogHotelStars: '',
+        dialogHotelPriceAvg: '',
+        dialogHotelPriceFrom: '',
+        dialogHotelLabel: '',
+        loaderListViewed: false,
+        countViewedHotels: [],
+        visibleFunction: false,
+        // end carousel
     }),
 
     created () {
-
+        this.visibleFunction = true;
+        this.showViewedHostels(null);
     },
 
     mounted () {
@@ -64,7 +82,27 @@ new Vue({
         page: function(newVal) {
             this.page = newVal;
             this.getHotels();
+        },
+
+        listHotels: {
+            handler(after, before) {
+                let val = Object.keys(after).length;
+                let old = Object.keys(before).length;
+                if (val > 1) {
+                    if (val > old) {
+
+                    }
+                }
+            },
+            deep: true
         }
+
+    },
+
+    computed: {
+        // listHotels() {
+        //     return Object.assign({}, this.viewedHotel);
+        // }
     },
 
     methods: {
@@ -125,6 +163,10 @@ new Vue({
                 this.dialog = true;
                 if (response.data.hotels.length > 0) {
                     this.hotels = response.data.hotels;
+                    this.links = this.hotels.map(function(link){
+                        let id = link.id != '' ? link.id : link.hotelId;
+                        return id;
+                    })
                     this.countPage = response.data.pagination.countPage
                     this.visiblyHotels = true;
                     this.showMessage = false;
@@ -194,7 +236,81 @@ new Vue({
             }).catch( (error) => {
                 console.log(error.message);
             })
-        }
+        },
 
+        /**
+         *
+         * @param hotel
+         */
+        // informationHotel(hotel) {
+        //     const data = {
+        //         'id': hotel.id != '' ? hotel.id : hotel.hotelId
+        //     }
+        //
+        //
+        //     this.loader = true;
+        //     axios.post('/favorite/viewed-hotel', {
+        //         'data': data
+        //     }).then( (response) => {
+        //         this.viewedHotel = response.data;
+        //         this.dialogHotel = true;
+        //         this.dialogHotelName = hotel.fullName != '' ? hotel.fullName : hotel.hotelName + ', ' + hotel.location.name + ", " + hotel.location.country;
+        //         this.dialogHotelId = hotel.id != '' ? hotel.id : hotel.hotelId;
+        //         this.dialogHotelLocationName = hotel.locationName != '' ? hotel.locationName : hotel.location.name + ". " + hotel.location.country;
+        //         this.dialogHotelLocationId = hotel.locationId;
+        //         this.dialogHotelStars = hotel.stars != ''  ? hotel.stars : 0;
+        //         this.dialogHotelPriceAvg = hotel.priceAvg != '' ? hotel.priceAvg : 'Не указана';
+        //         this.dialogHotelPriceFrom = hotel.priceFrom != '' ? hotel.priceFrom : 'Не указана';
+        //         this.dialogHotelLabel = hotel.label != '' ? hotel.label : hotel.hotelName;
+        //         this.loader = false;
+        //     }).catch( (error) => {
+        //         console.log(error.message);
+        //     })
+        // },
+
+        showViewedHostels(ids = null) {
+            const data = {
+                'viewedHotel': ids
+            }
+            this.loaderListViewed = true;
+            axios.post('/favorite/get-list-viewed-hotels', {
+                'data': data
+            }).then( (response) => {
+                const listHotels = response.data.map( function(value) {
+                    value.location = JSON.parse(value.location);
+                    return value;
+                });
+                let viewedHotel = [];
+                // this.countViewedHotels = listHotels;
+                if (listHotels.length > 1) {
+                    for (let i = 0; i < listHotels.length - 1; i++) {
+                        viewedHotel[i] = listHotels[i];
+                    }
+                }
+
+                this.items = viewedHotel.length;
+                this.loaderListViewed = false;
+                if (this.visibleFunction ) {
+                    $(function() {
+                        // Owl Carousel
+                        const owl = $(".owl-carousel");
+                        owl.owlCarousel({
+                            items: 4,
+                            margin: 10,
+                            nav: true
+                        });
+                    });
+                }
+            }).catch( (error) => {
+                console.log(error.message);
+            })
+        }
     }
 })
+
+
+$(function() {
+    let className = document.getElementsByClassName('owl-stage');
+});
+
+

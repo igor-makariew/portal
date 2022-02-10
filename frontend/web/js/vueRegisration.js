@@ -151,7 +151,7 @@ new Vue({
         },
 
         editPersonalDate: function() {
-            return Object.assign({}, this.personalDate)
+            return Object.assign({}, this.personalDate);
         },
 
         confirmPasswordRules() {

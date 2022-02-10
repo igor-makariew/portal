@@ -20,6 +20,7 @@ class FavoriteProducts extends ActiveRecord
      */
     protected $redis;
     public $favoritesId;
+    public $viewedId;
 
     public function __construct()
     {
@@ -85,5 +86,10 @@ class FavoriteProducts extends ActiveRecord
      */
     public function getKeys($key) {
         return $this->redis->hkeys($key);
+    }
+
+    public function setViewedHotels($id) {
+        $key = 'viewedHotels_' . $this->userId;
+        return $this->redis->hset($key);
     }
 }

@@ -26,7 +26,7 @@ class UserController extends \yii\web\Controller
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
         $response = [
             'res' => false,
-            'user' => []
+            'user' => [],
         ];
         if (!Yii::$app->user->isGuest) {
             $response['res'] = true;

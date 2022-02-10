@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <section class="ftco-section ftco-degree-bg">
     <div id="appHotels">
-        <v-app class="height-form" id="inspire">
+        <v-app class="height-form" >
             <v-dialog v-model="dialogAlert" max-width="700px">
                 <v-card>
                     <v-card-title class="text-h5 text-justify">{{dialogAlertTitle}}</v-card-title>
@@ -41,6 +41,52 @@ $this->params['breadcrumbs'][] = $this->title;
                     </v-card-actions>
                 </v-card>
             </v-dialog>
+
+            <v-row justify="center">
+                <v-dialog
+                        v-model="dialogHotel"
+                        persistent
+                        max-width="700px"
+                ><v-card>
+                        <v-card-title>
+                            <span class="text-h5">{{dialogHotelLabel}}</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <div> <h5 class="text--darken-1 mb-3">Название отеля - {{dialogHotelName}}. </h5></div>
+                            <v-spacer></v-spacer>
+                            <div><h5 class="text--darken-1 mb-3"> Локация в базе - {{dialogHotelLocationId}}. </h5></div>
+                            <v-spacer></v-spacer>
+                            <div><h5 class="text--darken-1 mb-3"> Номер отеля в базе - {{dialogHotelId}}. </h5></div>
+                            <v-spacer></v-spacer>
+                            <div><h5 class="text--darken-1 mb-3"> Локация отеля - {{dialogHotelLocationName}}. </h5></div>
+                            <v-spacer></v-spacer>
+                            <div>
+                                <v-rating
+                                        v-model="dialogHotelStars"
+                                        background-color="orange lighten-3"
+                                        color="orange"
+                                        large
+                                ></v-rating>
+                            </div>
+                            <v-spacer></v-spacer>
+                            <div><h5 class="text--darken-1 mb-3"> Цена номера отеля (средняя) - {{dialogHotelPriceAvg}}. </h5></div>
+                            <v-spacer></v-spacer>
+                            <div><h5 class="text--darken-1 mb-3"> Цена номера отеля (на момент заселения) - {{dialogHotelPriceFrom}}. </h5></div>
+                            <v-spacer></v-spacer>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <div class="text-right">
+                                <v-btn
+                                        color="blue darken-1"
+                                        text
+                                        @click="dialogHotel = false"
+                                >Закрыть</v-btn>
+                            </div>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+            </v-row>
 
             <v-item-group mandatory>
                 <v-container>
@@ -94,10 +140,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             </v-col>
                             <v-col cols="8">
                                 <v-select
-                                    v-model="currency"
-                                    :items="currencies"
-                                    item-text="name"
-                                    label="Currency"
+                                        v-model="currency"
+                                        :items="currencies"
+                                        item-text="name"
+                                        label="Currency"
                                 ></v-select>
                             </v-col>
                         </v-row>
@@ -155,18 +201,18 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <template v-if="visiblyHotels">
                         <div class="mb-7"></div>
-                            <v-row>
-                                <v-col
+                        <v-row>
+                            <v-col
                                     v-for="(hotel, index) in hotels"
                                     :key="index"
                                     cols="12"
                                     md="4"
                                     crtSelectedItem="index"
-                                >
-                                <v-item v-slot="{ active, toggle }">
+                            ><v-item v-slot="{ active, toggle }">
                                     <v-card
                                             class="mx-auto"
                                             max-width="344"
+                                            height="360"
                                     >
                                         <v-img
                                                 src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
@@ -183,8 +229,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
                                         <v-card-actions>
                                             <v-btn
-                                                    color="orange lighten-2"
-                                                    text
+                                                color="orange lighten-2"
+                                                text
+                                                :href="'/favorite/index?id=' + links[index]"
                                             >
                                                 Information
                                             </v-btn>
@@ -222,8 +269,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     </template>
                                                     <template>
                                                         Добавить в избранное -  <v-icon
-                                                                                    :color="hotel.favorite != null ? 'green' : ''"
-                                                                                    @click="addFavorite(hotel)"
+                                                                :color="hotel.favorite != null ? 'green' : ''"
+                                                                @click="addFavorite(hotel)"
                                                         >{{ 'mdi-star-circle' }}</v-icon>
                                                     </template>
                                                     <v-col class="text-right" >
@@ -268,21 +315,144 @@ $this->params['breadcrumbs'][] = $this->title;
                     <!-- end preloader -->
 
                     <div class="mb-7"></div>
-<!-- Start pagination                   -->
+                    <!-- Start pagination                   -->
                     <template v-if="visiblyHotels">
                         <div class="text-center">
                             <v-pagination
-                                v-model="page"
-                                :length="countPage"
-                                circle
+                                    v-model="page"
+                                    :length="countPage"
+                                    circle
                             ></v-pagination>
                         </div>
                     </template>
-<!-- End pagination                   -->
+                    <!-- End pagination                   -->
                 </v-container>
             </v-item-group>
+
+            <div class="container">
+                <template v-if="loaderListViewed">
+                    <!-- start preloader not work!!!-->
+                    <div class="loader-wrap text-center" >
+                        <v-progress-circular
+                                :rotate="-90"
+                                :size="100"
+                                :width="15"
+                                :value="value"
+                                :indeterminate="true"
+                                color="success"
+                        >
+                        </v-progress-circular>
+                    </div>
+                    <!-- end preloader -->
+                </template>
+                <template v-show="!loaderListViewed && items > 0">
+                    <div class="home-demo">
+                        <h3 v-if="!loaderListViewed && items > 0">Вы смотрели:</h3>
+                        <div id="list" style="display: none">
+                            <div class="item" v-for="viewHotel in items" :viewSelectedItem="viewHotel" :key="viewHotel">
+                                <v-card
+                                        class="mx-auto"
+                                        max-width="344"
+                                >
+                                    <v-img
+                                            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+                                            height="200px"
+                                    ></v-img>
+
+                                    <v-card-title>
+                                        Top western road trips - {{viewHotel}}
+                                    </v-card-title>
+
+                                    <v-card-subtitle>
+                                        1,000 miles of wonder
+                                    </v-card-subtitle>
+
+                                    <v-card-actions>
+                                        <v-btn
+                                                color="orange lighten-2"
+                                                text
+                                        >
+                                            Explore
+                                        </v-btn>
+
+                                        <v-spacer></v-spacer>
+
+                                        <v-btn
+                                                icon
+                                                @click = "show = !show; viewSelectedItem = viewHotel"
+                                        ><v-icon>{{ show && viewHotel == viewSelectedItem ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                                        </v-btn>
+                                    </v-card-actions>
+
+                                    <v-expand-transition>
+                                        <div v-show="show && viewSelectedItem == viewHotel">
+                                            <v-divider></v-divider>
+
+                                            <v-card-text>
+                                                I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
+                                            </v-card-text>
+                                        </div>
+                                    </v-expand-transition>
+                                </v-card>
+                            </div>
+                        </div>
+                        <div class="owl-carousel owl-theme">
+                            <div class="item" v-for="viewHotel in items" :viewSelectedItem="viewHotel" :key="viewHotel">
+                                <v-card
+                                        class="mx-auto"
+                                        max-width="344"
+                                >
+                                    <v-img
+                                            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+                                            height="200px"
+                                    ></v-img>
+
+                                    <v-card-title>
+                                        Top western road trips - {{viewHotel}}
+                                    </v-card-title>
+
+                                    <v-card-subtitle>
+                                        1,000 miles of wonder
+                                    </v-card-subtitle>
+
+                                    <v-card-actions>
+                                        <v-btn
+                                                color="orange lighten-2"
+                                                text
+                                        >
+                                            Explore
+                                        </v-btn>
+
+                                        <v-spacer></v-spacer>
+
+                                        <v-btn
+                                                icon
+                                                @click = "show = !show; viewSelectedItem = viewHotel"
+                                        ><v-icon>{{ show && viewHotel == viewSelectedItem ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                                        </v-btn>
+                                    </v-card-actions>
+
+                                    <v-expand-transition>
+                                        <div v-show="show && viewSelectedItem == viewHotel">
+                                            <v-divider></v-divider>
+
+                                            <v-card-text>
+                                                I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
+                                            </v-card-text>
+                                        </div>
+                                    </v-expand-transition>
+                                </v-card>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
         </v-app>
     </div>
 </section>
+
+
+
 
 <?= $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/vueHotels.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>
