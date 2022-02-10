@@ -6,6 +6,8 @@ use Yii;
 use yii\web\Controller;
 use common\models\favoriteProducts\FavoriteProducts;
 use common\models\hotels\Hotels;
+use common\models\historyUser\HistoryUser;
+use common\models\listFilterHotel\ListFilterHotel;
 
 class FavoriteController extends Controller
 {
@@ -76,6 +78,72 @@ class FavoriteController extends Controller
             $response['res'] = true;
         }
 
+        return $response;
+    }
+
+    public function actionViewedHotel()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $modelHistoryUser = new HistoryUser($data['data']['id']);
+        return $modelHistoryUser->getIds();
+    }
+
+    public function actionGetListViewedHotels()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $list = [];
+        if (is_array($data['data']['viewedHotel'])) {
+            if (count($data['data']['viewedHotel']) > 0) {
+                $list = $data['data']['viewedHotel'];
+            }
+        } else {
+            $modelHistoryUser = new HistoryUser(null);
+//            $modelHistoryUser->clearIds();
+            $list = $modelHistoryUser->getIds();
+        }
+
+        $modelHotel = Hotels::find()
+            ->select('full_name, hotel_id, hotel_name, label, location, location_id, location_name, stars')
+            ->where(['in', 'hotel_id', $list])
+            ->all();
+        return $modelHotel;
+    }
+
+    /**
+     * получение карточки товара
+     *
+     * @return array
+     */
+    public function actionGetHotel()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $response = [
+            'res' => false,
+            'dataHotel' => [],
+        ];
+        $dataHotel = Hotels::find()->where(['hotel_id' => $data['data']['id']])->one();
+        if (!empty($dataHotel)) {
+            $response['res'] = true;
+            $response['dataHotel'] = $dataHotel;
+        }
+
+        return $response;
+    }
+
+    /**
+     * получение картинок слайдера
+     *
+     * @return mixed
+     */
+    public function actionGetSliders()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+
+        $modelListFilterHotel = new ListFilterHotel([]);
+        $response['filterHotel'] = $modelListFilterHotel->getList();
         return $response;
     }
 }
