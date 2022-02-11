@@ -40,7 +40,8 @@
     font-weight: 300;
 }
 
-
-/*test*/
+.fix-height {
+    height: 5rem;
+}
 
 

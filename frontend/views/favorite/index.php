@@ -8,6 +8,7 @@ use  yii\widgets\Breadcrumbs;
 $this->title = 'Hotel';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<?= $this->registerCssFile(Yii::$app->urlManager->createUrl('/css/hotels.css', ['depends' => ['frontend\assets\AppAsset']])); ?>
 
 <div class="hero-wrap js-fullheight" style="background-image: url('/images/hotels.jpg');">
     <div class="overlay"></div>
@@ -67,9 +68,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         <div class="owl-carousel owl-theme">
                             <div class="item" v-for="(viewHotel, index) in items" :viewSelectedItem="viewHotel" :key="viewHotel">
                                 <v-card
-                                        class="mx-auto"
+                                        class="mx-auto mb-5"
                                         max-width="344"
-                                        height="400"
                                 >
                                     <v-img
                                             src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
@@ -77,7 +77,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ></v-img>
 
                                     <v-card-title>
-                                        {{sliders[index].label != '' ? sliders[index].label : sliders[index].hotelName}}
+                                        <div class="card-text fix-height">
+                                            {{sliders[index].label != '' ? sliders[index].label : sliders[index].hotelName}}
+                                        </div>
                                     </v-card-title>
 
                                     <v-card-subtitle>
@@ -107,14 +109,16 @@ $this->params['breadcrumbs'][] = $this->title;
                                             <v-divider></v-divider>
 
                                             <v-card-text>
-                                                <div> <h6 class="text--darken-1 mb-3">Полное название - {{sliders[index].fullName != '' ? sliders[index].fullName : sliders[index].hotelName + '. ' + sliders[index].location.name + '. ' + sliders[index].location.country}}. </h6></div>
-                                                <v-spacer></v-spacer>
-                                                <div> <h6 class="text--darken-1 mb-3">Геолокация отеля - lat :  {{sliders[index].location.lat != null ? sliders[index].location.lat : sliders[index].location.geo.lat}}, lon : {{sliders[index].location.lon != null ? sliders[index].location.lon : sliders[index].location.geo.lon}}. </h6></div>
-                                                <v-spacer></v-spacer>
-                                                <div><h6 class="text--darken-1 mb-3"> Номер отеля в базе - {{sliders[index].hotelId != '' ? sliders[index].hotelId : 'Не установлено'}}, lon - {{paramHotel.location.lon}}. </h6></div>
-                                                <v-spacer></v-spacer>
-                                                <div><h6 class="text--darken-1 mb-3"> Локация отеля - {{sliders[index].locationId}}. </h6></div>
-                                                <v-spacer></v-spacer>
+                                                <div class="h-100">
+                                                    <div> <h6 class="text--darken-1 mb-3">Полное название - {{sliders[index].fullName != '' ? sliders[index].fullName : sliders[index].hotelName + '. ' + sliders[index].location.name + '. ' + sliders[index].location.country}}. </h6></div>
+                                                    <v-spacer></v-spacer>
+                                                    <div> <h6 class="text--darken-1 mb-3">Геолокация отеля - lat :  {{sliders[index].location.lat != null ? sliders[index].location.lat : sliders[index].location.geo.lat}}, lon : {{sliders[index].location.lon != null ? sliders[index].location.lon : sliders[index].location.geo.lon}}. </h6></div>
+                                                    <v-spacer></v-spacer>
+                                                    <div><h6 class="text--darken-1 mb-3"> Номер отеля в базе - {{sliders[index].hotelId != '' ? sliders[index].hotelId : 'Не установлено'}}, lon - {{paramHotel.location.lon}}. </h6></div>
+                                                    <v-spacer></v-spacer>
+                                                    <div><h6 class="text--darken-1 mb-3"> Локация отеля - {{sliders[index].locationId}}. </h6></div>
+                                                    <v-spacer></v-spacer>
+                                                </div>
                                             </v-card-text>
                                         </div>
                                     </v-expand-transition>

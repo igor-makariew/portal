@@ -59,7 +59,7 @@ new Vue({
         dialogHotelPriceFrom: '',
         dialogHotelLabel: '',
         loaderListViewed: false,
-        countViewedHotels: [],
+        listViewedHotels: [],
         visibleFunction: false,
         // end carousel
     }),
@@ -281,7 +281,7 @@ new Vue({
                     return value;
                 });
                 let viewedHotel = [];
-                // this.countViewedHotels = listHotels;
+                this.listViewedHotels = listHotels;
                 if (listHotels.length > 1) {
                     for (let i = 0; i < listHotels.length - 1; i++) {
                         viewedHotel[i] = listHotels[i];

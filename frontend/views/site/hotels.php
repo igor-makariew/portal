@@ -212,7 +212,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <v-card
                                             class="mx-auto"
                                             max-width="344"
-                                            height="360"
                                     >
                                         <v-img
                                                 src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
@@ -220,7 +219,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                         ></v-img>
 
                                         <v-card-title>
-                                            {{hotel.label != '' ? hotel.label : hotel.hotelName}}
+                                            <div class="card-text fix-height">
+                                                {{hotel.label != '' ? hotel.label : hotel.hotelName}}
+                                            </div>
                                         </v-card-title>
 
                                         <v-card-subtitle>
@@ -348,58 +349,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 <template v-show="!loaderListViewed && items > 0">
                     <div class="home-demo">
                         <h3 v-if="!loaderListViewed && items > 0">Вы смотрели:</h3>
-                        <div id="list" style="display: none">
-                            <div class="item" v-for="viewHotel in items" :viewSelectedItem="viewHotel" :key="viewHotel">
-                                <v-card
-                                        class="mx-auto"
-                                        max-width="344"
-                                >
-                                    <v-img
-                                            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-                                            height="200px"
-                                    ></v-img>
-
-                                    <v-card-title>
-                                        Top western road trips - {{viewHotel}}
-                                    </v-card-title>
-
-                                    <v-card-subtitle>
-                                        1,000 miles of wonder
-                                    </v-card-subtitle>
-
-                                    <v-card-actions>
-                                        <v-btn
-                                                color="orange lighten-2"
-                                                text
-                                        >
-                                            Explore
-                                        </v-btn>
-
-                                        <v-spacer></v-spacer>
-
-                                        <v-btn
-                                                icon
-                                                @click = "show = !show; viewSelectedItem = viewHotel"
-                                        ><v-icon>{{ show && viewHotel == viewSelectedItem ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-                                        </v-btn>
-                                    </v-card-actions>
-
-                                    <v-expand-transition>
-                                        <div v-show="show && viewSelectedItem == viewHotel">
-                                            <v-divider></v-divider>
-
-                                            <v-card-text>
-                                                I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
-                                            </v-card-text>
-                                        </div>
-                                    </v-expand-transition>
-                                </v-card>
-                            </div>
-                        </div>
                         <div class="owl-carousel owl-theme">
                             <div class="item" v-for="viewHotel in items" :viewSelectedItem="viewHotel" :key="viewHotel">
                                 <v-card
-                                        class="mx-auto"
+                                        class="mx-auto mb-5"
                                         max-width="344"
                                 >
                                     <v-img
@@ -408,11 +361,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ></v-img>
 
                                     <v-card-title>
-                                        Top western road trips - {{viewHotel}}
+                                        <div class="card-text fix-height">
+                                            {{listViewedHotels[viewHotel - 1].label != '' ? listViewedHotels[viewHotel - 1].label : listViewedHotels[viewHotel - 1].hotel_name}}
+                                        </div>
                                     </v-card-title>
 
                                     <v-card-subtitle>
-                                        1,000 miles of wonder
+                                        Месторасположение - {{listViewedHotels[viewHotel - 1].location_name != '' ? listViewedHotels[viewHotel - 1].location_name : listViewedHotels[viewHotel - 1].location.country + '. ' + listViewedHotels[viewHotel - 1].location.name}}
                                     </v-card-subtitle>
 
                                     <v-card-actions>
@@ -420,7 +375,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 color="orange lighten-2"
                                                 text
                                         >
-                                            Explore
+                                            Информация:
                                         </v-btn>
 
                                         <v-spacer></v-spacer>
@@ -437,8 +392,17 @@ $this->params['breadcrumbs'][] = $this->title;
                                             <v-divider></v-divider>
 
                                             <v-card-text>
-                                                I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
-                                            </v-card-text>
+                                                <div class="h-100">
+                                                    <div> <h6 class="text--darken-1 mb-3">Полное название - {{listViewedHotels[viewHotel - 1].full_name != '' ? listViewedHotels[viewHotel - 1].full_name : listViewedHotels[viewHotel - 1].hotel_name + '. ' + listViewedHotels[viewHotel - 1].location.name + '. ' + listViewedHotels[viewHotel - 1].location.country}}. </h6></div>
+                                                    <v-spacer></v-spacer>
+                                                    <div> <h6 class="text--darken-1 mb-3">Геолокация отеля - lat :  {{listViewedHotels[viewHotel - 1].location.lat != null ? listViewedHotels[viewHotel - 1].location.lat : listViewedHotels[viewHotel - 1].location.geo.lat}}, lon : {{listViewedHotels[viewHotel - 1].location.lon != null ? listViewedHotels[viewHotel - 1].location.lon : listViewedHotels[viewHotel - 1].location.geo.lon}}. </h6></div>
+                                                    <v-spacer></v-spacer>
+                                                    <div><h6 class="text--darken-1 mb-3"> Номер отеля в базе - {{listViewedHotels[viewHotel - 1].hotel_id != '' ? listViewedHotels[viewHotel - 1].hotel_id : 'Не установлено'}}. </h6></div>
+                                                    <v-spacer></v-spacer>
+                                                    <div><h6 class="text--darken-1 mb-3"> Локация отеля - {{listViewedHotels[viewHotel - 1].location_id}}. </h6></div>
+                                                    <v-spacer></v-spacer>
+                                                </div>
+                                             </v-card-text>
                                         </div>
                                     </v-expand-transition>
                                 </v-card>
