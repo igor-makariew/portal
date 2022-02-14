@@ -105,6 +105,11 @@ new Vue({
         dialogConfirm: false,
         dialogConfirmTitle: '',
         hotelId: '',
+        onlyStringRules: [
+            v => !!v || 'Введите данные для поиска.',
+            v => /^[a-zA-Zа-яА-Я]+$/.test(v) || 'Вы ввели данные отличные от строковых.'
+        ],
+        searchList:[],
         // end personal
     }),
 
@@ -421,6 +426,17 @@ new Vue({
             this.close()
         },
 
-
+        searchHotels(event) {
+            let result =  this.search.match(/(^\D+$)/g);
+            if (result != null) {
+                this.searchList = this.desserts.filter((hotel) => {
+                    if (hotel.title.toLowerCase().indexOf(event.toLowerCase()) != -1) {
+                        return hotel;
+                    }
+                })
+            } else {
+                this.searchList = [];
+            }
+        }
     }
 })
