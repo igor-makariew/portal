@@ -217,14 +217,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                             <div v-if="!loader">
                                                 <v-data-table
                                                         :headers="headers"
-                                                        :items="desserts"
+                                                        :items="searchList.length == 0 ? desserts : searchList"
                                                         sort-by="number"
                                                         class="elevation-1"
                                                         :footer-props="{
-                                                                                    itemsPerPageText: 'Количество заказов на странице',
-                                                                                    itemsPerPageOptions:[30, 60, 90, -1]
-                                                                                }"
-                                                        :search="search"
+                                                            itemsPerPageText: 'Количество заказов на странице',
+                                                            itemsPerPageOptions:[30, 60, 90, -1]
+                                                        }"
                                                 >
                                                     <template v-slot:top>
                                                         <v-toolbar
@@ -232,14 +231,14 @@ $this->params['breadcrumbs'][] = $this->title;
                                                         >
                                                             <v-toolbar-title>Мои заказы</v-toolbar-title>
                                                             <v-spacer></v-spacer>
-
                                                             <v-text-field
                                                                     v-model="search"
                                                                     append-icon="mdi-magnify"
                                                                     label="Поиск"
                                                                     single-line
-                                                                    hide-details
                                                                     class="hidden-xs-only"
+                                                                    @input="searchHotels($event)"
+                                                                    :rules="onlyStringRules"
                                                             ></v-text-field>
 
                                                             <v-spacer></v-spacer>
