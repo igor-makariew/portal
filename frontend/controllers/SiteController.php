@@ -20,6 +20,8 @@ use common\models\hotels\Hotels;
 use common\models\User;
 use common\models\favoriteProducts\FavoriteProducts;
 use common\models\listFilterHotel\ListFilterHotel;
+use common\models\listCountry\ListCountry;
+use common\models\listResorts\ListResorts;
 
 /**
  * Site controller
@@ -83,7 +85,23 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $countries = ListCountry::find()->all();
+        $ids = ListCountry::find()->select('id')->indexBy('id')->column();
+        $results = ListResorts::find()->where(['resort_country_id' => $ids])->all();
+        $resorts = [];
+        foreach($results as $index => $result) {
+            if (is_array($resorts[$result['resort_country_id']])) {
+                array_push($resorts[$result['resort_country_id']], $result);
+            } else {
+                $resorts[$result['resort_country_id']] = [];
+                array_push($resorts[$result['resort_country_id']], $result);
+            }
+        }
+
+        return $this->render('index', [
+            'resorts' => $resorts,
+            'countries' => $countries
+        ]);
     }
 
     /**
