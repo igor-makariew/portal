@@ -2,7 +2,6 @@
 
 namespace common\models\listResorts;
 
-use common\models\listCountry\ListCountry;
 use Yii;
 
 /**
@@ -32,9 +31,8 @@ class ListResorts extends \yii\db\ActiveRecord
     {
         return [
             [['resorts_id', 'name', 'resort_country_id'], 'required'],
-            [['resorts_id', 'resort_country_id'], 'integer'],
+            [['resorts_id', 'is_popular', 'resort_country_id', 'at_filtering'], 'integer'],
             [['name'], 'string', 'max' => 50],
-            [['resorts_id'], 'unique']
         ];
     }
 
@@ -45,19 +43,11 @@ class ListResorts extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'resorts_id' => 'ID курорта',
-            'name' => 'Название',
-            'is_popular' => 'Популярность',
-            'resort_country_id' => 'Идентификатор страны',
-            'at_filtering' => 'Доступные курорты в базе',
+            'resorts_id' => 'Resorts ID',
+            'name' => 'Name',
+            'is_popular' => 'Is Popular',
+            'resort_country_id' => 'Resort Country ID',
+            'at_filtering' => 'At Filtering',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery|ListCountry
-     */
-    public function getListCountry()
-    {
-        return $this->hasOne(ListCountry::class, ['country_id' => 'resort_country_id']);
     }
 }

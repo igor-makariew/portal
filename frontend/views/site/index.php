@@ -2,6 +2,8 @@
 
 /* @var $this yii\web\View */
 
+use yii\helpers\Url;
+
 $this->title = 'DirEngine - Free Bootstrap 4 Template by Colorlib';
 ?>
 <?php  //var_dump( basename(Yii::getAlias('@app'))); ?>
@@ -106,13 +108,13 @@ $this->title = 'DirEngine - Free Bootstrap 4 Template by Colorlib';
                     <?php foreach ($countries as $country):?>
                         <div class="item">
                             <div class="destination">
-                                <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url(images/destination-1.jpg);">
+                                <a href="<?= Url::to(['/destination/index', 'id' => $country['id']])?>" class="img d-flex justify-content-center align-items-center" style="background-image: url(images/destination-1.jpg);">
                                     <div class="icon d-flex justify-content-center align-items-center">
                                         <span class="icon-search2"></span>
                                     </div>
                                 </a>
                                 <div class="text p-3">
-                                    <h3><a href="#"><?= $country['name']?></a></h3>
+                                    <h3><a href="<?= Url::to(['/destination/index', 'id' => $country['id']])?>"><?= $country['name']?></a></h3>
                                     <?php if(!empty($resorts[$country['id']])):?>
                                         <span class="listing"><?= count($resorts[$country['id']])?> Listing</span>
                                     <?php else:?>

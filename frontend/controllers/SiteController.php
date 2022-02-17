@@ -444,6 +444,55 @@ class SiteController extends Controller
     }
 
     /**
+     * @return string
+     */
+    public function actionTour()
+    {
+        return $this->render('tour', [
+//            'resorts' => $resorts,
+//            'countries' => $countries
+        ]);
+    }
+
+    public function actionGetTours()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $response = [
+            'countries' => [],
+            'resorts' => [],
+            'pagination' => [
+                'page' => '',
+                'rowPerPage' => '',
+                'countPage' => ''
+            ]
+        ];
+        $response['countries'] = ListCountry::find()->all();
+        $ids = ListCountry::find()->select('id')->indexBy('id')->column();
+        $results = ListResorts::find()->where(['resort_country_id' => $ids])->all();
+        foreach($results as $index => $result) {
+            if (is_array($response['resorts'][$result['resort_country_id']])) {
+                array_push($response['resorts'][$result['resort_country_id']], $result);
+            } else {
+                $response['resorts'][$result['resort_country_id']] = [];
+                array_push($response['resorts'][$result['resort_country_id']], $result);
+            }
+        }
+
+        $page = $data['data']['page'];
+        $rowPerPage = $data['data']['rowPerPage'];
+        $offset = $page == 1 ? 0 : ($page - 1)*$rowPerPage;
+        $countPage = (int) ceil(count($response['countries']) / $rowPerPage);
+
+        $response['pagination']['page'] = $page;
+        $response['pagination']['rowPerPage'] = $rowPerPage;
+        $response['pagination']['countPage'] = $countPage;
+        $response['countries'] = array_slice($response['countries'], $offset, $rowPerPage);
+
+        return $response;
+    }
+
+    /**
      * Signs user up.
      *
      * @return mixed
