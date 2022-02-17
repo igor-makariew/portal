@@ -65,11 +65,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     ><v-expansion-panel
                                 v-for="(resort, index) in listResorts"
                                 :key="index"
-                                @click="getHotels(resort.id)"
+                                @click="getHotels(resort.id, flag)"
                         >
                             <v-expansion-panel-header>Курорт - {{resort.name}}</v-expansion-panel-header>
                             <v-expansion-panel-content>
-                                Отели:
                                 <template v-if="loaderHotels">
                                     <!-- start preloader not work!!!-->
                                     <div class="loader-wrap text-center" >
@@ -86,9 +85,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <!-- end preloader -->
                                 </template>
                                 <template v-if="!loaderHotels">
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item" v-for="hotel in listHotels" :key="hotel.id">{{hotel.name}}</li>
-                                    </ul>
+                                    <template v-if="listHotels.length > 0">
+                                        Отели:
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item" v-for="hotel in listHotels" :key="hotel.id">{{hotel.name}}</li>
+                                        </ul>
+                                    </template>
+                                    <template v-else>
+                                        Ничего нет.
+                                    </template>
                                 </template>
                             </v-expansion-panel-content>
                         </v-expansion-panel>

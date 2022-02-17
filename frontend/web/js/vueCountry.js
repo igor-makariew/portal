@@ -12,6 +12,7 @@ new Vue({
         country:{},
         listResorts: [],
         listHotels: [],
+        flag: false,
     }),
 
     created () {
@@ -36,13 +37,18 @@ new Vue({
             })
         },
 
-        async getHotels(id) {
-            // this.loaderHotels = false;
-            const result = await axios(`http://api-gateway.travelata.ru/directory/resortHotels?resortId=${id}`);
-            this.listHotels = result['data']['data'];
-            // if (this.listHotels.length > 0) {
-            //     this.loaderHotels = false;
-            // }
+        async getHotels(id, flag) {
+            if (!flag) {
+                this.loaderHotels = true;
+                const result = await axios(`http://api-gateway.travelata.ru/directory/resortHotels?resortId=${id}`);
+                this.listHotels = result['data']['data'];
+                if (this.listHotels.length != -1) {
+                    this.loaderHotels = false;
+                }
+                this.flag = true;
+            } else {
+                this.flag = false;
+            }
         }
     }
 })
