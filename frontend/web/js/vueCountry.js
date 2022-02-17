@@ -4,12 +4,14 @@ new Vue({
 
     data: () => ({
         loaderCountry: false,
+        loaderHotels: false,
         //start preloder
         interval: {},
         value: 0,
         //end preloder
         country:{},
         listResorts: [],
+        listHotels: [],
     }),
 
     created () {
@@ -32,6 +34,15 @@ new Vue({
             }).catch( (error) => {
                 console.log(error.message);
             })
+        },
+
+        async getHotels(id) {
+            // this.loaderHotels = false;
+            const result = await axios(`http://api-gateway.travelata.ru/directory/resortHotels?resortId=${id}`);
+            this.listHotels = result['data']['data'];
+            // if (this.listHotels.length > 0) {
+            //     this.loaderHotels = false;
+            // }
         }
     }
 })

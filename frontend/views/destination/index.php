@@ -23,6 +23,11 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         'links' => [
                             [
+                                'label' => 'Tours',
+                                'url' => ['/site/tour'],
+                                'template' => "<span class='mr-2'><a>{link}</a></span>",
+                            ],
+                            [
                                 'label' => 'Country',
                                 'template' => "<span class='mr-2'><a>{link}</a></span>",
                             ],
@@ -55,14 +60,36 @@ $this->params['breadcrumbs'][] = $this->title;
                     <!-- end preloader -->
                 </template>
                 <template v-if="!loaderCountry">
-                    <v-expansion-panels focusable>
-                        <v-expansion-panel
+                    <v-expansion-panels
+                            focusable
+                    ><v-expansion-panel
                                 v-for="(resort, index) in listResorts"
                                 :key="index"
+                                @click="getHotels(resort.id)"
                         >
                             <v-expansion-panel-header>Курорт - {{resort.name}}</v-expansion-panel-header>
                             <v-expansion-panel-content>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                                Отели:
+                                <template v-if="loaderHotels">
+                                    <!-- start preloader not work!!!-->
+                                    <div class="loader-wrap text-center" >
+                                        <v-progress-circular
+                                                :rotate="-90"
+                                                :size="100"
+                                                :width="15"
+                                                :value="value"
+                                                :indeterminate="true"
+                                                color="success"
+                                        >
+                                        </v-progress-circular>
+                                    </div>
+                                    <!-- end preloader -->
+                                </template>
+                                <template v-if="!loaderHotels">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item" v-for="hotel in listHotels" :key="hotel.id">{{hotel.name}}</li>
+                                    </ul>
+                                </template>
                             </v-expansion-panel-content>
                         </v-expansion-panel>
                     </v-expansion-panels>
