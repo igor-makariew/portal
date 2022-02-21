@@ -10,6 +10,7 @@ new Vue ({
         //end preloder
         listCountries: [],
         listResorts: [],
+        listCountriesId: [],
         page: 1,
         countPage: '',
         rowPerPage: 12,
@@ -40,7 +41,7 @@ new Vue ({
                     this.countPage = response.data.pagination.countPage
                     this.listCountries = response.data.countries;
                     this.listResorts = response.data.resorts;
-                    console.log(response.data);
+                    this.listCountriesId = response.data.ids;
                 }).catch( (error) => {
                     console.log(error.message)
             })

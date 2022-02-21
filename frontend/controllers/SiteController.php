@@ -465,11 +465,12 @@ class SiteController extends Controller
                 'page' => '',
                 'rowPerPage' => '',
                 'countPage' => ''
-            ]
+            ],
+            'ids' => []
         ];
         $response['countries'] = ListCountry::find()->all();
-        $ids = ListCountry::find()->select('id')->indexBy('id')->column();
-        $results = ListResorts::find()->where(['resort_country_id' => $ids])->all();
+        $response['ids'] = ListCountry::find()->select('country_id')->indexBy('country_id')->column();
+        $results = ListResorts::find()->where(['resort_country_id' => $response['ids']])->all();
         foreach($results as $index => $result) {
             if (is_array($response['resorts'][$result['resort_country_id']])) {
                 array_push($response['resorts'][$result['resort_country_id']], $result);
