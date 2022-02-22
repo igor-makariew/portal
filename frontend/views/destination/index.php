@@ -63,12 +63,28 @@ $this->params['breadcrumbs'][] = $this->title;
                     <template v-if="listResorts != null">
                         <v-expansion-panels
                                 focusable
+                                flat
+                                hover
                         ><v-expansion-panel
                                     v-for="(resort, index) in listResorts"
                                     :key="index"
-                                    @click="getHotels(resort.id, flag)"
+                                    @click="getHotels(resort.id, flag, $event)"
                             >
-                                    <v-expansion-panel-header>Курорт - {{resort.name}}</v-expansion-panel-header>
+                                <v-expansion-panel-header v-slot="{ open }">Курорт - {{resort.name}} - {{open}}
+                                    <span v-if="!open" class="text-right ml-5">
+                                       <v-rating
+                                           v-model="resort.id = resort.id > 5 ? 5 : resort.id"
+                                           icon-label="custom icon label text {0} of {1}"
+                                           background-color="yellow lighten-3"
+                                           color="yellow"
+                                           readonly
+                                           medium
+                                           empty-icon="$ratingFull"
+                                           half-increments
+                                           hover
+                                       ></v-rating>
+                                    </span>
+                                </v-expansion-panel-header>
                                     <v-expansion-panel-content>
                                         <template v-if="loaderHotels">
                                             <!-- start preloader not work!!!-->
@@ -87,7 +103,80 @@ $this->params['breadcrumbs'][] = $this->title;
                                         </template>
                                         <template v-if="!loaderHotels">
                                             <template v-if="resort">
-                                                Отели:
+                                                <div class="mb-5 mt-5 ml-0 pl-0">
+                                                    <v-row justify="start">
+                                                        <v-dialog
+                                                            v-model="dialogComment"
+                                                            persistent
+                                                            max-width="700px"
+                                                        >
+                                                            <template v-slot:activator="{ on, attrs }">
+                                                                <v-btn
+                                                                    color="success"
+                                                                    dark
+                                                                    v-bind="attrs"
+                                                                    v-on="on"
+                                                                    class="mt-5 mb-5"
+                                                                >
+                                                                    Оставить комментарий
+                                                                </v-btn>
+                                                            </template>
+                                                            <v-card>
+                                                                <v-card-title>
+                                                                    <span class="text-h5">Комментарий пользователя - {{nameUser}}</span>
+                                                                </v-card-title>
+                                                                <v-card-text>
+                                                                    <v-container>
+                                                                        <v-row>
+                                                                            <v-col cols="12">
+                                                                                <v-textarea
+                                                                                    background-color="grey lighten-2"
+                                                                                    color="success"
+                                                                                    label="Комментарий"
+                                                                                    v-model="commentUser"
+                                                                                ></v-textarea>
+                                                                            </v-col>
+
+                                                                            <v-col col="12">
+                                                                                <span class="text-h5 ml-2 mb-5">Выставите рейтинг туру</span>
+                                                                                <v-rating
+                                                                                        v-model="resort.id = resort.id > 5 ? 5 : resort.id"
+                                                                                        icon-label="custom icon label text {0} of {1}"
+                                                                                        background-color="yellow lighten-3"
+                                                                                        color="yellow"
+                                                                                        medium
+                                                                                        empty-icon="$ratingFull"
+                                                                                        half-increments
+                                                                                        hover
+                                                                                        @input="raiting(resort.id)"
+                                                                                ></v-rating>
+                                                                            </v-col>
+                                                                        </v-row>
+                                                                    </v-container>
+                                                                </v-card-text>
+                                                                <v-card-actions>
+                                                                    <v-spacer></v-spacer>
+                                                                    <v-btn
+                                                                        color="blue darken-1"
+                                                                        text
+                                                                        @click="dialogComment = false"
+                                                                    >
+                                                                        Закрыть
+                                                                    </v-btn>
+                                                                    <v-btn
+                                                                        color="blue darken-1"
+                                                                        text
+                                                                        @click="dialogComment = false"
+                                                                    >
+                                                                        Отправить
+                                                                    </v-btn>
+                                                                </v-card-actions>
+                                                            </v-card>
+                                                        </v-dialog>
+                                                    </v-row>
+
+                                                </div>
+                                                <span class="ml-3 h4">Отели:</span>
                                                 <ul class="list-group list-group-flush">
                                                     <li class="list-group-item" v-for="hotel of listHotels" :key="hotel.id">{{hotel.name}}</li>
                                                 </ul>

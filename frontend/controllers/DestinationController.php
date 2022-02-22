@@ -6,6 +6,7 @@ use yii\web\Controller;
 use Yii;
 use common\models\listCountry\ListCountry;
 use common\models\listResorts\ListResorts;
+use common\models\User;
 
 class DestinationController extends Controller
 {
@@ -31,6 +32,21 @@ class DestinationController extends Controller
         $modelResorts = $modelCountry->listResorts;
 
         return $modelResorts;
+    }
+
+    public function actionGetUser()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $response = [
+            'res' => false,
+            'user' => [],
+        ];
+        if (!Yii::$app->user->isGuest) {
+            $response['res'] = true;
+            $response['user'] = User::find()->select('username, phone, email')->where(['id' => Yii::$app->user->identity->id])->one();
+        }
+
+        return $response;
     }
 
 }
