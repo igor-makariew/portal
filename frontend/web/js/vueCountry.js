@@ -18,6 +18,12 @@ new Vue({
         commentUser: '',
         rating: 3,
         nameUser: '',
+        ratingUser: 0,
+        commentTextRules: [
+            v => !!v || 'Комментарий не введен',
+            v => (v && v.length >= 10) || 'Комментарий должен быть не менее 10 символов',
+        ],
+        validCommentUser: true,
         //end raiting tour
     }),
 
@@ -53,7 +59,7 @@ new Vue({
          * @param boolean flag
          * @returns {Promise<void>}
          */
-        async getHotels(id, flag, event) {
+        async getHotels(id, flag) {
             if (!flag) {
                 this.loaderHotels = true;
                 const result = await axios(`http://api-gateway.travelata.ru/directory/resortHotels?resortId=${id}`);
@@ -67,6 +73,9 @@ new Vue({
             }
         },
 
+        /**
+         * получение данных зарегестрированного пользователя
+         */
         getUser() {
             axios.post('/destination/get-user', {})
                 .then( (response) => {
@@ -76,12 +85,30 @@ new Vue({
             })
         },
 
-        /**
-         *
-         * @param integer id
-         */
-        raiting(id) {
-            console.log(id);
+        submitComment(resort, comment) {
+            this.dialogComment = false;
+            const data = {
+                'resort': resort,
+                'comment': comment
+            };
+            this.loaderCountry = true;
+            axios.post('/destination/create-comment', {
+                'data': data
+            }).then( (response) => {
+                if (response.data.res) {
+                    console.log(response.data);
+                } else {
+                    console.log('error');
+                }
+                this.loaderCountry = false;
+            }).catch( (error) => {
+                console.log(error.message);
+            })
         },
+
+        addRating(value) {
+            console.log(value);
+            this.ratingUser = value;
+        }
     }
 })
