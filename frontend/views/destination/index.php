@@ -73,7 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <v-expansion-panel-header v-slot="{ open }">Курорт - {{resort.name}} - {{open}}
                                     <span v-if="!open" class="text-right ml-5">
                                        <v-rating
-                                               v-model="resort.id = resort.id > 5 ? 5 : resort.id"
+                                               v-model="resort.rating"
                                                icon-label="custom icon label text {0} of {1}"
                                                background-color="yellow lighten-3"
                                                color="yellow"
@@ -144,13 +144,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                                                             <v-col col="12">
                                                                                 <span class="text-h5 ml-2 mb-5">Выставите рейтинг туру:</span>
                                                                                 <v-rating
-                                                                                        v-model="resort.rating"
+                                                                                        v-model="resort.user_rating"
                                                                                         background-color="yellow lighten-3"
                                                                                         color="yellow"
                                                                                         medium
                                                                                         half-increments
                                                                                         hover
-                                                                                        :key="resort.id"
                                                                                 ></v-rating>
                                                                             </v-col>
                                                                         </v-row>
@@ -170,7 +169,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                                         color="blue darken-1"
                                                                         text
                                                                         :disabled="!validCommentUser"
-                                                                        @click="submitComment(resort, commentUser)"
+                                                                        @click="submitComment(resort, commentUser, userId)"
                                                                 >
                                                                     Отправить
                                                                 </v-btn>

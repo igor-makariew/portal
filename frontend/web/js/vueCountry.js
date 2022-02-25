@@ -18,6 +18,7 @@ new Vue({
         commentUser: '',
         rating: 3,
         nameUser: '',
+        userId: 0,
         ratingUser: 0,
         commentTextRules: [
             v => !!v || 'Комментарий не введен',
@@ -46,7 +47,8 @@ new Vue({
             axios.post('/destination/get-country', {
                 'data': data
             }).then( (response) => {
-                this.listResorts = response.data;
+                console.log(response.data);
+                this.listResorts = response.data.listResorts;
                 this.loaderCountry = false;
             }).catch( (error) => {
                 console.log(error.message);
@@ -80,24 +82,38 @@ new Vue({
             axios.post('/destination/get-user', {})
                 .then( (response) => {
                     this.nameUser = response.data.user['username'];
+                    this.userId = response.data.user['id'];
                 }).catch( (error) => {
                     console.log(error.message);
             })
         },
 
-        submitComment(resort, comment) {
+        /**
+         *
+         * @param object resort
+         * @param string comment
+         * @param integer user_id
+         */
+        submitComment(resort, comment, user_id) {
             this.dialogComment = false;
+            let urlParams = new URLSearchParams(window.location.search);
+            let idCountry = urlParams.get('id');
             const data = {
                 'resort': resort,
-                'comment': comment
+                'comment': comment,
+                'user_id': user_id,
+                'id': idCountry
             };
             this.loaderCountry = true;
             axios.post('/destination/create-comment', {
                 'data': data
             }).then( (response) => {
+                console.log(response.data);
                 if (response.data.res) {
-                    console.log(response.data);
+                    this.commentUser = '';
+                    this.listResorts = response.data.listResorts;
                 } else {
+                    // взять модалку и поставить сюда с ошибкой
                     console.log('error');
                 }
                 this.loaderCountry = false;

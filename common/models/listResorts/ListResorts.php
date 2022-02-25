@@ -2,6 +2,7 @@
 
 namespace common\models\listResorts;
 
+use common\models\rating\Rating;
 use Yii;
 
 /**
@@ -31,7 +32,8 @@ class ListResorts extends \yii\db\ActiveRecord
     {
         return [
             [['resorts_id', 'name', 'resort_country_id'], 'required'],
-            [['resorts_id', 'is_popular', 'resort_country_id', 'at_filtering'], 'integer'],
+            [['is_popular', 'resort_country_id', 'at_filtering'], 'integer'],
+            [['rating'], 'safe'],
             [['name'], 'string', 'max' => 50],
         ];
     }
@@ -48,6 +50,24 @@ class ListResorts extends \yii\db\ActiveRecord
             'is_popular' => 'Is Popular',
             'resort_country_id' => 'Resort Country ID',
             'at_filtering' => 'At Filtering',
+            'rating' => 'Rating'
         ];
+    }
+
+
+    /**
+     * @return \yii\db\ActiveQuery|ListCountry
+     */
+    public function getListCountry()
+    {
+        return $this->hasOne(ListCountry::class, ['country_id' => 'resort_country_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRatings()
+    {
+        return $this->hasMany(Rating::class, ['resorts_id' => 'resorts_id']);
     }
 }

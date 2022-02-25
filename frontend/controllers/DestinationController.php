@@ -2,12 +2,14 @@
 
 namespace frontend\controllers;
 
+use yii\db\Query;
 use yii\web\Controller;
 use Yii;
 use common\models\listCountry\ListCountry;
 use common\models\listResorts\ListResorts;
 use common\models\User;
 use common\models\comments\Comments;
+use common\models\rating\Rating;
 
 class DestinationController extends Controller
 {
@@ -28,11 +30,41 @@ class DestinationController extends Controller
     {
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
         $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $response = [
+            'listResorts' => [],
+        ];
 
-        $modelCountry = ListCountry::find()->where(['country_id' => $data['data']['id']])->one();
-        $modelResorts = $modelCountry->listResorts;
+//        $models = ListCountry::find()
+//            ->select('*')
+//            ->with([
+//                'listResorts' => function($query) {
+//                    $query->with(['ratings']);
+//                }
+//            ])
+//            ->where(['list_country.country_id' => $data['data']['id']])
+//            ->one();
 
-        return $modelResorts;
+        $querys = new \yii\db\Query;
+        $userRatingsTour = $querys->select('`list_resorts`.`*`, `rating`.`rating` AS `user_rating`, `rating`.`user_id`')
+            ->from('`list_country`')
+            ->leftJoin('`list_resorts`', '`list_resorts`.`resort_country_id` = `list_country`.`country_id`')
+            ->leftJoin('`rating`', '`rating`.`resorts_id` = `list_resorts`.`resorts_id` AND `rating`.`user_id` = ' .Yii::$app->user->identity->id)
+            ->where(['list_country.country_id' => $data['data']['id']])
+            ->all();
+        $userRatings = [];
+        foreach($userRatingsTour as  $index => $userRatingTour) {
+            $userRatings[$index]['at_filtering'] = $userRatingTour['at_filtering'];
+            $userRatings[$index]['id'] = (int) $userRatingTour['id'];
+            $userRatings[$index]['is_popular'] = $userRatingTour['is_popular'];
+            $userRatings[$index]['name'] = $userRatingTour['name'];
+            $userRatings[$index]['rating'] = (float) $userRatingTour['rating'];
+            $userRatings[$index]['resort_country_id'] = (int) $userRatingTour['resort_country_id'];
+            $userRatings[$index]['resorts_id'] = (int) $userRatingTour['resorts_id'];
+            $userRatings[$index]['user_rating'] = (float) $userRatingTour['user_rating'];
+        }
+
+        $response['listResorts'] = $userRatings;
+        return $response;
     }
 
     /**
@@ -47,7 +79,7 @@ class DestinationController extends Controller
         ];
         if (!Yii::$app->user->isGuest) {
             $response['res'] = true;
-            $response['user'] = User::find()->select('username, phone, email')->where(['id' => Yii::$app->user->identity->id])->one();
+            $response['user'] = User::find()->select('id, username, phone, email')->where(['id' => Yii::$app->user->identity->id])->one();
         }
 
         return $response;
@@ -59,17 +91,59 @@ class DestinationController extends Controller
         $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
         $response = [
             'res' => false,
+            'listResorts' => [],
+            'error' => ''
         ];
-        $modelListResort = ListResorts::findOne($data['data']['resort']['resorts_id']);
-        $modelListResort->rating = $data['data']['resort']['rating'];
+        $modelUserRating = Rating::find()->where(['user_id' => $data['data']['user_id'], 'resorts_id' => $data['data']['resort']['resorts_id']])->one();
+        if (!isset($modelUserRating)) {
+            $modelRating = new Rating();
+            $valueRating = [
+                'user_id' => $data['data']['user_id'],
+                'rating' => $data['data']['resort']['user_rating'],
+                'resorts_id' => $data['data']['resort']['resorts_id']
+            ];
+            $modelRating->attributes = $valueRating;
+            $modelRating->save();
+        } else {
+            $modelRating = Rating::find()->where(['user_id' => $data['data']['user_id'], 'resorts_id' => $data['data']['resort']['resorts_id']])->one();
+            $modelRating->rating = $data['data']['resort']['user_rating'];
+            $modelRating->update();
+        }
+
+        $modelOverallRating = Rating::find()->where(['resorts_id' => $data['data']['resort']['resorts_id']])->sum('rating');
+        $modelOverallUsers = Rating::find()->select('user_id')->where(['resorts_id' => $data['data']['resort']['resorts_id']])->count();
+        $average = $modelOverallRating / $modelOverallUsers;
+
+        $modelListResort = ListResorts::find()->where(['resorts_id' => $data['data']['resort']['resorts_id']])->one();
+        $modelListResort->rating = $average;
         $modelComments = new Comments();
-        $value = [
+        $valueComment = [
             'comment_resort_id' => $data['data']['resort']['resorts_id'],
             'comment' => $data['data']['comment']
         ];
-        $modelComments->attributes = $value;
-        if ($modelComments->save() && $modelListResort->update()) {
+        $modelComments->attributes = $valueComment;
+        $test = $modelListResort->update() == 0 ? true : $modelListResort->update();
+        if ($modelComments->save() && $modelListResort->update() == 0 ? true : $modelListResort->update()) {
             $response['res'] = true;
+            $querys = new \yii\db\Query;
+            $userRatingsTour = $querys->select('`list_resorts`.`*`, `rating`.`rating` AS `user_rating`, `rating`.`user_id`')
+                ->from('`list_country`')
+                ->leftJoin('`list_resorts`', '`list_resorts`.`resort_country_id` = `list_country`.`country_id`')
+                ->leftJoin('`rating`', '`rating`.`resorts_id` = `list_resorts`.`resorts_id` AND `rating`.`user_id` = ' .Yii::$app->user->identity->id)
+                ->where(['list_country.country_id' => $data['data']['id']])
+                ->all();
+            $userRatings = [];
+            foreach($userRatingsTour as  $index => $userRatingTour) {
+                $userRatings[$index]['at_filtering'] = $userRatingTour['at_filtering'];
+                $userRatings[$index]['id'] = (int) $userRatingTour['id'];
+                $userRatings[$index]['is_popular'] = $userRatingTour['is_popular'];
+                $userRatings[$index]['name'] = $userRatingTour['name'];
+                $userRatings[$index]['rating'] = (float) $userRatingTour['rating'];
+                $userRatings[$index]['resort_country_id'] = (int) $userRatingTour['resort_country_id'];
+                $userRatings[$index]['resorts_id'] = (int) $userRatingTour['resorts_id'];
+                $userRatings[$index]['user_rating'] = (float) $userRatingTour['user_rating'];
+            }
+            $response['listResorts'] = $userRatings;
         }
 
         return $response;
