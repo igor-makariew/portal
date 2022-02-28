@@ -53,13 +53,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         >
                             <div class="item">
                                 <div class="destination">
-                                    <a :href="'/destination/index?id=' + country['id']" class="img d-flex justify-content-center align-items-center" style="background-image: url(images/destination-1.jpg);">
+                                    <a :href="'/destination/index?id=' + country['country_id']" class="img d-flex justify-content-center align-items-center" style="background-image: url(images/destination-1.jpg);">
                                         <div class="icon d-flex justify-content-center align-items-center">
                                             <span class="icon-search2"></span>
                                         </div>
                                     </a>
                                     <div class="text p-3">
-                                        <h3><a :href="'/destination/index?id=' + country['id']">{{country['name']}}</a></h3>
+                                        <h3><a :href="'/destination/index?id=' + country['country_id']">{{country['name']}}</a></h3>
                                         <template v-if="listResorts[country['id']] != null">
                                             <span class="listing"> {{Object.keys(listResorts[country['id']]).length}} Listing</span>
                                         </template>
