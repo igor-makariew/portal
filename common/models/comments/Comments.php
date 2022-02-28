@@ -34,6 +34,7 @@ class Comments extends ActiveRecord
             [['comment_resort_id'], 'integer'],
             [['comment'], 'string'],
             [['created_at'], 'safe'],
+            [['name'], 'string', 'max' => 64]
         ];
     }
 

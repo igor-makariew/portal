@@ -169,7 +169,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                                         color="blue darken-1"
                                                                         text
                                                                         :disabled="!validCommentUser"
-                                                                        @click="submitComment(resort, commentUser, userId)"
+                                                                        @click="submitComment(resort, commentUser, userId, nameUser)"
                                                                 >
                                                                     Отправить
                                                                 </v-btn>

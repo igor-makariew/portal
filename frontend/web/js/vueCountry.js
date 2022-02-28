@@ -47,7 +47,6 @@ new Vue({
             axios.post('/destination/get-country', {
                 'data': data
             }).then( (response) => {
-                console.log(response.data);
                 this.listResorts = response.data.listResorts;
                 this.loaderCountry = false;
             }).catch( (error) => {
@@ -94,7 +93,7 @@ new Vue({
          * @param string comment
          * @param integer user_id
          */
-        submitComment(resort, comment, user_id) {
+        submitComment(resort, comment, user_id, nameUser) {
             this.dialogComment = false;
             let urlParams = new URLSearchParams(window.location.search);
             let idCountry = urlParams.get('id');
@@ -102,13 +101,13 @@ new Vue({
                 'resort': resort,
                 'comment': comment,
                 'user_id': user_id,
-                'id': idCountry
+                'id': idCountry,
+                'name': nameUser
             };
             this.loaderCountry = true;
             axios.post('/destination/create-comment', {
                 'data': data
             }).then( (response) => {
-                console.log(response.data);
                 if (response.data.res) {
                     this.commentUser = '';
                     this.listResorts = response.data.listResorts;

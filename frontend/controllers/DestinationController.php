@@ -119,10 +119,10 @@ class DestinationController extends Controller
         $modelComments = new Comments();
         $valueComment = [
             'comment_resort_id' => $data['data']['resort']['resorts_id'],
-            'comment' => $data['data']['comment']
+            'comment' => $data['data']['comment'],
+            'name' => $data['data']['name']
         ];
         $modelComments->attributes = $valueComment;
-        $test = $modelListResort->update() == 0 ? true : $modelListResort->update();
         if ($modelComments->save() && $modelListResort->update() == 0 ? true : $modelListResort->update()) {
             $response['res'] = true;
             $querys = new \yii\db\Query;
