@@ -6,6 +6,7 @@ use  yii\widgets\Breadcrumbs;
 $this->title = 'Country';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<?= $this->registerCssFile(Yii::$app->urlManager->createUrl('/css/destination.css', ['depends' => ['frontend\assets\AppAsset']])); ?>
 
 <div class="hero-wrap js-fullheight" style="background-image: url('/images/hotels.jpg');">
     <div class="overlay"></div>
@@ -68,9 +69,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         ><v-expansion-panel
                                     v-for="(resort, index) in listResorts"
                                     :key="index"
-                                    @click="getHotels(resort.id, flag)"
                             >
-                                <v-expansion-panel-header v-slot="{ open }">Курорт - {{resort.name}} - {{open}}
+                                <v-expansion-panel-header
+                                        v-slot="{ open }"
+
+                                >
+                                    <span @click="getHotels(resort, open)">
+                                        Курорт - {{resort.name}}
+                                    </span>
                                     <span v-if="!open" class="text-right ml-5">
                                        <v-rating
                                                v-model="resort.rating"
@@ -112,15 +118,45 @@ $this->params['breadcrumbs'][] = $this->title;
                                                             :retain-focus="false"
                                                     >
                                                         <template v-slot:activator="{ on, attrs }">
-                                                            <v-btn
+                                                            <v-row class="row-parent">
+                                                                <v-btn
                                                                     color="success"
                                                                     dark
                                                                     v-bind="attrs"
                                                                     v-on="on"
                                                                     class="mt-5 mb-5"
-                                                            >
-                                                                Оставить комментарий
-                                                            </v-btn>
+                                                                >
+                                                                    Оставить комментарий
+                                                                </v-btn>
+                                                                <span>
+                                                                    <span class="h5 mr-5">Комментарии:</span>
+                                                                    <!-- start preloader not work!!!-->
+                                                                    <template v-if="loaderCountComments">
+                                                                        <span class="loader-wrap text-center" >
+                                                                        <v-progress-circular
+                                                                                :rotate="-90"
+                                                                                :size="20"
+                                                                                :width="5"
+                                                                                :value="value"
+                                                                                :indeterminate="true"
+                                                                                color="info"
+                                                                        >
+                                                                        </v-progress-circular>
+                                                                    </span>
+                                                                    </template>
+                                                                    <!-- end preloader -->
+                                                                    <template v-if="!loaderCountComments">
+                                                                        <v-btn
+                                                                                color="info"
+                                                                                dark
+                                                                                class="mt-5 mb-5"
+                                                                                @click="trigComment"
+                                                                        >
+                                                                        {{countComment}}
+                                                                    </v-btn>
+                                                                    </template>
+                                                                </span>
+                                                            </v-row>
                                                         </template>
                                                         <v-card>
                                                             <v-card-title>
@@ -169,7 +205,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                                         color="blue darken-1"
                                                                         text
                                                                         :disabled="!validCommentUser"
-                                                                        @click="submitComment(resort, commentUser, userId, nameUser)"
+                                                                        @click="submitComment(commentUser, userId, nameUser)"
                                                                 >
                                                                     Отправить
                                                                 </v-btn>
@@ -183,6 +219,26 @@ $this->params['breadcrumbs'][] = $this->title;
                                             <ul class="list-group list-group-flush">
                                                 <li class="list-group-item" v-for="hotel of listHotels" :key="hotel.id">{{hotel.name}}</li>
                                             </ul>
+                                            <div v-show="triggerComments">
+                                                <div class="comments">
+                                                    <ul class="media-list">
+                                                        <!-- Комментарий (уровень 1) -->
+                                                        <li class="media">
+                                                            <div class="media-body">
+                                                                <div class="p-3 mb-2 bg-secondary text-white background-border" v-for="comment in comments">
+                                                                    <div class="media-heading">
+                                                                        <div class="author">{{comment.name}}</div>
+                                                                        <div class="metadata">
+                                                                            <span class="date ml-12 text-white">{{comment.created_at}}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="media-text text-justify">{{comment.comment}}</div>
+                                                                </div>
+                                                            </div>
+                                                        </li><!-- Конец комментария (уровень 1) -->
+                                                    </ul>
+                                                </div>
+                                            </div>
                                         </template>
                                         <template v-else>
                                             <v-alert

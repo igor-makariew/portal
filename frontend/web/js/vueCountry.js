@@ -25,12 +25,23 @@ new Vue({
             v => (v && v.length >= 10) || 'Комментарий должен быть не менее 10 символов',
         ],
         validCommentUser: true,
+        countComment: 0,
+        comments: [],
+        loaderCountComments: false,
+        triggerComments: false,
+        resort: {},
         //end raiting tour
     }),
 
     created () {
         this.getCountry();
-        this.getUser()
+        this.getUser();
+    },
+
+    watch: {
+        // countComment: function(val) {
+        //     console.log(val);
+        // }
     },
 
     methods: {
@@ -56,22 +67,24 @@ new Vue({
 
         /**
          *
-         * @param integer id
-         * @param boolean flag
+         * @param object resort
          * @returns {Promise<void>}
          */
-        async getHotels(id, flag) {
+        async getHotels(resort,  flag) {
             if (!flag) {
+                this.resort = resort;
                 this.loaderHotels = true;
-                const result = await axios(`http://api-gateway.travelata.ru/directory/resortHotels?resortId=${id}`);
+                this.lengthComments(this.resort.resorts_id);
+                const result = await axios(`http://api-gateway.travelata.ru/directory/resortHotels?resortId=${this.resort.id}`);
                 this.listHotels = result['data']['data'];
                 if (this.listHotels.length != -1) {
                     this.loaderHotels = false;
                 }
-                this.flag = true;
-            } else {
-                this.flag = false;
+                // this.flag = true;
             }
+            // else {
+            //     this.flag = false;
+            // }
         },
 
         /**
@@ -88,21 +101,21 @@ new Vue({
         },
 
         /**
-         *
+         * Комментраии пользователей
          * @param object resort
          * @param string comment
          * @param integer user_id
          */
-        submitComment(resort, comment, user_id, nameUser) {
+        submitComment(comment, user_id, nameUser) {
             this.dialogComment = false;
             let urlParams = new URLSearchParams(window.location.search);
             let idCountry = urlParams.get('id');
             const data = {
-                'resort': resort,
+                'resort': this.resort,
                 'comment': comment,
                 'user_id': user_id,
                 'id': idCountry,
-                'name': nameUser
+                'name': nameUser,
             };
             this.loaderCountry = true;
             axios.post('/destination/create-comment', {
@@ -119,6 +132,35 @@ new Vue({
             }).catch( (error) => {
                 console.log(error.message);
             })
+        },
+
+        /**
+         * количество кмментариев
+         *
+         * @param integer commentResortsId
+         */
+        lengthComments(commentResortsId) {
+            const data = {
+                'commentResortsId': commentResortsId
+            };
+            this.loaderCountComments = true;
+            axios.post('/destination/count-comments', {
+                'data': data
+            }).then( (response) => {
+                this.countComment = response.data.countComment;
+                this.comments = response.data.commentTour;
+                this.loaderCountComments = false;
+                }).catch( (error) => {
+                    console.log(error.message);
+            })
+        },
+
+        /**
+         * отображение комментариев
+         *
+         */
+        trigComment() {
+            this.triggerComments = this.triggerComments == false ? true : false;
         },
 
         addRating(value) {

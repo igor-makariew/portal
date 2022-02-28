@@ -149,4 +149,20 @@ class DestinationController extends Controller
         return $response;
     }
 
+    public function actionCountComments()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $response = [
+            'commentTour' => [],
+            'countComment' => ''
+        ];
+        $response['commentTour'] = Comments::find()
+            ->select(['comment', 'created_at', 'name'])
+            ->where(['comment_resort_id' => $data['data']['commentResortsId']])
+            ->all();
+        $response['countComment'] = count($response['commentTour']);
+        return $response;
+    }
+
 }
