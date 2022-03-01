@@ -26,8 +26,8 @@ class LoginForm extends Model
     {
         return [
             ['email', 'trim'],
-            ['email', 'required'],
-            ['email', 'email'],
+//            ['email', 'required'],
+            [['email'], 'email'],
             ['email', 'string', 'max' => 255],
 
             ['password', 'required'],

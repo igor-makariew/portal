@@ -76,9 +76,8 @@ class SiteController extends Controller
             return $this->goHome();
         }
 
-        $this->layout = 'blank';
-
         $model = new LoginForm();
+        $model->username = Yii::$app->request->post()['LoginForm']['username'];
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         }
