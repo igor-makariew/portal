@@ -23,7 +23,7 @@ class CountriesController extends \yii\web\Controller
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
         $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
         $query = new \yii\db\Query;
-        $modelListCountry = $query->select('`list_country`.`country_id`, `list_country`.`popular`, `list_country`.`name` AS `country_name`, `list_resorts`.`name` AS `name_resort`, `list_resorts`.`is_popular`, `list_resorts`.`rating`')
+        $modelListCountry = $query->select('`list_country`.`country_id`, `list_country`.`popular`, `list_country`.`name` AS `country_name`, `list_resorts`.`name` AS `resort_name`, `list_resorts`.`is_popular`, `list_resorts`.`rating`')
             ->from('`list_country`')
             ->leftJoin('`list_resorts`', '`list_resorts`.`resort_country_id` = `list_country`.`country_id`')
             ->all();

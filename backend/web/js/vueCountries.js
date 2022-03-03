@@ -4,6 +4,13 @@ new Vue({
 
     data: () => ({
         search: '',
+        selectField:[
+            {key: 'country_name', value: 'Страна'},
+            {key: 'country_id', value: 'Идентификатор'},
+            {key: 'resort_name', value: 'Тур'},
+            {key: 'rating', value: 'Рейтинг'},
+        ],
+        field: '',
         page: 1,
         pageCount: 0,
         itemsPerPage: 20,
@@ -24,7 +31,7 @@ new Vue({
             },
             { text: 'Идентификатор', value: 'country_id',  align: 'center'},
             { text: 'Популярность страны', value: 'popular', align: 'center' },
-            { text: 'Тур', value: 'name_resort', align: 'center' },
+            { text: 'Тур', value: 'resort_name', align: 'center' },
             { text: 'Популярность тура', value: 'is_popular', align: 'center' },
             { text: 'Рейтинг', value: 'rating', align: 'center' },
         ],
@@ -37,6 +44,7 @@ new Vue({
     }),
 
     created() {
+        this.initialize();
         this.getCountries();
     },
 
@@ -49,10 +57,20 @@ new Vue({
             if (newVal < 1 || isNaN(newVal)) {
                 this.itemsPerPage = this.minRow;
             }
+        },
+
+        field: function (newVal, oldVal) {
+            if (newVal != oldVal) {
+                this.search = '';
+                this.listCountries = [];
+            }
         }
     },
 
     methods: {
+        /**
+         * получение стран с из направлениями
+         */
         getCountries() {
             this.loader = true;
             axios.post('/admin/countries/get-countries', {})
@@ -64,6 +82,12 @@ new Vue({
             })
         },
 
+        /**
+         * возвращение цвета
+         *
+         * @param popular
+         * @returns {string}
+         */
         getColor(popular) {
             if (popular == 1) {
                 return 'green';
@@ -72,17 +96,35 @@ new Vue({
             }
         },
 
+        initialize () {
+            this.desserts;
+        },
         /**
          * поиск
          *
          * @param event
          */
         searchList(event) {
-            let search = this.search.match(/(^\D+$)/g);
+            this.field = this.field == '' ? 'country_name' : this.field;
+            let search = null;
+            if (this.field == 'country_name' || this.field == 'resort_name') {
+                search = this.search.match(/(^\D+$)/g);
+            }
+
+            if (this.field == 'country_id') {
+                search = this.search.match(/^[0-9]+$/g);
+            }
+
+            if (this.field == 'rating') {
+                search = this.search.match(/^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$/g);
+            }
+
             if (search != null) {
                 this.listCountries = this.desserts.filter( (country) => {
-                    if (country.name.toLowerCase().indexOf(event.toLowerCase()) != -1) {
-                        return country;
+                    if ( country[this.field] != null ) {
+                        if (country[this.field].toLowerCase().indexOf(event.toLowerCase()) != -1) {
+                            return country;
+                        }
                     }
                 })
             } else {

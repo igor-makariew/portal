@@ -30,6 +30,21 @@
                             <div class="col-xl-6 col-md-6 col-12">
                             </div>
                             <div class="col-xl-6 col-md-6 col-12">
+                                <v-col
+                                        class="d-flex"
+                                        cols="12"
+                                        sm="6"
+                                >
+                                    <v-select
+                                            :items="selectField"
+                                            item-value="key"
+                                            item-text="value"
+                                            v-model="field"
+                                            label="Выберите поле"
+                                            dense
+                                            solo
+                                    ></v-select>
+                                </v-col>
                                 <v-text-field
                                         v-model="search"
                                         append-icon="mdi-magnify"
