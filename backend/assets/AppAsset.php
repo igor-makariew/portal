@@ -13,13 +13,26 @@ class AppAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'css/site.css',
-//        'chart.js/Chart.min.css',
+        'https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700"',
+        'https://fonts.googleapis.com/css?family=Alex+Brush',
+        'css/materialdesignicons.min.css',
+        'css/fonts.googleapis.css',
+        'css/vuetify.min.css',
+        'css/font-awesome.min.css',
     ];
     public $js = [
+        'js/jquery.min.js',
+        'js/axios.min.js',
+        'js/bootstrap.min.js',
+        'js/vue.js',
+        'js/vuetify.js',
     ];
     public $depends = [
 //        ломает шаблон
 //        'yii\web\YiiAsset',
 //        'yii\bootstrap4\BootstrapAsset',
     ];
+//    public $jsOptions = [
+//        'position' => \yii\web\View::POS_HEAD
+//    ];
 }

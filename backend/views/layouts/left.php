@@ -32,6 +32,7 @@
                 'items' => [
                     ['label' => 'Menu admin', 'options' => ['class' => 'header']],
                     ['label' => 'Users', 'icon' => 'users', 'url' => ['users/index']],
+                    ['label' => 'Countries', 'icon' => 'flag', 'url' => ['countries/index']],
                     ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug']],
                     ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
                     [
