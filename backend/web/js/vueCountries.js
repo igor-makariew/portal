@@ -17,6 +17,7 @@ new Vue({
         maxRows: 50,
         minRow: 1,
         loader: false,
+        loaderUpdate: false,
         intervalCountriesRuls: [
             v => !!v || 'Поле не должна быть пустым',
             v => v > 0 || 'Значение не должно быть меньше 1',
@@ -34,6 +35,7 @@ new Vue({
             { text: 'Тур', value: 'resort_name', align: 'center' },
             { text: 'Популярность тура', value: 'is_popular', align: 'center' },
             { text: 'Рейтинг', value: 'rating', align: 'center' },
+            { text: 'Действие', value: 'actions', sortable: false },
         ],
         desserts: [],
         //start preloder
@@ -41,11 +43,46 @@ new Vue({
         value: 0,
         //end preloder
         listCountries: [],
+        dialog: false,
+        dialogDelete: false,
+        editedIndex: -1,
+        editedItem: {
+            country_name: '',
+            country_id: null,
+            popular: null,
+            resort_name: '',
+            is_popular: null,
+            rating: 0,
+        },
+        defaultItem: {
+            country_name: '',
+            country_id: null,
+            popular: null,
+            resort_name: '',
+            is_popular: null,
+            rating: 0,
+        },
+        popularCountry: [
+            {key: 0, value: 'НЕТ'},
+            {key: 1, value: 'ДА'}
+        ],
+        popularTour: [
+            {key: null, value: 'НЕТ'},
+            {key: 1, value: 'ДА'}
+        ],
+        crtSelectedItem: '',
+        item: [],
+        dialogAlert: false,
     }),
 
     created() {
-        this.initialize();
         this.getCountries();
+    },
+
+    computed: {
+        formTitle () {
+            return this.editedIndex === -1 ? 'Создание новой записи' : 'Редактирование записи'
+        },
     },
 
     watch: {
@@ -64,7 +101,18 @@ new Vue({
                 this.search = '';
                 this.listCountries = [];
             }
-        }
+        },
+
+        dialog (val) {
+            val || this.close()
+        },
+
+        // desserts: {
+        //     handler(val) {
+        //        console.log(val)
+        //     },
+        //     deep: true
+        // },
     },
 
     methods: {
@@ -96,9 +144,6 @@ new Vue({
             }
         },
 
-        initialize () {
-            this.desserts;
-        },
         /**
          * поиск
          *
@@ -130,6 +175,96 @@ new Vue({
             } else {
                 this.listCountries = [];
             }
-        }
+        },
+
+        /**
+         * редактирование строки
+         *
+         * @param item
+         */
+        editItem (item) {
+            this.crtSelectedItem = item.resorts_id;
+            this.editedIndex = this.desserts.indexOf(item);
+            this.editedItem = Object.assign({}, item);
+            this.dialog = true;
+            this.item = item;
+        },
+
+        deleteItem (item) {
+            this.editedIndex = this.desserts.indexOf(item)
+            this.editedItem = Object.assign({}, item)
+            this.dialogDelete = true
+        },
+
+        deleteItemConfirm () {
+            this.desserts.splice(this.editedIndex, 1)
+            this.closeDelete()
+        },
+
+        /**
+         * хакрытие окна новй записи/редактирования
+         */
+        close () {
+            this.dialog = false;
+            this.editedIndex = -1
+            // this.$nextTick(() => {
+            //     this.editedItem = Object.assign({}, this.defaultItem)
+            //     this.editedIndex = -1
+            // })
+        },
+
+        /**
+         * хакрытие окна удаления
+         */
+        closeDelete () {
+            this.dialogDelete = false
+            this.$nextTick(() => {
+                this.editedItem = Object.assign({}, this.defaultItem)
+                this.editedIndex = -1
+            })
+        },
+
+        /**
+         * выбор пути отправки данных
+         */
+        selectRequest() {
+            if (this.editedIndex > -1) {
+                this.save('update-row', this.item);
+            } else {
+                this.save('create-row', this.item = null);
+            }
+        },
+
+        /**
+         * сохранение записи
+         */
+        save (path, item) {
+            this.loaderUpdate = true;
+            axios.post(`/admin/countries/${path}`, {
+                'item': this.editedItem,
+            }).then( (response) => {
+                this.loaderUpdate = false;
+                if (response.data.response) {
+                    this.editedIndex = this.desserts.indexOf(item)
+                    if (this.editedIndex > -1) {
+                        Object.assign(this.desserts[this.editedIndex], this.editedItem);
+                        Object.keys(this.desserts).forEach( (key) => {
+                            if (this.desserts[key]['country_id'] == this.editedItem['country_id']) {
+                                this.desserts[key]['popular'] =  this.editedItem['popular']
+                            }
+                        })
+                    } else {
+                        this.getCountries();
+                    }
+                } else {
+                    this.dialogAlert = true;
+                    this.dialogAlertTitle = 'Произошла ошибка обновления. Попробыуйте позже!';
+                }
+            }).catch( (error) => {
+                console.log(error.message);
+            })
+            // this.desserts.push(this.editedItem)
+            this.close()
+        },
     }
 })

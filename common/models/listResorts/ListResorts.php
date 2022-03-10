@@ -3,6 +3,7 @@
 namespace common\models\listResorts;
 
 use common\models\rating\Rating;
+use common\models\listCountry\ListCountry;
 use Yii;
 
 /**
