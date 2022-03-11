@@ -58,6 +58,7 @@
                                                     class="mb-2"
                                                     v-bind="attrs"
                                                     v-on="on"
+                                                    @click="newItem"
                                             >
                                                 Создание новой записи
                                             </v-btn>
@@ -136,9 +137,37 @@
                                                         sm="6"
                                                         md="4"
                                                     >
-                                                        <v-text-field
-                                                            v-model="editedItem.rating"
+                                                        <v-rating
+                                                            v-model="typeof editedItem.rating == 'string' ? Number(editedItem.rating) : editedItem.rating"
+                                                            background-color="orange lighten-3"
+                                                            color="orange"
+                                                            color="yellow"
+                                                            medium
+                                                            empty-icon="$ratingFull"
+                                                            half-increments
                                                             label="Рейтинг"
+                                                        ></v-rating>
+                                                    </v-col>
+                                                    <v-col
+                                                            cols="12"
+                                                            sm="6"
+                                                            md="4"
+                                                            v-if="editedIndex < 0"
+                                                    >
+                                                        <v-text-field
+                                                                v-model="editedItem.resort_country_id"
+                                                                label="Внешний идентификатор"
+                                                        ></v-text-field>
+                                                    </v-col>
+                                                    <v-col
+                                                            cols="12"
+                                                            sm="6"
+                                                            md="4"
+                                                            v-if="editedIndex < 0"
+                                                    >
+                                                        <v-text-field
+                                                                v-model="editedItem.resorts_id"
+                                                                label="Идентификатор тура"
                                                         ></v-text-field>
                                                     </v-col>
                                                 </v-row>

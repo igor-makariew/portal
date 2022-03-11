@@ -53,6 +53,9 @@ new Vue({
             resort_name: '',
             is_popular: null,
             rating: 0,
+            resort_country_id: null,
+            resorts_id: null,
+
         },
         defaultItem: {
             country_name: '',
@@ -61,6 +64,8 @@ new Vue({
             resort_name: '',
             is_popular: null,
             rating: 0,
+            resort_country_id: null,
+            resorts_id: null,
         },
         popularCountry: [
             {key: 0, value: 'НЕТ'},
@@ -73,6 +78,7 @@ new Vue({
         crtSelectedItem: '',
         item: [],
         dialogAlert: false,
+        dialogAlertTitle: '',
     }),
 
     created() {
@@ -106,6 +112,21 @@ new Vue({
         dialog (val) {
             val || this.close()
         },
+
+        editedIndex: function (newVal) {
+            if (newVal == -100) {
+                this.editedItem.country_name = '';
+                this.editedItem.country_id = null;
+                this.editedItem.popular = null;
+                this.editedItem.resort_name = '';
+                this.editedItem.is_popular = null;
+                this.editedItem.rating = 0;
+                this.editedItem.resort_country_id = null;
+                this.editedItem.resorts_id = null;
+                this.editedItem.country_id = null;
+                this.editedItem.country_id = null;
+            }
+        }
 
         // desserts: {
         //     handler(val) {
@@ -190,6 +211,13 @@ new Vue({
             this.item = item;
         },
 
+        /**
+         * при создании новой строки присваивает значение -1
+         */
+        newItem () {
+            this.editedIndex = -100;
+        },
+
         deleteItem (item) {
             this.editedIndex = this.desserts.indexOf(item)
             this.editedItem = Object.assign({}, item)
@@ -254,11 +282,26 @@ new Vue({
                             }
                         })
                     } else {
+                        this.editedItem.country_name = '';
+                        this.editedItem.country_id = null;
+                        this.editedItem.popular = null;
+                        this.editedItem.resort_name = '';
+                        this.editedItem.is_popular = null;
+                        this.editedItem.rating = 0;
+                        this.editedItem.resort_country_id = null;
+                        this.editedItem.resorts_id = null;
+                        this.editedItem.country_id = null;
+                        this.editedItem.country_id = null;
                         this.getCountries();
                     }
                 } else {
                     this.dialogAlert = true;
-                    this.dialogAlertTitle = 'Произошла ошибка обновления. Попробыуйте позже!';
+                    if (this.editedIndex > -1) {
+                        this.dialogAlertTitle = 'Произошла ошибка обновления данных. Попробыуйте позже!';
+                    } else {
+                        console.log(response.data);
+                        this.dialogAlertTitle = 'Произошла ошибка добавления новых данных. Попробыуйте позже!';
+                    }
                 }
             }).catch( (error) => {
                 console.log(error.message);

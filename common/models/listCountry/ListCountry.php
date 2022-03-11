@@ -29,7 +29,8 @@ class ListCountry extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['country_id', 'popular'], 'integer'],
+            [['country_id'], 'integer', 'min' => 1],
+            [['popular'], 'number', 'min' => 0, 'max' => 5],
             [['name'], 'string', 'max' => 50],
             [['country_id'], 'unique']
         ];

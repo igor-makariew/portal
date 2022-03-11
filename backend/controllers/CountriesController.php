@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use common\models\listResorts\ListResorts;
 use Yii;
+use yii\db\Exception;
 use yii\helpers\Url;
 use common\models\listCountry\ListCountry;
 
@@ -37,7 +38,9 @@ class CountriesController extends \yii\web\Controller
         return $modelListCountry;
     }
 
-
+    /**
+     * @return array
+     */
     public function actionUpdateRow()
     {
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
@@ -58,6 +61,51 @@ class CountriesController extends \yii\web\Controller
         $modelListCountry->popular = $data['item']['popular'];
         if ($modelListresort->validate() && $modelListCountry->validate() && $modelListresort->save() && $modelListCountry->save()) {
             $response['response'] = true;
+        }
+
+        return $response;
+    }
+
+    /**
+     * @return array
+     */
+    public function actionCreateRow()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $response = [
+            'response' => false,
+            'message' => '',
+            'errorCountry' => '',
+            'errorResorts' => ''
+        ];
+        $modelListCountry = new ListCountry();
+        $countryValues = [
+            'country_id' => $data['item']['country_id'],
+            'name' => $data['item']['country_name'],
+            'popular' => $data['item']['popular']
+        ];
+        $modelListCountry->attributes = $countryValues;
+        $modelListResorts = new ListResorts();
+        $resortValues = [
+            'resorts_id' => $data['item']['resorts_id'],
+            'name' => $data['item']['resort_name'],
+            'is_popular' => $data['item']['is_popular'],
+            'resort_country_id' => $data['item']['resort_country_id'],
+            'rating' => $data['item']['rating'],
+        ];
+        $modelListResorts->attributes = $resortValues;
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            if ( $modelListCountry->validate() && $modelListCountry->save() && $modelListResorts->validate() && $modelListResorts->save()) {
+                $response['response'] = true;
+                $transaction->commit();
+            }
+        } catch (Exception $exception) {
+            $transaction->rollBack();
+            $response['message'] = $exception->getMessage();
+            $response['errorCountry'] = $modelListCountry->errors;
+            $response['errorResorts'] = $modelListResorts->errors;
         }
 
         return $response;
