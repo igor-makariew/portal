@@ -67,6 +67,8 @@ class CountriesController extends \yii\web\Controller
     }
 
     /**
+     * редактирование строк
+     *
      * @return array
      */
     public function actionCreateRow()
@@ -95,11 +97,19 @@ class CountriesController extends \yii\web\Controller
             'rating' => $data['item']['rating'],
         ];
         $modelListResorts->attributes = $resortValues;
+        $isModelListCountry = ListCountry::find()->where(['country_id' => $data['item']['country_id']])->count();
         $transaction = Yii::$app->db->beginTransaction();
         try {
-            if ( $modelListCountry->validate() && $modelListCountry->save() && $modelListResorts->validate() && $modelListResorts->save()) {
-                $response['response'] = true;
-                $transaction->commit();
+            if ($isModelListCountry == 1) {
+                if ( $modelListResorts->validate() && $modelListResorts->save()) {
+                    $response['response'] = true;
+                    $transaction->commit();
+                }
+            } else {
+                if ( $modelListCountry->validate() && $modelListCountry->save() && $modelListResorts->validate() && $modelListResorts->save()) {
+                    $response['response'] = true;
+                    $transaction->commit();
+                }
             }
         } catch (Exception $exception) {
             $transaction->rollBack();
@@ -109,5 +119,42 @@ class CountriesController extends \yii\web\Controller
         }
 
         return $response;
+    }
+
+    public function actionDelete()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+//        $response = [
+//            'response' => false,
+//            'message' => '',
+//            'errorCountry' => '',
+//            'errorResorts' => ''
+//        ];
+//        $modelListCountry = ListCountry::find()->where(['country_id' => $data['item']['country_id']])->one();
+//        $countResorts = ListResorts::find()->where(['resort_country_id' => $data['item']['country_id']])->count();
+//        $modelListResort = ListResorts::find()->where(['resorts_id' => $data['item']['resorts_id']])->one();
+//        $transaction = Yii::$app->db->beginTransaction();
+//        try {
+//            if ($countResorts > 1) {
+//                if ($modelListResort->delete()) {
+//                    $response['response'] = true;
+//                    $transaction->commit();
+//                }
+//            } else {
+//                if ($modelListCountry->delete() && $modelListResort->delete()) {
+//                    $response['response'] = true;
+//                    $transaction->commit();
+//                }
+//            }
+//        } catch (Exception $exception) {
+//            $transaction->rollBack();
+//            $response['message'] = $exception->getMessage();
+//            $response['errorCountry'] = $modelListCountry->errors;
+//            $response['errorCountry'] = $modelListResort->errors;
+//        }
+
+        return $data;
+
     }
 }

@@ -22,10 +22,25 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
         'js/jquery.min.js',
-        'js/axios.min.js',
+        'js/jquery-migrate-3.0.1.min.js',
+        'js/popper.min.js',
         'js/bootstrap.min.js',
+        'js/jquery.easing.1.3.js',
+        'js/jquery.waypoints.min.js',
+        'js/jquery.stellar.min.js',
+        'js/owl.carousel.min.js',
+        'js/jquery.magnific-popup.min.js',
+        'js/aos.js',
+        'js/jquery.animateNumber.min.js',
+        'js/bootstrap-datepicker.js',
+        'js/scrollax.min.js',
+        'js/main.js',
+        'js/axios.min.js',
         'js/vue.js',
         'js/vuetify.js',
+
+
+
     ];
     public $depends = [
 //        ломает шаблон

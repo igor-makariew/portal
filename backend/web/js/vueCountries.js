@@ -18,6 +18,7 @@ new Vue({
         minRow: 1,
         loader: false,
         loaderUpdate: false,
+        loaderDelete: false,
         intervalCountriesRuls: [
             v => !!v || 'Поле не должна быть пустым',
             v => v > 0 || 'Значение не должно быть меньше 1',
@@ -76,9 +77,12 @@ new Vue({
             {key: 1, value: 'ДА'}
         ],
         crtSelectedItem: '',
+        crtSelectedDelItem: '',
         item: [],
+        itemDel: [],
         dialogAlert: false,
         dialogAlertTitle: '',
+        favoriteProducts: [],
     }),
 
     created() {
@@ -218,14 +222,43 @@ new Vue({
             this.editedIndex = -100;
         },
 
+        /**
+         * показ диалогового окна на удаление строки
+         *
+         * @param object item
+         */
         deleteItem (item) {
-            this.editedIndex = this.desserts.indexOf(item)
-            this.editedItem = Object.assign({}, item)
-            this.dialogDelete = true
+            this.crtSelectedDelItem = item.resorts_id;
+            this.editedIndex = this.desserts.indexOf(item);
+            this.editedItem = Object.assign({}, item);
+            this.dialogDelete = true;
+            this.itemDel = item;
         },
 
+        /**
+         * удаление строки
+         */
         deleteItemConfirm () {
-            this.desserts.splice(this.editedIndex, 1)
+            this.loaderDelete = true;
+            axios.post('/admin/countries/delete', {
+                'item': this.editedItem
+            }).then( (response) => {
+                if (response.data.response) {
+                    if (this.listCountries.length > 0) {
+                        this.editedIndex = this.listCountries.indexOf(this.itemDel);
+                        this.listCountries.splice(this.editedIndex, 1);
+                    } else {
+                        this.editedIndex = this.desserts.indexOf(this.itemDel);
+                        this.desserts.splice(this.editedIndex, 1);
+                    }
+                } else {
+                    this.dialogAlert = true;
+                    this.dialogAlertTitle = `Произошла ошибка удаления данных. Попробыуйте позже! ${response.data.message}`;
+                }
+                this.loaderDelete = false;
+            }).catch( (error) => {
+                console.log(error.message)
+            })
             this.closeDelete()
         },
 
@@ -245,11 +278,12 @@ new Vue({
          * хакрытие окна удаления
          */
         closeDelete () {
-            this.dialogDelete = false
-            this.$nextTick(() => {
-                this.editedItem = Object.assign({}, this.defaultItem)
-                this.editedIndex = -1
-            })
+            this.dialogDelete = false;
+            this.editedIndex = -1;
+            // this.$nextTick(() => {
+            //     this.editedItem = Object.assign({}, this.defaultItem)
+            //     this.editedIndex = -1
+            // })
         },
 
         /**
@@ -259,7 +293,12 @@ new Vue({
             if (this.editedIndex > -1) {
                 this.save('update-row', this.item);
             } else {
-                this.save('create-row', this.item = null);
+                if (this.editedItem.country_id == this.editedItem.resort_country_id) {
+                    this.save('create-row', this.item = null);
+                } else {
+                    this.dialogAlert = true;
+                    this.dialogAlertTitle = 'Идентификатор и внешний идентификатор должны совпадать!';
+                }
             }
         },
 
@@ -299,14 +338,12 @@ new Vue({
                     if (this.editedIndex > -1) {
                         this.dialogAlertTitle = 'Произошла ошибка обновления данных. Попробыуйте позже!';
                     } else {
-                        console.log(response.data);
                         this.dialogAlertTitle = 'Произошла ошибка добавления новых данных. Попробыуйте позже!';
                     }
                 }
             }).catch( (error) => {
                 console.log(error.message);
             })
-            // this.desserts.push(this.editedItem)
             this.close()
         },
     }

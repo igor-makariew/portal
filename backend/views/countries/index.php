@@ -298,16 +298,40 @@
                                         color="success"
                                         @click="editItem(item)"
                                 >
-                                mdi-pencil
-                            </v-icon>
+                                    mdi-pencil
+                                </v-icon>
                             </span>
-                            <v-icon
-                                small
-                                color="red"
-                                @click="deleteItem(item)"
-                            >
-                                mdi-delete
-                            </v-icon>
+                            <span v-if="loaderDelete && crtSelectedDelItem == item.resorts_id">
+                                <span class="loader-wrap text-center">
+                                    <v-progress-circular
+                                            :rotate="-90"
+                                            :size="20"
+                                            :width="5"
+                                            :value="value"
+                                            :indeterminate="true"
+                                            color="success"
+                                    >
+                                    </v-progress-circular>
+                                </span>
+                            </span>
+                            <span v-if="!loaderDelete && crtSelectedDelItem == item.resorts_id">
+                                <v-icon
+                                        small
+                                        color="red"
+                                        @click="deleteItem(item)"
+                                >
+                                    mdi-delete
+                                </v-icon>
+                            </span>
+                            <span v-if="crtSelectedDelItem != item.resorts_id">
+                                <v-icon
+                                        small
+                                        color="red"
+                                        @click="deleteItem(item)"
+                                >
+                                    mdi-delete
+                                </v-icon>
+                            </span>
                         </template>
                     </v-data-table>
 
