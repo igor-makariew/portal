@@ -21,7 +21,7 @@ class AppAsset extends AssetBundle
         'css/font-awesome.min.css',
     ];
     public $js = [
-        'js/jquery.min.js',
+//        'js/jquery.min.js', // перенесен в шаблон
         'js/jquery-migrate-3.0.1.min.js',
         'js/popper.min.js',
         'js/bootstrap.min.js',

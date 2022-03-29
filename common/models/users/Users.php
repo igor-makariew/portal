@@ -22,6 +22,8 @@ use yii\db\ActiveRecord;
  */
 class Users extends ActiveRecord
 {
+    const STATUS_ACTIVE = 10;
+    const STATUS_INACTIVE = 9;
     /**
      * {@inheritdoc}
      */
