@@ -24,7 +24,7 @@ class AppAsset extends AssetBundle
 //        'js/jquery.min.js', // перенесен в шаблон
         'js/jquery-migrate-3.0.1.min.js',
         'js/popper.min.js',
-        'js/bootstrap.min.js',
+//        'js/bootstrap.min.js',
         'js/jquery.easing.1.3.js',
         'js/jquery.waypoints.min.js',
         'js/jquery.stellar.min.js',

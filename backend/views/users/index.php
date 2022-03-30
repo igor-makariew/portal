@@ -5,6 +5,7 @@ use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use kartik\date\DatePicker;
+use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -34,15 +35,48 @@ $this->params['breadcrumbs'][] = $this->title;
                 'visible' => false
 
             ],
-//            'id',
+            'id',
             'username',
             'email:email',
             'phone',
             'status',
             [
+                'label' => 'Photo',
+                'format' => 'raw',
+                'value' => function ($data) {
+                    return '<a type="button" class="" data-toggle="modal" data-target="#exampleModalLong'.$data['id'].'">
+                              <img src="/admin/images/my_girl'.$data['id'].'.jpg" style="width: 20px" alt="Кнопка «button»">
+                            </a>
+                            <div class="modal fade" id="exampleModalLong'.$data['id'].'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">My_girl'.$data['id'].'</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <img src="/admin/images/my_girl'.$data['id'].'.jpg" style="width: 500px; height: 800px" alt="my_girl"/>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>                                      
+                                    </div>
+                                </div>
+                            </div>
+                        </div>';
+
+//                    return Html::img(Url::toRoute(['images/my_girl.jpg']), [
+//                       'alt' => 'фото',
+//                       'style' => 'width:20px',
+//                       'onclick' => 'alert("test")'
+//                    ]);
+                }
+            ],
+            [
                 'label' => 'Дата регистрации пользователя',
                 'attribute' => 'created_at',
-                'format' =>  'datetime'
+                'format' =>  ['date', 'HH:mm:ss dd.MM.yyyy']
             ],
             [
                 'class' => ActionColumn::class,
@@ -68,6 +102,9 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]); ?>
+
+    <?php Modal::begin(['header'=>'My modal data', 'id'=>'mymodal'])?>
+    <?php Modal::end()?>
 
     <?php
         echo '<label class="form-label">Birth Date</label>';
