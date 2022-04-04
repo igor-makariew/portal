@@ -13,9 +13,13 @@ class AppAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'css/site.css',
+        'css/vuetify.min.css',
 //        'chart.js/Chart.min.css',
     ];
     public $js = [
+        'js/axios.min.js',
+        'js/vue.js',
+        'js/vuetify.js',
     ];
     public $depends = [
 //        ломает шаблон
