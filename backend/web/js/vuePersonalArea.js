@@ -13,11 +13,11 @@ new Vue({
             let file = this.file;
             formData.append('file', file);
             axios.post('/admin/personal-area/upload-file',
-                // formData, {
-                //     headers: {
-                //         'Content-Type': 'multipart/form-data'
-                //     }
-                // }
+                formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
         ).then( (response) => {
                 console.log(response)
             }).catch( (error) => {
