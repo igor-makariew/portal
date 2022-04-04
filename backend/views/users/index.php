@@ -103,9 +103,6 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 
-    <?php Modal::begin(['header'=>'My modal data', 'id'=>'mymodal'])?>
-    <?php Modal::end()?>
-
     <?php
         echo '<label class="form-label">Birth Date</label>';
         echo DatePicker::widget([
