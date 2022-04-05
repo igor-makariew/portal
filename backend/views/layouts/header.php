@@ -238,7 +238,8 @@ use yii\helpers\Url;
                         <li class="user-header">
                             <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle"
                                  alt="User Image"/>
-
+                            <img src="<?= Url::to('/admin/web/images/uploadFiles/igor.makariew_7/Screenshot_17.png') ?>" class="img-circle"
+                                 alt="User Image"/>
                             <p>
                                 Alexander Pierce - Web Developer
                                 <small>Member since Nov. 2012</small>

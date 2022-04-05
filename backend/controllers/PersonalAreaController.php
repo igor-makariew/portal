@@ -5,10 +5,12 @@ namespace backend\controllers;
 use yii\web\Controller;
 use Yii;
 use common\models\User;
+use common\traits\ImageTrait;
 
 class PersonalAreaController extends Controller
 {
     public $enableCsrfValidation = false;
+    use ImageTrait;
 
     public function actionIndex()
     {
@@ -26,7 +28,11 @@ class PersonalAreaController extends Controller
         $response = [
             'res' => false,
             'error' => '',
-            'createDir' => ''
+            'createDir' => '',
+            'width' => '',
+            'height' => '',
+            'type' => '',
+            'nameImage' => ''
         ];
         try {
             $userModel = User::find()->select('id, email')->where(['id' => Yii::$app->user->identity->id])->one();
@@ -38,10 +44,16 @@ class PersonalAreaController extends Controller
                 $response['createDir'] = $this->createDir($nameDir, $path);
             }
 
-            if (!move_uploaded_file($_FILES['file']['tmp_name'], $path.$nameDir.'/'.$_FILES['file']['name'])) {
-                $response['error'] = 'Ошибка записи файла ' . $_FILES['file']['name'];
-                return $response;
-            }
+            $this->getNameFile($path, $nameDir);
+            $this->getParamsImage($path.$nameDir, $this->nameImage[2]);
+            $this->createImage($path, $nameDir, $this->type);
+
+//            if ($this->delFile($nameDir, $path)) {
+//                if (!move_uploaded_file($_FILES['file']['tmp_name'], $path.$nameDir.'/'.$_FILES['file']['name'])) {
+//                    $response['error'] = 'Ошибка записи файла ' . $_FILES['file']['name'];
+//                    return $response;
+//                }
+//            }
 
             $response['res'] = true;
 
@@ -76,6 +88,4 @@ class PersonalAreaController extends Controller
         $dir = $path.$nameDir;
         return mkdir($dir, 0777, true);
     }
-
-
 }
