@@ -22,6 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ></v-progress-circular>
             </div>
             <div v-if="!loaderUploadFile">
+                <p class="text--darken-1">Загрузка аватарки</p>
                 <v-file-input
                         accept="image/*"
                         label="Загрузка файла"
