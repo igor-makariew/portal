@@ -13,14 +13,25 @@ $this->params['breadcrumbs'][] = $this->title;
 <div id="personal-area">
     <v-app id="inspire">
         <div class="container-personal">
-            <v-file-input
-                accept="image/*"
-                label="Загрузка файла"
-                show-size
-                outlined
-                dense
-                @change="uploadFile"
-            ></v-file-input>
+            <div class="text-center" v-if="loaderUploadFile">
+                <v-progress-circular
+                        :size="40"
+                        :width="3"
+                        color="primary"
+                        indeterminate
+                ></v-progress-circular>
+            </div>
+            <div v-if="!loaderUploadFile">
+                <v-file-input
+                        accept="image/*"
+                        label="Загрузка файла"
+                        show-size
+                        outlined
+                        dense
+                        v-model="uplFile"
+                        @change="uploadFile"
+                ></v-file-input>
+            </div>
         </div>
     </v-app>
 </div>

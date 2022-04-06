@@ -51,6 +51,10 @@ return [
                 '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
             ],
         ],
+        'urlManagerBackend' => [
+            'class' => 'yii\web\UrlManager',
+            'baseUrl' => '/backend/web',
+        ],
     ],
     'params' => $params,
 ];

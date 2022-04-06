@@ -29,10 +29,8 @@ class PersonalAreaController extends Controller
             'res' => false,
             'error' => '',
             'createDir' => '',
-            'width' => '',
-            'height' => '',
-            'type' => '',
-            'nameImage' => ''
+            'nameImage' => '',
+            'delImage' => ''
         ];
         try {
             $userModel = User::find()->select('id, email')->where(['id' => Yii::$app->user->identity->id])->one();
@@ -48,13 +46,15 @@ class PersonalAreaController extends Controller
             $this->getParamsImage($path.$nameDir, $this->nameImage[2]);
             $this->createImage($path, $nameDir, $this->type);
 
-//            if ($this->delFile($nameDir, $path)) {
-//                if (!move_uploaded_file($_FILES['file']['tmp_name'], $path.$nameDir.'/'.$_FILES['file']['name'])) {
-//                    $response['error'] = 'Ошибка записи файла ' . $_FILES['file']['name'];
-//                    return $response;
-//                }
-//            }
-
+            if ($this->delFile($nameDir, $path)) {
+                if (!move_uploaded_file($_FILES['file']['tmp_name'], $path.$nameDir.'/'.$_FILES['file']['name'])) {
+                    $response['error'] = 'Ошибка записи файла ' . $_FILES['file']['name'];
+                    return $response;
+                }
+            }
+            $this->getNameFile($path, $nameDir);
+            $response['delImage'] = $this->delImage;
+            $response['nameImage'] = $this->nameImage[2];
             $response['res'] = true;
 
             return $response;

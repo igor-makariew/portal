@@ -9,6 +9,7 @@ trait ImageTrait
     public $height;
     public $type;
     public $nameImage;
+    public $delImage;
 
     /**
      * @param $path
@@ -60,6 +61,7 @@ trait ImageTrait
     public function delFile($nameDir, $path)
     {
         $file = scandir($path.$nameDir);
+        $this->delImage = $file[2];
         return unlink($path.$nameDir.'/'.$file[2]);
     }
 }
