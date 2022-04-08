@@ -24,13 +24,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         ></v-progress-circular>
                     </div>
                     <div v-if="!loaderUserDatas">
-                        <v-form>
+                        <v-form v-model="validUserData">
                             <v-text-field
                                     v-model="userDatas.username"
                                     :counter="15"
                                     :rules="usernameRule"
                                     label="Имя"
                             ></v-text-field>
+
                             <v-text-field
                                     v-model="userDatas.email"
                                     :rules="emailRule"
@@ -45,14 +46,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <div class="container-row">
                                     <div class="col-6">
                                         <v-checkbox
-                                            v-model="validUserData"
+                                            v-model="validUserDataCheckbox"
+                                            :disabled="disabledUserData"
                                             label="Редактирование данных пользователя"
                                         ></v-checkbox>
                                     </div>
                                     <div class="col-6 text-right pt-5">
                                         <v-btn
                                             color="success"
-                                            :disabled="!validUserData"
+                                            :disabled="!btnDisabled"
                                             @click="updateUserData"
                                         >Редактировать</v-btn>
                                     </div>
@@ -82,7 +84,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                 </div>
                 <div class="col-4">
-
+                    <v-img
+                        src="/backend/web/images/uploadFiles/igor.makariew_7/Screenshot_60.png"
+                        aspect-ratio="1.7"
+                        class="p-3 rounded-circle"
+                    ></v-img>
                 </div>
             </div>
         </div>

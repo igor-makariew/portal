@@ -73,9 +73,23 @@ class PersonalAreaController extends Controller
     {
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
         $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $response = [
+            'res' => false,
+            'error' => [],
+            'userDatas' => []
+        ];
         $modelUser = User::find()->where(['id' => Yii::$app->user->identity->id])->one();
+        $modelUser->username = $data['userDatas']['username'];
+        $modelUser->email = $data['userDatas']['email'];
+        $modelUser->phone = $data['userDatas']['phone'];
+        if ($modelUser->validate() && $modelUser->save()) {
+            $response['userDatas'] = User::find()->select('username, email, phone')->where(['id' => Yii::$app->user->identity->id])->one();
+            $response['res'] = true;
+        } else {
+            $response['error'] = $modelUser->getErrors();
+        }
 
-        return $data;
+        return $response;
     }
 
     public function actionGetUserData()

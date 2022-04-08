@@ -12,13 +12,26 @@ new Vue({
             'phone': '8-900-000-00-00',
         },
         validUserData: false,
+        validUserDataCheckbox: false,
+
+        disabledUserData: false,
         loaderUserDatas: false,
+        validateForm: false,
 
         usernameRule: [
             v => !!v || 'Поле Имя обязательно для заполнения.',
         ],
         emailRule: [
             v => !!v || 'Поле Email обязательно для заполнения',
+            value => {
+                const pattern = /.+@.+\..+/;
+                if (/.+@.+\..+/.test(value)) {
+                    return /.+@.+\..+/.test(value);
+                } else {
+                    return 'Электронная почта не корректная.';
+                }
+            },
+            // v => /.+@.+\..+/.test(v) || 'Электронная почта не корректная.',
         ],
         phoneRule: [
             v => !!v || 'Поле Телефон обязательно для заполнения',
@@ -27,6 +40,26 @@ new Vue({
 
     created () {
         this.getUserData();
+    },
+
+    computed: {
+        btnDisabled() {
+            if (this.validUserData == true && this.validUserDataCheckbox == true) {
+                return true;
+            }
+            return false;
+        },
+
+        editPersonalDate: function() {
+            // return Object.assign({}, this.emailRule);
+            return Object.assign({}, this.emailRule);
+        },
+    },
+
+    watch: {
+        validateForm: function(val) {
+            console.log(val);
+        }
     },
 
     methods: {
@@ -82,14 +115,22 @@ new Vue({
             axios.post('/admin/personal-area/update-user-data', {
                 'userDatas': this.userDatas
             }).then( (response) => {
+                if (response.data.res) {
+                    this.userDatas.username = response.data.userDatas.username;
+                    this.userDatas.email = response.data.userDatas.email;
+                    this.userDatas.phone = response.data.userDatas.phone;
+                }
+                this.validUserDataCheckbox == false;
                 this.loaderUserDatas = false;
-                console.log(response)
             }).catch( (error) => {
                 this.loaderUserDatas = false;
                 console.log(error.message)
             })
         },
 
+        /**
+         * получение перональных данных
+         */
         getUserData() {
             this.loaderUserDatas = true;
             axios.post('/admin/personal-area/get-user-data')
