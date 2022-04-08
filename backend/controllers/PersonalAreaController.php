@@ -64,6 +64,29 @@ class PersonalAreaController extends Controller
         }
     }
 
+    public function actionGetAvatarUser()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $response = [
+            'avatar' => '',
+            'default' => '',
+            'error' => ''
+        ];
+        $userModel = User::find()->select('id, email')->where(['id' => Yii::$app->user->identity->id])->one();
+        $id = $userModel['id'];
+        $email = substr($userModel['email'], 0, strpos($userModel['email'], '@'));
+        $path = $_SERVER['DOCUMENT_ROOT'] . '/backend/web/images/uploadFiles/';
+        $nameDir = $email.'_'.$id;
+        if ( count($this->getNameFile($path, $nameDir)) < 3) {
+            $response['dafault'] = '/backend/web/images/uploadFiles/default.jpg';
+        } else {
+            $response['avatar'] = '/backend/web/images/uploadFiles/' . $nameDir . '/' . $this->nameImage[2];
+        }
+
+        return $response;
+
+    }
+
     /**
      * Редактирование персогнальных данных
      *

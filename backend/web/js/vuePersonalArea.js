@@ -13,8 +13,6 @@ new Vue({
         },
         validUserData: false,
         validUserDataCheckbox: false,
-
-        disabledUserData: false,
         loaderUserDatas: false,
         validateForm: false,
 
@@ -35,11 +33,14 @@ new Vue({
         ],
         phoneRule: [
             v => !!v || 'Поле Телефон обязательно для заполнения',
-        ]
+        ],
+        avatar: '',
+        loaderAvatar: false,
     }),
 
     created () {
         this.getUserData();
+        this.getAvatar();
     },
 
     computed: {
@@ -80,15 +81,31 @@ new Vue({
                 }
         ).then( (response) => {
             if (response.data.res) {
+                console.log(response);
                 let avatars = document.getElementsByClassName('avatar-image');
                 Object.values(avatars).forEach( (value) => {
                     this.updateAvatar(value, response.data.delImage, response.data.nameImage)
                 })
                 this.uplFile = [];
+                this.getAvatar();
                 this.loaderUploadFile = false;
             }
             }).catch( (error) => {
                 console.log(error.message)
+            })
+        },
+
+        /**
+         * получение аватарки
+         */
+        getAvatar() {
+            this.loaderAvatar = true;
+            axios.post('/admin/personal-area/get-avatar-user')
+                .then( (response) => {
+                    this.avatar = response.data.avatar != '' ? response.data.avatar : response.data.dafault;
+                    this.loaderAvatar = false;
+                }).catch( (error) => {
+                    console.log(error.message)
             })
         },
 

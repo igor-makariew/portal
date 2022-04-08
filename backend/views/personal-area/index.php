@@ -47,7 +47,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <div class="col-6">
                                         <v-checkbox
                                             v-model="validUserDataCheckbox"
-                                            :disabled="disabledUserData"
                                             label="Редактирование данных пользователя"
                                         ></v-checkbox>
                                     </div>
@@ -84,11 +83,21 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                 </div>
                 <div class="col-4">
-                    <v-img
-                        src="/backend/web/images/uploadFiles/igor.makariew_7/Screenshot_60.png"
-                        aspect-ratio="1.7"
-                        class="p-3 rounded-circle"
-                    ></v-img>
+                    <div class="text-center mt-7" v-if="loaderAvatar">
+                        <v-progress-circular
+                                :size="160"
+                                :width="5"
+                                color="primary"
+                                indeterminate
+                        ></v-progress-circular>
+                    </div>
+                    <div v-if="!loaderAvatar">
+                        <v-img
+                            :src="avatar"
+                            aspect-ratio="1.7"
+                            class="p-3 rounded-circle"
+                        ></v-img>
+                    </div>
                 </div>
             </div>
         </div>
