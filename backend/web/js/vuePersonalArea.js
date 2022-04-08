@@ -6,7 +6,28 @@ new Vue({
         file: '',
         uplFile: [],
         loaderUploadFile: false,
+        userDatas: {
+            'username': '',
+            'email': '',
+            'phone': '8-900-000-00-00',
+        },
+        validUserData: false,
+        loaderUserDatas: false,
+
+        usernameRule: [
+            v => !!v || 'Поле Имя обязательно для заполнения.',
+        ],
+        emailRule: [
+            v => !!v || 'Поле Email обязательно для заполнения',
+        ],
+        phoneRule: [
+            v => !!v || 'Поле Телефон обязательно для заполнения',
+        ]
     }),
+
+    created () {
+        this.getUserData();
+    },
 
     methods: {
         /**
@@ -51,6 +72,36 @@ new Vue({
                 src = src.replaceAll(oldStr, newStr);
                 source.outerHTML = src;
             }
+        },
+
+        /**
+         * редактирование персональных данных
+         */
+        updateUserData() {
+            this.loaderUserDatas = true;
+            axios.post('/admin/personal-area/update-user-data', {
+                'userDatas': this.userDatas
+            }).then( (response) => {
+                this.loaderUserDatas = false;
+                console.log(response)
+            }).catch( (error) => {
+                this.loaderUserDatas = false;
+                console.log(error.message)
+            })
+        },
+
+        getUserData() {
+            this.loaderUserDatas = true;
+            axios.post('/admin/personal-area/get-user-data')
+                .then( (response) => {
+                    this.loaderUserDatas = false;
+                    this.userDatas.username = response.data.username;
+                    this.userDatas.email = response.data.email;
+                    this.userDatas.phone = response.data.phone;
+                }).catch( (error) => {
+                    this.loaderUserDatas = false;
+                    console.log(error.message);
+            })
         }
 
         // handleFileUploads() {

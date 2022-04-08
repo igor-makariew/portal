@@ -65,6 +65,30 @@ class PersonalAreaController extends Controller
     }
 
     /**
+     * Редактирование персогнальных данных
+     *
+     * @return mixed
+     */
+    public function actionUpdateUserData()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $modelUser = User::find()->where(['id' => Yii::$app->user->identity->id])->one();
+
+        return $data;
+    }
+
+    public function actionGetUserData()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $modelUser = User::find()
+            ->select('username, email, phone')
+            ->where(['id' => Yii::$app->user->identity->id])
+            ->one();
+        return $modelUser;
+    }
+
+    /**
      * @param $nameDir
      * @param $path
      * @return bool
