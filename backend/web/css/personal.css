@@ -1,0 +1,8 @@
+.container-personal {
+    margin: 2rem 2rem 1rem;
+}
+
+.container-row {
+    display: flex;
+    flex-direction: row;
+}

@@ -1,5 +1,7 @@
 <?php
 use yii\helpers\Html;
+use yii\helpers\Url;
+use backend\widgets\updateAvatars;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
@@ -229,15 +231,17 @@ use yii\helpers\Html;
 
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="user-image" alt="User Image"/>
+                        <?= Html::img(Yii::$app->urlManagerBackend->baseUrl.'/images/UploadFiles/'. updateAvatars::widget(),
+                            ['alt' => 'User Image', 'class' => 'user-image avatar-image',])?>
                         <span class="hidden-xs">Alexander Pierce</span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header">
-                            <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle"
-                                 alt="User Image"/>
-
+<!--                            <img src="--><?//= $directoryAsset ?><!--/img/user2-160x160.jpg" class="img-circle"-->
+<!--                                 alt="User Image"/>-->
+                            <?= Html::img(Yii::$app->urlManagerBackend->baseUrl.'/images/UploadFiles/'. updateAvatars::widget(),
+                                ['alt' => 'User Image', 'class' => 'img-circle avatar-image',])?>
                             <p>
                                 Alexander Pierce - Web Developer
                                 <small>Member since Nov. 2012</small>
@@ -258,7 +262,7 @@ use yii\helpers\Html;
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="#" class="btn btn-default btn-flat">Profile</a>
+                                <a href="<?= Url::to(['/personal-area/index'])?>" class="btn btn-default btn-flat">Profile</a>
                             </div>
                             <div class="pull-right">
                                 <?= Html::a(
