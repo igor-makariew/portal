@@ -39,6 +39,8 @@ class SignupForm extends Model
 
             ['phone', 'trim'],
             ['phone', 'string', 'max' => 255],
+
+            ['role', 'string', 'max' => 32],
         ];
     }
 
@@ -57,6 +59,7 @@ class SignupForm extends Model
         $user->username = $this->user;
         $user->email = $this->email;
         $user->phone = $this->phone;
+        $user->role = User::ROLE_USER;
         $user->setPassword($this->password);
         $user->generateAuthKey();
         $user->generateEmailVerificationToken();
