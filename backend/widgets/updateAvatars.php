@@ -21,6 +21,9 @@ class updateAvatars extends Widget
         $email = substr($userModel['email'], 0, strpos($userModel['email'], '@'));
         $path = $_SERVER['DOCUMENT_ROOT'] . '/backend/web/images/uploadFiles/';
         $nameDir = $email.'_'.$id;
+        if (!$this->isDir($nameDir, $path)) {
+            $response['createDir'] = $this->createDir($nameDir, $path);
+        }
         $this->getNameFile($path, $nameDir);
         $this->namePath = $nameDir .'/'. $this->getNameFile($path, $nameDir)[2];
     }

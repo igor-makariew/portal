@@ -3,6 +3,7 @@
 namespace common\models\listResorts;
 
 use common\models\rating\Rating;
+use common\models\listCountry\ListCountry;
 use Yii;
 
 /**
@@ -32,8 +33,9 @@ class ListResorts extends \yii\db\ActiveRecord
     {
         return [
             [['resorts_id', 'name', 'resort_country_id'], 'required'],
-            [['is_popular', 'resort_country_id', 'at_filtering'], 'integer'],
-            [['rating'], 'safe'],
+            [['resort_country_id', 'resorts_id'], 'integer'],
+            ['is_popular' , 'safe'],
+            ['rating', 'number', 'min' => 0, 'max' => 5],
             [['name'], 'string', 'max' => 50],
         ];
     }

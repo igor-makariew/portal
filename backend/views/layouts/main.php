@@ -1,15 +1,17 @@
 <?php
+
 use yii\helpers\Html;
+use common\models\User;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
 
 
-if (Yii::$app->controller->action->id === 'login') { 
-/**
- * Do not use this code in your template. Remove it. 
- * Instead, use the code  $this->layout = '//main-login'; in your controller.
- */
+if (Yii::$app->controller->action->id === 'login') {
+    /**
+     * Do not use this code in your template. Remove it.
+     * Instead, use the code  $this->layout = '//main-login'; in your controller.
+     */
     echo $this->render(
         'main-login',
         ['content' => $content]
@@ -25,6 +27,8 @@ if (Yii::$app->controller->action->id === 'login') {
     dmstr\web\AdminLteAsset::register($this);
 
     $directoryAsset = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2010/adminlte/dist');
+    $user = User::find()->select(['username', 'email', 'phone', 'created_at'])->where(['id' => Yii::$app->user->identity->id])->one();
+    $date = date('d - m - Y', $user['created_at']);
     ?>
     <?php $this->beginPage() ?>
     <!DOCTYPE html>
@@ -34,6 +38,7 @@ if (Yii::$app->controller->action->id === 'login') {
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <?= Html::csrfMetaTags() ?>
         <title><?= Html::encode($this->title) ?></title>
+        <?= $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/jquery.min.js')); ?>
         <?php $this->head() ?>
     </head>
     <body class="hold-transition skin-blue sidebar-mini">
@@ -42,12 +47,19 @@ if (Yii::$app->controller->action->id === 'login') {
 
         <?= $this->render(
             'header.php',
-            ['directoryAsset' => $directoryAsset]
+            [
+                'directoryAsset' => $directoryAsset,
+                'user' => $user,
+                'date' => $date
+            ]
         ) ?>
 
         <?= $this->render(
             'left.php',
-            ['directoryAsset' => $directoryAsset]
+            [
+                'directoryAsset' => $directoryAsset,
+                'user' => $user
+            ]
         )
         ?>
 

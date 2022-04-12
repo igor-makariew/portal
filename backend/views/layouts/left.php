@@ -14,10 +14,10 @@
                     ['alt' => 'User Image', 'class' => 'img-circle avatar-image',])?>
             </div>
             <div class="pull-left info">
-                <p>Alexander Pierce</p>
+                <p></p>
 
                 <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
-            </div>
+            </div><?= $user['username']?>
         </div>
 
         <!-- search form -->
@@ -36,8 +36,9 @@
             [
                 'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
                 'items' => [
-                    ['label' => 'Menu Yii2', 'options' => ['class' => 'header']],
-                    ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii']],
+                    ['label' => 'Menu admin', 'options' => ['class' => 'header']],
+                    ['label' => 'Users', 'icon' => 'users', 'url' => ['users/index']],
+                    ['label' => 'Countries', 'icon' => 'flag', 'url' => ['countries/index']],
                     ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug']],
                     ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
                     [

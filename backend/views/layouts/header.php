@@ -233,32 +233,20 @@ use backend\widgets\updateAvatars;
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <?= Html::img(Yii::$app->urlManagerBackend->baseUrl.'/images/UploadFiles/'. updateAvatars::widget(),
                             ['alt' => 'User Image', 'class' => 'user-image avatar-image',])?>
-                        <span class="hidden-xs">Alexander Pierce</span>
+                        <span class="hidden-xs"><?= strtoupper($user['username']); ?></span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header">
-<!--                            <img src="--><?//= $directoryAsset ?><!--/img/user2-160x160.jpg" class="img-circle"-->
-<!--                                 alt="User Image"/>-->
-                            <?= Html::img(Yii::$app->urlManagerBackend->baseUrl.'/images/UploadFiles/'. updateAvatars::widget(),
-                                ['alt' => 'User Image', 'class' => 'img-circle avatar-image',])?>
+                            <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle"
+                                 alt="User Image"/>
+
                             <p>
-                                Alexander Pierce - Web Developer
-                                <small>Member since Nov. 2012</small>
+                                <?= strtoupper($user['username']); ?> - Web Developer
+                                <small>Member since <?= $date?></small>
                             </p>
                         </li>
-                        <!-- Menu Body -->
-                        <li class="user-body">
-                            <div class="col-xs-4 text-center">
-                                <a href="#">Followers</a>
-                            </div>
-                            <div class="col-xs-4 text-center">
-                                <a href="#">Sales</a>
-                            </div>
-                            <div class="col-xs-4 text-center">
-                                <a href="#">Friends</a>
-                            </div>
-                        </li>
+
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
