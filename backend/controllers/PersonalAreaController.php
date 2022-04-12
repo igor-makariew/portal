@@ -115,6 +115,11 @@ class PersonalAreaController extends Controller
         return $response;
     }
 
+    /**
+     * Получение персональных данных
+     *
+     * @return array|\yii\db\ActiveRecord|null
+     */
     public function actionGetUserData()
     {
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
@@ -130,23 +135,23 @@ class PersonalAreaController extends Controller
      * @param $path
      * @return bool
      */
-    public function isDir($nameDir, $path)
-    {
-        if (file_exists($path . $nameDir)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+//    public function isDir($nameDir, $path)
+//    {
+//        if (file_exists($path . $nameDir)) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
 
     /**
      * @param $nameDir
      * @param $path
      * @return bool
      */
-    public function createDir($nameDir, $path)
-    {
-        $dir = $path.$nameDir;
-        return mkdir($dir, 0777, true);
-    }
+//    public function createDir($nameDir, $path)
+//    {
+//        $dir = $path.$nameDir;
+//        return mkdir($dir, 0777, true);
+//    }
 }

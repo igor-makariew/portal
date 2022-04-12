@@ -2,40 +2,50 @@
 
 namespace backend\controllers;
 
-use common\models\users\Users;
+use common\models\User;
 use yii\data\ActiveDataProvider;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use Yii;
 
 /**
  * UsersController implements the CRUD actions for Users model.
  */
 class UsersController extends Controller
 {
+    public $enableCsrfValidation = false;
+
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
         return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
             'access' => [
                 'class' => AccessControl::class,
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'create', 'update', 'view','delete' ],
-//                        'roles' => [Users::STATUS_ACTIVE], // доработать роли
+                        'actions' => ['index', 'create', 'update', 'view','delete', 'create-role-permission' ],
+                        'roles' => [User::ROLE_ADMIN],
 
                     ],
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view' ],
+                        'roles' => [User::ROLE_MODER],
+                    ],
 
+                ],
+            ],
+
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['POST'],
                 ],
             ],
         ];
@@ -49,7 +59,7 @@ class UsersController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Users::find(),
+            'query' => User::find(),
             /*
             'pagination' => [
                 'pageSize' => 50
@@ -87,7 +97,7 @@ class UsersController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Users();
+        $model = new User();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -140,15 +150,37 @@ class UsersController extends Controller
      * Finds the Users model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Users the loaded model
+     * @return User the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Users::findOne(['id' => $id])) !== null) {
+        if (($model = User::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionCreateRolePermission()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+//        создание новой роли плоьзоавтеля
+        $role = Yii::$app->authManager->createRole($data['data']['newRole']);
+        $role->description = $data['data']['descriptionRole'];
+        Yii::$app->authManager->add($role);
+//        создание разрешения
+        $permit = Yii::$app->authManager->createPermission($data['data']['newPermission']);
+        $permit->description = $data['data']['descriptionPermission'];
+        Yii::$app->authManager->add($permit);
+//        наследование роли и разрешения
+        $userRole = Yii::$app->authManager->getRole($data['data']['newRole']);
+        $userPermit = Yii::$app->authManager->getPermission($data['data']['newPermission']);
+        Yii::$app->authManager->addChild($userRole, $userPermit);
+//        привязка роли к пользователю
+        Yii::$app->authManager->assign($userRole, $data['data']['userId']);
+
+        return $data;
     }
 }

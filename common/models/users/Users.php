@@ -24,12 +24,16 @@ class Users extends ActiveRecord
 {
     const STATUS_ACTIVE = 10;
     const STATUS_INACTIVE = 9;
+    const ROLE_USER = 'user';
+    const ROLE_MODER = 'moder';
+    const ROLE_ADMIN = 'admin';
+
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'user';
+        return '{{%user}}';
     }
 
     /**
@@ -41,7 +45,7 @@ class Users extends ActiveRecord
             [['username', 'auth_key', 'password_hash', 'email', 'created_at', 'updated_at'], 'required'],
             [['status', 'created_at', 'updated_at'], 'integer'],
             [['username', 'password_hash', 'password_reset_token', 'email', 'verification_token'], 'string', 'max' => 255],
-            [['auth_key', 'phone'], 'string', 'max' => 32],
+            [['auth_key', 'phone', 'role'], 'string', 'max' => 32],
             [['username'], 'unique'],
             [['email'], 'unique'],
             [['password_reset_token'], 'unique'],
