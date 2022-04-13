@@ -245,35 +245,59 @@ $this->params['breadcrumbs'][] = $this->title;
                         <div v-if="loaderUpdate && crtSelectedItem == item.resorts_id" class="text-center ">
                             <v-overlay z-index="1100">
                                 <span class="loader-wrap text-center">
+                                    <v-progress-circular
+                                            :size="50"
+                                            :width="5"
+                                            color="primary"
+                                            indeterminate
+                                    >
+                                    </v-progress-circular>
+                                </span>
+                            </v-overlay>
+                        </div>
+                        <div v-if="loaderReestablishResort && crtSelectedItem == item.resorts_id" class="text-center ">
+                            <span class="loader-wrap text-center">
                                 <v-progress-circular
-                                        :size="50"
+                                        :size="25"
                                         :width="5"
                                         color="primary"
                                         indeterminate
                                 >
                                 </v-progress-circular>
                             </span>
-                            </v-overlay>
                         </div>
                         <span v-if="!loaderUpdate && crtSelectedItem == item.resorts_id">
-                                <v-icon
-                                        small
-                                        class="mr-2"
-                                        color="success"
-                                        @click="editItem(item)"
-                                >
-                                mdi-pencil
+                            <v-icon
+                                    small
+                                    class="mr-2"
+                                    color="success"
+                                    @click="editItem(item, true)"
+                                    v-if="item.del_resort == 0"
+                            >mdi-pencil
                             </v-icon>
+                            <span v-if="!loaderReestablishResort">
+                                <v-btn
+                                        color="success"
+                                        @click="reestablishResort(item)"
+                                        v-if="item.del_resort == 1"
+                                >Востановить курорт</v-btn>
                             </span>
+                        </span>
                         <span v-if="crtSelectedItem != item.resorts_id">
                                 <v-icon
                                         small
                                         class="mr-2"
                                         color="success"
-                                        @click="editItem(item)"
+                                        @click="editItem(item, true)"
+                                        v-if="item.del_resort == 0"
                                 >
                                     mdi-pencil
                                 </v-icon>
+                            <v-btn
+                                    color="success"
+                                    @click="reestablishResort(item, false)"
+                                    v-if="item.del_resort == 1"
+                            >Востановить курорт</v-btn>
                             </span>
                         <span v-if="loaderDelete && crtSelectedDelItem == item.resorts_id">
                                 <span class="loader-wrap text-center">
@@ -291,6 +315,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         small
                                         color="red"
                                         @click="deleteItem(item)"
+                                        v-if="item.del_resort == 0"
                                 >
                                     mdi-delete
                                 </v-icon>
@@ -300,6 +325,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         small
                                         color="red"
                                         @click="deleteItem(item)"
+                                        v-if="item.del_resort == 0"
                                 >
                                     mdi-delete
                                 </v-icon>

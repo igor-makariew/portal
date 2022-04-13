@@ -48,6 +48,7 @@ new Vue({
         dialogDelete: false,
         itemDel: [],
         allResorts: false,
+        loaderReestablishResort: false,
 
         //  end table resorts
     }),
@@ -148,12 +149,14 @@ new Vue({
          *
          * @param item
          */
-        editItem (item) {
+        editItem (item, param) {
             this.crtSelectedItem = item.resorts_id;
             this.editedIndex = this.desserts.indexOf(item);
             this.editedItem = Object.assign({}, item);
-            this.dialog = true;
-            this.item = item;
+            if(param) {
+                this.dialog = true;
+                this.item = item;
+            }
         },
 
         deleteItem (item) {
@@ -200,6 +203,22 @@ new Vue({
             }).catch( (error) => {
                 this.loaderDelete = false;
                 this.closeDelete();
+                this.dialogAlert = true;
+                this.dialogAlertTitle = error.message;
+            })
+        },
+
+        reestablishResort(item, param) {
+            this.loaderReestablishResort = true;
+            this.editItem(item, param);
+            axios.post('/admin/resorts/reestablish-resort', {
+                'item': this.editedItem
+            }).then( (response) => {
+                this.editedIndex = this.desserts.indexOf(item);
+                this.desserts.splice(this.editedIndex, 1);
+                this.loaderReestablishResort = false;
+            }).catch( (error) => {
+                this.loaderReestablishResort = false;
                 this.dialogAlert = true;
                 this.dialogAlertTitle = error.message;
             })
