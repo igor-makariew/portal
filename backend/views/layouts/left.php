@@ -34,14 +34,15 @@
 
         <?= dmstr\widgets\Menu::widget(
             [
-                'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
+                'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree', 'id' => 'adminMenu'],
                 'items' => [
                     ['label' => 'Menu admin', 'options' => ['class' => 'header']],
                     ['label' => 'Users', 'icon' => 'users', 'url' => ['users/index']],
                     ['label' => 'Countries', 'icon' => 'flag', 'url' => ['countries/index']],
                     ['label' => 'Resorts', 'icon' => 'bed', 'url' => ['resorts/index']],
                     ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug']],
-                    ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
+                    ['label' => 'test', 'icon' => 'dashboard'],
+                    ['label' => 'Login', 'url' => ['site/login'], 'visible' => \Yii::$app->user->isGuest],
                     [
                         'label' => 'Some tools',
                         'icon' => 'share',

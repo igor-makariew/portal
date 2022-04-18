@@ -10,7 +10,7 @@ new Vue({
         loaderResorts: false,
         page: 1,
         pageCount: 0,
-        itemsPerPage: 30,
+        itemsPerPage: 50,
         headers: [
             {
                 text: 'Идентификатор',
@@ -49,8 +49,11 @@ new Vue({
         itemDel: [],
         allResorts: false,
         loaderReestablishResort: false,
-
         //  end table resorts
+        // start url
+        nameUrl: '',
+        listNameUrls: [],
+        // end url
     }),
 
     created() {
@@ -123,10 +126,16 @@ new Vue({
                 'allResorts': this.allResorts
             }).then( (response) => {
                 this.loaderResorts = false;
-                this.desserts = response.data;
+                if(response.data.length > 0) {
+                    this.desserts = response.data;
+                } else {
+                    this.dialogAlert = true;
+                    this.dialogAlertTitle = 'Нет записей';
+                }
             }).catch( (error) => {
                 this.loaderResorts = false;
-                console.log(error.message)
+                this.dialogAlert = true;
+                this.dialogAlertTitle = error.message;
             })
         },
 
@@ -208,6 +217,12 @@ new Vue({
             })
         },
 
+        /**
+         * востановление из удаленных
+         *
+         * @param item
+         * @param param
+         */
         reestablishResort(item, param) {
             this.loaderReestablishResort = true;
             this.editItem(item, param);
@@ -268,6 +283,6 @@ new Vue({
                 this.dialogAlert = true;
                 this.dialogAlertTitle = error.message;
             })
-        }
+        },
     }
 })

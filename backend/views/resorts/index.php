@@ -1,9 +1,18 @@
 <?php
 /* @var $this yii\web\View */
 
+use yii\widgets\Breadcrumbs;
+
 $this->title = 'Курорты';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
+
+<nav aria-label="breadcrumb">
+        <?= Breadcrumbs::widget(
+            $breadcrumbs
+        );?>
+</nav>
 
 <?= $this->registerCssFile(Yii::$app->urlManager->createUrl('/css/hotels.css', ['depends' => ['backend\assets\AppAsset']])); ?>
 <div id="appHotels">
@@ -80,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <v-dialog v-model="dialogAlert" max-width="700px">
             <v-card>
-                <v-card-title class="text-h5 text-justify">{{dialogAlertTitle}}</v-card-title>
+                <v-card-title class="text-h5 text-center">{{dialogAlertTitle}}</v-card-title>
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="blue darken-1" text @click="dialogAlert = false">OK</v-btn>
@@ -337,14 +346,16 @@ $this->params['breadcrumbs'][] = $this->title;
                             v-model="page"
                             :length="pageCount"
                     ></v-pagination>
-                    <v-text-field
-                            :value="itemsPerPage"
-                            label="Items per page"
-                            type="number"
-                            min="-1"
-                            max="15"
-                            @input="itemsPerPage = parseInt($event, 10)"
-                    ></v-text-field>
+                    <div class="width-inputs">
+                        <v-text-field
+                                :value="itemsPerPage"
+                                label="Количество строк на странице"
+                                type="number"
+                                min="1"
+                                max="100"
+                                @input="itemsPerPage = parseInt($event, 10)"
+                        ></v-text-field>
+                    </div>
                 </div>
             </div>
         </div>

@@ -8,4 +8,11 @@ return [
     'user.passwordMinLength' => 8,
 
     'MAX_COUNT_VIEWED_HOTELS' => 30,
+
+    'currensySymbol' => [
+        'eur' => '€',
+        'rub' => '₽',
+        'usd' => '$',
+        'test' => 'test'
+    ],
 ];

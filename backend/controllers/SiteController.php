@@ -8,12 +8,16 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
+use common\traits\BreadcrumbsTrait;
 
 /**
  * Site controller
  */
 class SiteController extends Controller
 {
+    public $enableCsrfValidation = false;
+    use BreadcrumbsTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -28,7 +32,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index'],
+                        'actions' => ['logout', 'index', 'urls'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -62,7 +66,16 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $this->sessionUrl();
+        $this->sessionBreadcrumbs();
+        list($route, $param) = Yii::$app->request->resolve();
+        $this->getKeys();
+        $this->removeRouteInSession($route);
+        $this->addRoute($route);
+        $this->getBreadcrumbs($route);
+        return $this->render('index', [
+            'urls' => $this->getUrls(),
+        ]);
     }
 
     /**
@@ -99,5 +112,17 @@ class SiteController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
+    }
+
+    /**
+     * запись данных меню в сессию
+     */
+    public function actionUrls()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $this->sessionUrl();
+        $this->clearSession('urls');
+        $this->setUrls($data['listNameUrls']);
     }
 }
