@@ -21,7 +21,8 @@
         "yiisoft/yii2-redis": "^2.0",
         "fedemotta/yii2-cronjob": "*",
         "dmstr/yii2-adminlte-asset": "^2.1",
-        "kartik-v/yii2-widget-datepicker": "@dev"
+        "kartik-v/yii2-widget-datepicker": "@dev",
+        "phpoffice/phpexcel": "^1.8"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
