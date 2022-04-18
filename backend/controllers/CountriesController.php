@@ -7,17 +7,26 @@ use Yii;
 use yii\db\Exception;
 use yii\helpers\Url;
 use common\models\listCountry\ListCountry;
+use common\traits\BreadcrumbsTrait;
 
 class CountriesController extends \yii\web\Controller
 {
     public $enableCsrfValidation = false;
+    use BreadcrumbsTrait;
 
     /**
      * @return string
      */
     public function actionIndex()
     {
+        $this->sessionUrl();
+        $this->sessionBreadcrumbs();
+        list($route, $param) = Yii::$app->request->resolve();
+        $this->createBreadcrumbs($this->routes, $route);
         return $this->render('index', [
+            'breadcrumbs' => $this->breadcrumbs,
+            'route' => $route,
+            'param' => $this->breadcrumbs,
         ]);
     }
 

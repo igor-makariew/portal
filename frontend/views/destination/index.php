@@ -32,8 +32,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'label' => 'Country',
                                 'template' => "<span class='mr-2'><a>{link}</a></span>",
                             ],
-                        ],
-                    ]) ?>
+                        ]
+                    ]); ?>
                 </p>
                 <h1 class="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Hotel</h1>
             </div>

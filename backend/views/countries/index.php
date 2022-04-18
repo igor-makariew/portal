@@ -2,9 +2,18 @@
     /* @var $this yii\web\View */
     /* @var $dataProvider yii\data\ActiveDataProvider */
 
+    use yii\widgets\Breadcrumbs;
+
     $this->title = 'Страны';
     $this->params['breadcrumbs'][] = $this->title;
 ?>
+
+    <nav aria-label="breadcrumb">
+        <?= Breadcrumbs::widget(
+            $breadcrumbs
+        );?>
+    </nav>
+
 <?= $this->registerCssFile(Yii::$app->urlManager->createUrl('/css/countries.css', ['depends' => ['backend\assets\AppAsset']])); ?>
 <div class="">
     <div id="appCountries">
