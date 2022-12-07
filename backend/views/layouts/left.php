@@ -40,8 +40,11 @@
                     ['label' => 'Users', 'icon' => 'users', 'url' => ['users/index']],
                     ['label' => 'Countries', 'icon' => 'flag', 'url' => ['countries/index']],
                     ['label' => 'Resorts', 'icon' => 'bed', 'url' => ['resorts/index']],
+                    ['label' => 'Exel', 'icon' => 'file', 'url' => ['exel/index']],
+                    ['label' => 'Chat', 'icon' => 'twitter', 'url' => ['chat/index']],
+                    ['label' => 'WebSocket', 'icon' => 'file', 'url' => ['socket/index']],
+                    ['label' => 'Events', 'icon' => 'file', 'url' => ['ev/index']],
                     ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug']],
-                    ['label' => 'test', 'icon' => 'dashboard'],
                     ['label' => 'Login', 'url' => ['site/login'], 'visible' => \Yii::$app->user->isGuest],
                     [
                         'label' => 'Some tools',

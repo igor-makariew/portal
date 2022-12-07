@@ -11,6 +11,8 @@ return [
     'id' => 'app-console',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'language' => 'en-EN',
+    'charset' => 'utf-8',
     'controllerNamespace' => 'console\controllers',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
@@ -31,6 +33,7 @@ return [
                 ],
             ],
         ],
+//        'rabbitmq' => require(__DIR__ . '/rabbitmq.php'),
     ],
     'params' => $params,
 ];

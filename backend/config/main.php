@@ -55,6 +55,16 @@ return [
             'class' => 'yii\web\UrlManager',
             'baseUrl' => '/backend/web',
         ],
+//        подключение websocket
+        'websocket' => [
+            'class' => '\yiiplus\websocket\<dirver>\WebSocket',
+            'host' => '127.0.0.1',
+            'port' => 9501,
+            'channels' => [
+                    'push-message' => '\socket\channels\PushMessageChannel',  // Configure the execution class corresponding to channel
+            ],
+      ],
+
     ],
     'params' => $params,
 ];

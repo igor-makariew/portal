@@ -38,9 +38,6 @@ class AppAsset extends AssetBundle
         'js/axios.min.js',
         'js/vue.js',
         'js/vuetify.js',
-
-
-
     ];
     public $depends = [
 //        ломает шаблон

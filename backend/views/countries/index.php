@@ -15,6 +15,8 @@
     </nav>
 
 <?= $this->registerCssFile(Yii::$app->urlManager->createUrl('/css/countries.css', ['depends' => ['backend\assets\AppAsset']])); ?>
+<?= $listResorts ?>
+
 <div class="">
     <div id="appCountries">
         <v-app id="inspire">

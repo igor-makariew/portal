@@ -84,7 +84,6 @@ class PersonalAreaController extends Controller
         }
 
         return $response;
-
     }
 
     /**

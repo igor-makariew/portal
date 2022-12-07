@@ -5,6 +5,8 @@ namespace common\models\listResorts;
 use common\models\rating\Rating;
 use common\models\listCountry\ListCountry;
 use Yii;
+use yii\db\ActiveRecord;
+use common\traits\ListModelsTrait;
 
 /**
  * This is the model class for table "list_resorts".
@@ -16,14 +18,40 @@ use Yii;
  * @property int $resort_country_id
  * @property int|null $at_filtering
  */
-class ListResorts extends \yii\db\ActiveRecord
+class ListResorts extends ActiveRecord
 {
+    use ListModelsTrait;
+    const LIST_RESORTS = 'list resorts';
+
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
         return 'list_resorts';
+    }
+
+    /*
+     * проcлушка событий
+     */
+    public function init()
+    {
+        //Method 2
+        $this->on(ListResorts::LIST_RESORTS, [$this, 'listResorts'],
+            [
+                'type' => 'delete',
+                'extra_info' => null
+            ]);
+    }
+
+    public function handlerListResorts()
+    {
+        $this->trigger(ListResorts::LIST_RESORTS);
+    }
+
+    public function listResorts($event)
+    {
+        return var_dump($event);
     }
 
     /**
