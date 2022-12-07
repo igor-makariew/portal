@@ -36,6 +36,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'created_at',
                 'format' =>  'datetime'
             ],
+            [
+                'attribute' => 'mailing_list',
+                'value' => function($value) {
+                    return $value['mailing_list'] == 0 ? 'No' : 'Yes';
+                }
+            ]
         ],
     ]) ?>
 

@@ -41,6 +41,7 @@
                     ['label' => 'Countries', 'icon' => 'flag', 'url' => ['countries/index']],
                     ['label' => 'Resorts', 'icon' => 'bed', 'url' => ['resorts/index']],
                     ['label' => 'Exel', 'icon' => 'file', 'url' => ['exel/index']],
+                    ['label' => 'Mailing List', 'icon' => 'envelope', 'url' => ['mailing/index']],
                     ['label' => 'Chat', 'icon' => 'twitter', 'url' => ['chat/index']],
                     ['label' => 'WebSocket', 'icon' => 'file', 'url' => ['socket/index']],
                     ['label' => 'Events', 'icon' => 'file', 'url' => ['ev/index']],

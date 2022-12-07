@@ -112,6 +112,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'format' =>  ['date', 'HH:mm:ss dd.MM.yyyy']
                                     ],
                                     [
+                                        'label' => 'Рассылка писем',
+                                        'attribute' => 'mailing_list',
+                                        'value' => function($value) {
+                                            return $value['mailing_list'] == 0 ? 'No' : 'Yes';
+                                        }
+                                    ],
+                                    [
                                         'class' => ActionColumn::class,
                                         'header' => 'Действие',
 //                'headerOptions' => ['width' => '80'],
@@ -136,6 +143,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                             ]); ?>
 
+<!--                      работа с датой закончить позже      -->
                             <?php
                             echo '<label class="form-label">Birth Date</label>';
                             echo DatePicker::widget([

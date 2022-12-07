@@ -26,6 +26,11 @@ use yii\widgets\ActiveForm;
             'admin' => 'admin',
     ]) ?>
 
+    <?= $form->field($model, 'mailing_list')->dropDownList([
+            '0' => 'No',
+            '1' => 'Yes',
+    ]) ?>
+
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
     </div>
