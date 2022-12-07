@@ -3,16 +3,161 @@
 namespace backend\controllers;
 
 use common\models\listResorts\ListResorts;
+use phpDocumentor\Reflection\Types\Integer;
 use Yii;
-use yii\db\Exception;
+use yii\base\ErrorException;
+use yii\base\Exception;
 use yii\helpers\Url;
 use common\models\listCountry\ListCountry;
 use common\traits\BreadcrumbsTrait;
+use Codeception\PHPUnit;
+
+class Test  {
+
+    protected $num;
+    public function __construct()
+    {
+        $this->num = 0;
+    }
+
+    public function ride()
+    {
+        return ' Igor! ';
+    }
+}
+
+class Test3 extends Test
+{
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    public $num = 7;
+    public function ride()
+    {
+        return ' Igor - Katay = son! ';
+    }
+}
+
+class Test2 extends Test
+{
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+
+    public function updParentNum()
+    {
+        return $this->num = 12;
+    }
+
+    public function ride()
+    {
+        return 'Igor - Katay! ';
+    }
+}
+
+abstract class Ferrari
+{
+
+}
+
+class Porsche extends Ferrari
+{
+    public static $parentNameClass;
+
+    public function __construct()
+    {
+        self::$parentNameClass = get_parent_class($this);
+    }
+
+    public function printText()
+    {
+        return 'PORSCHE cool car!';
+    }
+
+    public static function parentClass()
+    {
+        return new static();
+    }
+}
+
+interface Mercedes
+{
+    const TOOL = 5;
+    const REAL = 7;
+    const CARTOON = 12;
+}
+
+class Red
+{
+    public function getConst()
+    {
+        return Mercedes::TOOL + Mercedes::CARTOON;
+    }
+}
+
+class MyException extends \yii\db\Exception
+{
+    public function __construct($message, $errorInfo = [], $code = '', $previous = null)
+    {
+        parent::__construct($message, $errorInfo, $code, $previous);
+    }
+}
+
+class Except
+{
+    public function inverse($znamenatel)
+    {
+        if ($znamenatel == 0) {
+            throw new MyException('Деление на 0 запрещено');
+        }
+
+        return 1/$znamenatel;
+    }
+
+    public function myException()
+    {
+        try {
+            var_dump($this->inverse(5));
+            var_dump($this->inverse(3));
+            var_dump($this->inverse(1));
+            var_dump($this->inverse(0));
+        } catch (MyException $exception) {
+            $response = $exception->getMessage();
+            var_dump($response);
+        }
+        /*
+        finally {
+            var_dump($response);
+        }*/
+    }
+}
+
 
 class CountriesController extends \yii\web\Controller
 {
     public $enableCsrfValidation = false;
     use BreadcrumbsTrait;
+
+    public $test, $test2, $test3;
+    public $ferrari;
+    public $red;
+    public $except;
+
+    public function __construct($id, $module, $config = [])
+    {
+        $this->test = new Test();
+        $this->test2 = new Test2();
+        $this->test3 = new Test3();
+        $this->ferrari = new Porsche();
+        $this->red = new Red();
+        $this->except = new Except();
+
+        parent::__construct($id, $module, $config);
+    }
 
     /**
      * @return string
@@ -23,11 +168,34 @@ class CountriesController extends \yii\web\Controller
         $this->sessionBreadcrumbs();
         list($route, $param) = Yii::$app->request->resolve();
         $this->createBreadcrumbs($this->routes, $route);
+
+//        изучить очереди
+        
+//        $resorts = new ListResorts();
+//        $listResorts = $resorts->handlerListResorts();
+//        $spl = new \SplQueue();
+//        $spl->enqueue('test1');
+//        $spl->enqueue('test2');
+//        $spl->enqueue('test3');
+//        $spl->enqueue('test4');
+
         return $this->render('index', [
             'breadcrumbs' => $this->breadcrumbs,
-            'route' => $route,
-            'param' => $this->breadcrumbs,
+//            'listResorts' => $listResorts
         ]);
+    }
+
+    public function car(string $str, int $number)
+    {
+        $this->cars( $number,  $str);
+        $integer = new Integer(5);
+        return $integer;
+        return $str . ' - ' . $number;
+    }
+
+    public function cars(int $number, string $str)
+    {
+        return $number. ' - ' . $str;
     }
 
     /**
@@ -167,3 +335,7 @@ class CountriesController extends \yii\web\Controller
 
     }
 }
+
+
+
+

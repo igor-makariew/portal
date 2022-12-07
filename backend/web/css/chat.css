@@ -1,0 +1,44 @@
+
+
+.message-from {
+    background-color: #fd3b29;
+    width: auto;
+    height: auto;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+.message-to {
+    background-color: #a9fd00;
+    width: auto;
+    height: auto;
+    border-radius: 5px;
+    padding: 5px 10px;
+    text-align: right;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+.block-right {
+    float: right;
+    margin-right: 20px;
+}
+
+.block-left {
+    margin-left: 20px;
+}
+
+.title-messenger {
+    text-align: center;
+    font-size: larger;
+    font-weight: bold;
+    margin: 10px;
+}
+
+.height-chat {
+    max-height: 75vh;
+}

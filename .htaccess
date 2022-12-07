@@ -1,6 +1,26 @@
+AddDefaultCharset UTF-8
 <IfModule mod_rewrite.c>
     Options +FollowSymlinks
     RewriteEngine On
+</IfModule>
+
+<IfModule deflate_module>
+AddOutputFilterByType DEFLATE text/html text/plain text/xml text/javascript text/css application/json application/javascript
+
+# Netscape 4.x has some problems...
+BrowserMatch ^Mozilla/4 gzip-only-text/html
+
+# Netscape 4.06-4.08 have some more problems
+BrowserMatch ^Mozilla/4\.0[678] no-gzip
+
+# MSIE masquerades as Netscape, but it is fine
+BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+
+# Do NOT compress localhost
+#SetEnvIf Remote_Host 127.0.0.1 no-gzip
+
+# Make sure proxies don't deliver the wrong content
+Header append Vary User-Agent env=!dont-vary
 </IfModule>
 
 <IfModule mod_rewrite.c>

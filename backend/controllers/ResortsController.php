@@ -60,13 +60,12 @@ class ResortsController extends \yii\web\Controller
 
     public function actionIndex()
     {
+        $this->sessionUrl();
         $this->sessionBreadcrumbs();
         list($route, $param) = Yii::$app->request->resolve();
         $this->createBreadcrumbs($this->routes, $route);
         return $this->render('index', [
-            'breadcrumbs' => $this->breadcrumbs,
-            'route' => $route,
-            'param' => $this->routes,
+            'breadcrumbs' => $this->breadcrumbs
         ]);
     }
 
