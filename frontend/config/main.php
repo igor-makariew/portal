@@ -16,6 +16,9 @@ return [
         'request' => [
             'baseUrl' => '',
 //            'csrfParam' => '_csrf-frontend',
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ]
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -45,7 +48,12 @@ return [
             'rules' => [
                 //'' => 'site/index',
                 //'<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
-                '<action:\w+>/' => 'site/<action>'
+                '<action:\w+>/' => 'site/<action>',
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'comment',
+                    'pluralize' => false
+                ],
             ],
         ],
 

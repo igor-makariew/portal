@@ -3,6 +3,7 @@
 namespace common\models\comments;
 
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
@@ -52,10 +53,10 @@ class Comments extends ActiveRecord
     }
 
     /**
-     * Метод расширяет возможности класса Customers, внедряя дополительные
-     * свойства и методы. Кроме того, позволяет реагировать на события,
-     * создаваемые классом Order или его родителями
-     */
+ * Метод расширяет возможности класса Customers, внедряя дополительные
+ * свойства и методы. Кроме того, позволяет реагировать на события,
+ * создаваемые классом Order или его родителями
+ */
     public function behaviors()
     {
         return [
@@ -77,5 +78,26 @@ class Comments extends ActiveRecord
             ],
 
         ];
+    }
+
+    public function search($param)
+    {
+        $query = self::find();
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query
+        ]);
+        $this->load($param);
+
+        if (!$this->validate()) {
+            return $dataProvider;
+        }
+
+        $query->andWhere('like', 'comment', $this->comment);
+        return $dataProvider;
+    }
+
+    public function formName()
+    {
+        return 'str';
     }
 }
