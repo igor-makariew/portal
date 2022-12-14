@@ -21,6 +21,9 @@ return [
         'request' => [
             'baseUrl' => '/admin',
             'csrfParam' => '_csrf-backend',
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ]
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -44,13 +47,30 @@ return [
             'errorAction' => 'site/error',
         ],
         'urlManager' => [
+            // настройка красиваого рест апи
             'enablePrettyUrl' => true,
+            'enableStrictParsing' => true,
             'showScriptName' => false,
+
+//            'enablePrettyUrl' => true,
+//            'showScriptName' => false,
             'rules' => [
                 '' => 'site/index',
                 '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'comment',
+                    'pluralize' => false
+                ],
+                // REST patterns
+//                array('api/list', 'pattern'=>'api/<model:\w+>', 'verb'=>'GET'),
+//                array('api/view', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'GET'),
+//                array('api/update', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'PUT'),
+//                array('api/delete', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'DELETE'),
+//                array('api/create', 'pattern'=>'api/<model:\w+>', 'verb'=>'POST'),
             ],
         ],
+
         'urlManagerBackend' => [
             'class' => 'yii\web\UrlManager',
             'baseUrl' => '/backend/web',
@@ -61,10 +81,9 @@ return [
             'host' => '127.0.0.1',
             'port' => 9501,
             'channels' => [
-                    'push-message' => '\socket\channels\PushMessageChannel',  // Configure the execution class corresponding to channel
+                'push-message' => '\socket\channels\PushMessageChannel',  // Configure the execution class corresponding to channel
             ],
-      ],
-
+        ],
     ],
     'params' => $params,
 ];
