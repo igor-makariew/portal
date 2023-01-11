@@ -3,6 +3,8 @@
 namespace backend\controllers;
 
 use common\models\User;
+use common\models\calendarEvent\CalendarEvents;
+use common\traits\BreadcrumbsTrait;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
 use yii\web\Controller;
@@ -17,39 +19,41 @@ use Yii;
 class UsersController extends Controller
 {
     public $enableCsrfValidation = false;
+    use BreadcrumbsTrait;
 
     /**
      * @inheritDoc
      */
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'actions' => ['index', 'create', 'update', 'view','delete', 'create-role-permission' ],
-                        'roles' => [User::ROLE_ADMIN],
-
-                    ],
-                    [
-                        'allow' => true,
-                        'actions' => ['index', 'view' ],
-                        'roles' => [User::ROLE_MODER],
-                    ],
-
-                ],
-            ],
-
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
+//    public function behaviors()
+//    {
+//        return [
+//            'access' => [
+//                'class' => AccessControl::class,
+//                'rules' => [
+//                    [
+//                        'allow' => true,
+//                        'actions' => ['index', 'create', 'update', 'view','delete', 'create-role-permission', 'create-events' ],
+//                        'roles' => [User::ROLE_ADMIN],
+//
+//                    ],
+//                    [
+//                        'allow' => true,
+//                        'actions' => ['index', 'view', 'create-role-permission', 'create-events' ],
+//                        'roles' => [User::ROLE_MODER],
+//                    ],
+//
+//                ],
+//            ],
+//
+//            'verbs' => [
+//                'class' => VerbFilter::class,
+//                'actions' => [
+//                    'delete' => ['POST'],
+//                    'create-events' => ['POST'],
+//                ],
+//            ],
+//        ];
+//    }
 
     /**
      * Lists all Users models.
@@ -182,5 +186,30 @@ class UsersController extends Controller
         Yii::$app->authManager->assign($userRole, $data['data']['userId']);
 
         return $data;
+    }
+
+
+    /**
+     * создание событий в календаоре
+     *
+     * @return bool
+     */
+    public function actionCreatecalendarevent()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+
+        $modelCalendarEvent = new CalendarEvents();
+        $valueCalendarEvent = [
+            'name' => $data['data']['descriptionEvent'],
+            'event' => $data['data']['event'],
+            'created_at' => $data['data']['date'],
+        ];
+        $modelCalendarEvent->attributes = $valueCalendarEvent;
+        if ($modelCalendarEvent->save()) {
+            return true;
+        }
+
+        return false;
     }
 }

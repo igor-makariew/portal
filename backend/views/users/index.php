@@ -144,39 +144,94 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]); ?>
 
 <!--                      работа с датой закончить позже      -->
+                        <div class="mt-5 mb-5">
                             <?php
-                            echo '<label class="form-label">Birth Date</label>';
+                            echo '<label class="form-label">Calendar Events</label>';
                             echo DatePicker::widget([
-                                'name' => 'dp_5',
+                                'name' => 'check_issue_date',
                                 'type' => DatePicker::TYPE_COMPONENT_PREPEND,
-                                'value' => date('d-M-Y'),
+                                'value' => date('d-m-Y'),
                                 'pluginOptions' => [
                                     'autoclose' => true,
-                                    'format' => 'dd-M-yyyy',
+                                    'format' => 'dd-m-yyyy',
                                     'calendarWeeks' => true, // номер недели
                                     'clearBtn' => true, // очистить календарь
-                                    'language' => 'ru'
+                                    'language' => 'ru',
+                                    'todayHighlight' => true
 
                                 ],
                                 'options' => [
-                                    'style' => 'color:green'
+                                    'style' => 'color:green',
+                                    'placeholder' => 'Select issue date...'
                                 ],
                                 'pluginEvents' => [
-                                    "show" => "function(e) {
-                console.log(e);
-             }",
-                                    "hide" => "function(e) {  
-                console.log(e);
-             }",
-                                    "clearDate" => "function(e) { 
-                console.log(e);    
-            }",
-//                "changeDate" => "function(e) {  # `e` here contains the extra attributes }",
-//                "changeYear" => "function(e) {  # `e` here contains the extra attributes }",
-//                "changeMonth" => "function(e) {  # `e` here contains the extra attributes }",
+//                                    "show" => "function(e) {
+//                console.log(e);
+//             }",
+//                                    "hide" => "function(e) {
+//                console.log(e);
+//             }",
+//                                    "clearDate" => "function(e) {
+//                console.log(e);
+//            }",
+                "changeDate" => "function(e) {  
+                    console.log(e);
+                    console.log(e.dates[0]);
+                }",
+                "changeYear" => "function(e) {  
+                    console.log(e);
+                    console.log(333);
+                }",
+                "changeMonth" => "function(e) {  
+                    console.log(e);
+                    console.log(555);
+                }",
                                 ],
                             ]);
                             ?>
+                        </div>
+                            <v-form ref="formValid"  v-model="valid">
+                                <v-row align="center">
+                                    <v-date-picker
+                                        v-model="date"
+                                        full-width
+                                        class="mt-4"
+                                    ></v-date-picker>
+                                </v-row>
+                                <v-row>
+                                    <v-col cols="3">
+                                        <v-subheader>Описание события</v-subheader>
+                                    </v-col>
+                                    <v-col cols="9">
+                                        <v-text-field
+                                            label="Description"
+                                            v-model="descriptionEvent"
+                                            :rules="fieldDescriptionEvent"
+                                        ></v-text-field>
+                                    </v-col>
+                                </v-row>
+
+                                <v-row>
+                                    <v-col cols="3">
+                                        <v-subheader>Выберите событие</v-subheader>
+                                    </v-col>
+                                    <v-col cols="9">
+                                        <v-select
+                                            v-model="event"
+                                            :items="events"
+                                            item-text="title"
+                                            item-value="title"
+                                            label="Event"
+                                        ></v-select>
+                                    </v-col>
+                                </v-row>
+
+                                <v-col class="text-right" >
+                                    <v-btn :disabled="!valid" color="success" class="mr-4" @click="setEvent" @click="validate">
+                                        Запрос
+                                    </v-btn>
+                                </v-col>
+                            </v-form>
                         </div>
                     </template>
                 <?php if (Yii::$app->user->can('administrator')):?>

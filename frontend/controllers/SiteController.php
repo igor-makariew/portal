@@ -22,6 +22,7 @@ use common\models\favoriteProducts\FavoriteProducts;
 use common\models\listFilterHotel\ListFilterHotel;
 use common\models\listCountry\ListCountry;
 use common\models\listResorts\ListResorts;
+use common\models\calendarEvent\CalendarEvents;
 
 /**
  * Site controller
@@ -617,5 +618,24 @@ class SiteController extends Controller
         return $this->render('resendVerificationEmail', [
             'model' => $model
         ]);
+    }
+
+    public function actionGetCalendarEvent()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $response = [
+            'today' => '',
+            'calendarEvent' => []
+        ];
+
+        $response['today'] = date("Y-m-d");
+        $modelCalendarEvent = CalendarEvents::find()
+            ->select('event, created_at')
+            ->where(['>=', 'created_at', $response['today']])
+            ->all();
+        $response['calendarEvent'] = $modelCalendarEvent;
+
+        return $response;
     }
 }
