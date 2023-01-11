@@ -24,36 +24,36 @@ class UsersController extends Controller
     /**
      * @inheritDoc
      */
-//    public function behaviors()
-//    {
-//        return [
-//            'access' => [
-//                'class' => AccessControl::class,
-//                'rules' => [
-//                    [
-//                        'allow' => true,
-//                        'actions' => ['index', 'create', 'update', 'view','delete', 'create-role-permission', 'create-events' ],
-//                        'roles' => [User::ROLE_ADMIN],
-//
-//                    ],
-//                    [
-//                        'allow' => true,
-//                        'actions' => ['index', 'view', 'create-role-permission', 'create-events' ],
-//                        'roles' => [User::ROLE_MODER],
-//                    ],
-//
-//                ],
-//            ],
-//
-//            'verbs' => [
-//                'class' => VerbFilter::class,
-//                'actions' => [
-//                    'delete' => ['POST'],
-//                    'create-events' => ['POST'],
-//                ],
-//            ],
-//        ];
-//    }
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'create', 'update', 'view','delete', 'create-role-permission', 'createcalendarevent' ],
+                        'roles' => [User::ROLE_ADMIN],
+
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'create-role-permission', 'create-events' ],
+                        'roles' => [User::ROLE_MODER],
+                    ],
+
+                ],
+            ],
+
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['POST'],
+                    'createcalendarevent' => ['POST'],
+                ],
+            ],
+        ];
+    }
 
     /**
      * Lists all Users models.
