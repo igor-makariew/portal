@@ -80,6 +80,12 @@ class Comments extends ActiveRecord
         ];
     }
 
+    /**
+     * создание api
+     *
+     * @param $param
+     * @return ActiveDataProvider
+     */
     public function search($param)
     {
         $query = self::find();
@@ -96,6 +102,9 @@ class Comments extends ActiveRecord
         return $dataProvider;
     }
 
+    /*
+     * параметр для api
+     */
     public function formName()
     {
         return 'str';

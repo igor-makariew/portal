@@ -3,6 +3,7 @@ new Vue({
     vuetify: new Vuetify(),
 
     data: () => ({
+        valid: true,
         tab: null,
         items: [
             'Список пользователей',
@@ -33,7 +34,14 @@ new Vue({
         descriptionPermissionRule: [
             v => !!v || 'Данное поле должно быть заполнено'
         ],
-
+        date:  (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+        event: 'stock',
+        events: ['stock', 'holidays', 'sale'],
+        descriptionEvent: '',
+        fieldDescriptionEvent: [
+            v => !!v || 'Данное поле должно быть заполнено',
+            v => (v && v.length) > 30 || 'Количество должно быть больше 30 символов'
+        ]
     }),
 
     methods: {
@@ -55,9 +63,34 @@ new Vue({
                 this.loaderRoles = false;
                 console.log(response);
             }).catch( (error) => {
+                this.loaderRoles = false;
                 console.log(error.message)
             })
 
+        },
+
+        setEvent() {
+            this.loaderRoles = true;
+            let data = {
+                'date': this.date,
+                'descriptionEvent': this.descriptionEvent,
+                'event': this.event
+            };
+            axios.post('/admin/users/createcalendarevent', {
+                'data': data
+            }).then( (response) => {
+                this.loaderRoles = false;
+                if (response) {
+                    alert('ok');
+                    this.descriptionEvent = '';
+                } else {
+                    alert('error')
+                }
+                console.log(response);
+            }).catch( (error) => {
+                this.loaderRoles = false;
+                console.log(error.message);
+            })
         }
 
     }

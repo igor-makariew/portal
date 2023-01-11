@@ -19,6 +19,14 @@ class EvController extends Controller
         $ev = new Ev();
         array_push($this->arrListener, Ev::STR_END, Ev::STR_END, Ev::STR_END);
 
+        $inputFilter = array('invoiceNo' => FILTER_SANITIZE_NUMBER_INT);
+
+        var_dump($inputFilter);
+
+        $input = filter_input_array(INPUT_POST, $inputFilter);
+
+        var_dump($input);
+
         $ev->on($ev::STR_END, [$ev, 'uppperStr'], $this->stroka, false);
 
         foreach ($this->arrListener as $listener) {

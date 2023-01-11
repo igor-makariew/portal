@@ -137,6 +137,55 @@ $this->title = 'DirEngine - Free Bootstrap 4 Template by Colorlib';
     </div>
 </section>
 
+<section class="ftco-section testimony-section bg-light-blue">
+    <div class="container">
+        <div id="appCalendarEvent">
+            <v-app id="inspire">
+                <v-row>
+                    <v-col>
+                        <v-sheet height="500">
+                            <v-calendar
+                                    :now="today"
+                                    :value="today"
+                                    color="primary"
+                            >
+                                <template v-slot:day="{ present, future, date }">
+                                    <v-row
+                                            class="fill-height"
+                                    >
+                                        <template v-if="present && tracked[date]">
+                                            <v-sheet
+                                                    v-for="(percent, i) in tracked[date]"
+                                                    :key="i"
+                                                    :title="category[i]"
+                                                    :color="colors[i]"
+                                                    :width="`${percent}%`"
+                                                    height="100%"
+                                                    tile
+                                            ></v-sheet>
+                                        </template>
+                                        <template v-if=" future && tracked[date]">
+                                            <v-sheet
+                                                    v-for="(percent, i) in tracked[date]"
+                                                    :key="i"
+                                                    :title="category[i]"
+                                                    :color="colors[i]"
+                                                    :width="`${percent}%`"
+                                                    height="100%"
+                                                    tile
+                                            ></v-sheet>
+                                        </template>
+                                    </v-row>
+                                </template>
+                            </v-calendar>
+                        </v-sheet>
+                    </v-col>
+                </v-row>
+            </v-app>
+        </div>
+    </div>
+</section>
+
 <section class="ftco-section bg-light">
     <div class="container">
         <div class="row justify-content-start mb-5 pb-3">
@@ -830,3 +879,5 @@ $this->title = 'DirEngine - Free Bootstrap 4 Template by Colorlib';
         </div>
     </div>
 </section>
+
+<?= $this->registerJsFile(Yii::$app->urlManager->createUrl('/js/vueCalendarEvent.js'), ['depends' => ['frontend\assets\AppAsset']]); ?>
