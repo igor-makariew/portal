@@ -35,7 +35,9 @@ AppAsset::register($this);
                 <div class="collapse navbar-collapse" id="ftco-nav">
                     <ul class="navbar-nav ml-auto" id="active_menu">
                         <li class="nav-item"><a href="<?= Url::to(['/site/index']) ?>" class="nav-link">Home</a></li>
-                        <li class="nav-item"><a href="<?= Url::to(['/site/about']) ?>" class="nav-link">About</a></li>
+<!--                        вернуть назад-->
+<!--                        <li class="nav-item"><a href="--><?//= Url::to(['/site/about']) ?><!--" class="nav-link">About</a></li>-->
+                        <li class="nav-item"><a href="<?= Url::to(['/site/shop']) ?>" class="nav-link">Shop</a></li>
                         <li class="nav-item"><a href="<?= Url::to(['/site/tour']) ?>" class="nav-link">Tour</a></li>
                         <li class="nav-item"><a href="<?= Url::to(['/site/hotels']) ?>" class="nav-link">Hotels</a></li>
                         <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
