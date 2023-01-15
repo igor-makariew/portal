@@ -23,6 +23,10 @@ use common\models\listFilterHotel\ListFilterHotel;
 use common\models\listCountry\ListCountry;
 use common\models\listResorts\ListResorts;
 use common\models\calendarEvent\CalendarEvents;
+use common\models\goods\Goods;
+use common\models\basketGoods\BasketGoods;
+use common\models\orders\Orders;
+use common\models\consumers\Consumers;
 
 /**
  * Site controller
@@ -212,6 +216,83 @@ class SiteController extends Controller
             'json' => $data
         ]);
     }
+    /**
+     * Displays shop page.
+     *
+     * @return mixed
+     */
+    public function actionShop()
+    {
+        return $this->render('shop', []);
+    }
+
+    public function actionGetGoods()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $modelGoods = Goods::find()->all();
+        return $modelGoods;
+
+    }
+
+    public function actionBasket()
+    {
+        return $this->render('basket', []);
+    }
+
+    public function actionSetBasket()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $basketGoods = new BasketGoods();
+        $basketGoods->addBasket($data['id']);
+    }
+
+    public function actionGetBasket()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+
+        $backetGood = new BasketGoods();
+        $ids = $backetGood->getBasket();
+        $modelGoods = Goods::find()->where(['in', 'id', $ids[Yii::$app->user->id]['ids']])->all();
+        return $modelGoods;
+    }
+
+    public function actionToOrder()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+
+        $modelConsumer = new Consumers();
+        $modelOrder = new Orders();
+        $consumer = [
+            'full_name' => $data['data']['fullname'],
+            'phone' => $data['data']['phone'],
+            'email' => $data['data']['email'],
+        ];
+
+        $order = [
+            'user_id' => Yii::$app->user->id,
+            'address' => $data['data']['address'],
+            'phone' => $data['data']['phone'],
+            'email' => $data['data']['email'],
+            'date' => date('Y-m-d'),
+            'number_order' => time(),
+            'order' => json_encode($data['data']['goods']),
+        ];
+
+        $modelConsumer->attributes = $consumer;
+        $modelOrder->attributes = $order;
+        if ($modelOrder->save() && $modelConsumer->save()) {
+            $basketGoods = new BasketGoods();
+            $basketGoods->removeFromBasket($data['data']['goods']);
+            return true;
+        }
+
+        return false;
+    }
+
 
     /**
      * Displays about page.
