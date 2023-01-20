@@ -53,8 +53,18 @@ class SiteController extends Controller
     public function actions()
     {
         return [
+            // объявляет "error" действие с помощью названия класса
             'error' => [
                 'class' => 'yii\web\ErrorAction',
+            ],
+            // объявляет "view" действие с помощью конфигурационного массива
+//            'view' => [
+//                'class' => 'yii\web\ViewAction',
+//                'viewPrefix' => '',
+//            ],
+            'captcha' => [
+                'class' => 'yii\captcha\CaptchaAction',
+                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
     }

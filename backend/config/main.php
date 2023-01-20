@@ -15,7 +15,10 @@ return [
         'admin' => [
             'class' => 'app\modules\admin\Module',
             'layout' => 'main'
-        ]
+        ],
+        'settings' => [
+            'class' => 'common\modules\settings\Settings',
+        ],
     ],
     'components' => [
         'request' => [
@@ -49,19 +52,32 @@ return [
         'urlManager' => [
             // настройка красиваого рест апи
             'enablePrettyUrl' => true,
-            'enableStrictParsing' => true,
+//            'enableStrictParsing' => true,
             'showScriptName' => false,
 
-//            'enablePrettyUrl' => true,
-//            'showScriptName' => false,
             'rules' => [
                 '' => 'site/index',
                 '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
+                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                '<module:\w+><controller:\w+>/<action:update|delete>/<id:\d+>' => '<module>/<controller>/<action>',
+
+//                '<controller:\w+>/<id:\d+>' => '<controller>/view',
+//                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+//                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+
+//                '<module:settings>/<controller:\w+>/<action:\w+>' => '<module>/<controller>/<action>',
+//                '<module:[\w-]+>/<controller:[\w-]+>/<action:[\w-]+>/<id:\d+>] => <module>/<controller>/<action>',
+//                '<module:\w+>/<controller:\w+>/<action:\w+>/<id:\d+>'=>'<module>/<controller>/<action>',
+//                '<module:\w+><controller:\w+>/<action:update|delete>/<id:\d+>' => '<module>/<controller>/<action>',
                 [
                     'class' => 'yii\rest\UrlRule',
-                    'controller' => 'comment',
+                    'controller' => ['settings/default'],
                     'pluralize' => false
                 ],
+//                '<controller:\w+>/<id:\d+>' => '<controller>/view',
+//                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+//                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+//                ['class' => 'yii\rest\UrlRule', 'controller' => ['api/user']],
                 // REST patterns
 //                array('api/list', 'pattern'=>'api/<model:\w+>', 'verb'=>'GET'),
 //                array('api/view', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'GET'),
