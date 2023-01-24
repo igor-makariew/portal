@@ -19,6 +19,9 @@ return [
         'settings' => [
             'class' => 'common\modules\settings\Settings',
         ],
+        'rabbitmq' => [
+            'class' => 'common\modules\rabbitmq\Rabbitmq',
+        ],
     ],
     'components' => [
         'request' => [
@@ -99,6 +102,17 @@ return [
             'channels' => [
                 'push-message' => '\socket\channels\PushMessageChannel',  // Configure the execution class corresponding to channel
             ],
+        ],
+// полключение rabbitmq
+        'rabbitMQ' => [
+            'class' => 'application.components.RabbitMQ.RabbitMQ',
+            'server' => array(
+                'host' => 'localhost',
+                'port' => '5672',
+                'vhost' => '/',
+                'user' => 'igor',
+                'password' => 'admin'
+            )
         ],
     ],
     'params' => $params,
