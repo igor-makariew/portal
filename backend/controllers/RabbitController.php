@@ -18,8 +18,7 @@ class RabbitController extends Controller
             'app' => Yii::getAlias('/admin/images/uploadImages/'),
         ]);
     }
-
-
+    
     /**
      * get messages RabbitMQ
      *
