@@ -13,42 +13,15 @@ $this->params['breadcrumbs'][] = $this->title;
 //        $breadcrumbs
 //    );?>
 </nav>
-
+<?php var_dump($app);?>
 <div id="appRabbit">
     <v-app id="inspire">
-        <div>
-            <v-col
-                    class="d-flex"
-                    cols="12"
-                    sm="4"
-            >
-                <v-select
-                        v-model="selectInterval"
-                        :items="items"
-                        label="Select interval"
-                        dense
-                        outlined
-                        @change="get"
-                ></v-select>
-            </v-col>
-        </div>
 
-        <v-card>
-            <v-card-title>
-                <v-text-field
-                        v-model="search"
-                        append-icon="mdi-magnify"
-                        label="Search"
-                        single-line
-                        hide-details
-                ></v-text-field>
-            </v-card-title>
-            <v-data-table
-                    :headers="headers"
-                    :items="desserts"
-                    :search="search"
-            ></v-data-table>
-        </v-card>
+        <div class="ml-3 mr-3">
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-success" @click="Send">Send</button>
+            </span>
+        </div>
     </v-app>
 </div>
 
