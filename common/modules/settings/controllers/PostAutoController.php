@@ -7,7 +7,6 @@ use common\modules\models\postauto\PostAutoSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\web\UploadedFile;
 
 /**
  * PostAutoController implements the CRUD actions for PostAuto model.
@@ -61,17 +60,6 @@ class PostAutoController extends Controller
         ]);
     }
 
-    public function actionUpload()
-    {
-        $modelPostAuto = new PostAuto();
-        if (\Yii::$app->request->isPost) {
-            $modelPostAuto->image = UploadedFile::getInstance($modelPostAuto, 'img');
-            $modelPostAuto->upload();
-            return;
-        }
-    }
-
-
     /**
      * Creates a new PostAuto model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -82,15 +70,8 @@ class PostAutoController extends Controller
         $model = new PostAuto();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model->img = UploadedFile::getInstance($model, 'img');
-                $model->upload();
-                $model->attributes = $model->createAttributesModel($model, $model->img);
-                if ($model->save(false)) {
-                    return $this->redirect(['view', 'id' => $model->id]);
-                } else {
-                    $model->loadDefaultValues();
-                }
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -112,13 +93,8 @@ class PostAutoController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post())) {
-            $model->img = UploadedFile::getInstance($model, 'img');
-            $model->upload();
-            $model->attributes = $model->createAttributesModel($model, $model->img);
-            if ($model->save(false)) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
