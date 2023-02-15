@@ -47,6 +47,7 @@
                     ['label' => 'WebSocket', 'icon' => 'file', 'url' => ['/socket/index']],
                     ['label' => 'Events', 'icon' => 'file', 'url' => ['/ev/index']],
                     ['label' => 'Module Settings', 'icon' => 'file', 'url' => ['settings/post-auto/index']],
+                    ['label' => 'RabbitMQ', 'icon' => 'file', 'url' => ['/rabbit/index']],
                     ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug']],
                     ['label' => 'Login', 'url' => ['site/login'], 'visible' => \Yii::$app->user->isGuest],
                     [
