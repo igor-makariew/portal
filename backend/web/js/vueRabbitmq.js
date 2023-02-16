@@ -3,12 +3,13 @@ new Vue({
     vuetify: new Vuetify(),
 
     data: () => ({
-        connectionRabbit: false,
         valid: true,
         command: '',
         commandRules: [
             v => !!v || 'Command is required',
+            v => /[a-zA-Z]/.test(v) || 'Command must be valid',
         ],
+        command: ''
 
     }),
 
@@ -25,13 +26,18 @@ new Vue({
     },
 
     methods: {
-
+        /**
+         * publish command
+         */
         connectionRabbitmq() {
+            let data = {
+                'command': this.command
+            };
             axios.post('/admin/rabbitmq/rabbitmq', {
-                'data': 'test'
+                'data': data
             })
                 .then( (response) => {
-                    this.connectionRabbit = true;
+                    this.command = '';
                     console.log(response)
                 }).catch( (error) => {
                     console.log(error.message);

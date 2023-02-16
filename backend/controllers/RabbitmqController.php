@@ -6,6 +6,7 @@ use yii\web\Controller;
 use Yii;
 use common\traits\BreadcrumbsTrait;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class RabbitmqController extends Controller
 {
@@ -20,7 +21,7 @@ class RabbitmqController extends Controller
     public function actionRabbitmq()
     {
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
-//        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
 
         $connection_params = array(
             'host' => 'localhost',
@@ -39,8 +40,14 @@ class RabbitmqController extends Controller
         );
 
         $channel = $connection->channel();
+        $channel->exchange_declare('commands', 'fanout', false, false, false);
+        $msg = new AMQPMessage($data['data']['command']);
+        $channel->basic_publish($msg, 'commands');
+        if ($channel->close() === null && $connection->close() === null) {
+            return 1;
+        }
 
-        return $channel;
+        return 0;
     }
 
 }

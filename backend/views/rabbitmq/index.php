@@ -14,39 +14,29 @@ $this->params['breadcrumbs'][] = $this->title;
 <div id="appRabbitmq">
     <v-app id="inspire">
         <div class="container-rabbitmq">
-            <div class="align-self-start">
-                <v-btn
-                        small
-                        class="success"
-                        @click="connectionRabbitmq"
-                >Connection RABBIT_MQ</v-btn>
-            </div>
-
-            <template v-if="connectionRabbit">
-                <div class="form-rabbitmq align-self-start">
+            <div class="form-rabbitmq align-self-start">
                     <v-form
                             ref="form"
                             v-model="valid"
-                            lazy-validation
                     >
                         <v-text-field
                                 v-model="command"
-                                :counter="10"
+                                :counter="20"
                                 :rules="commandRules"
                                 label="Command"
                                 required
                         ></v-text-field>
 
                         <v-btn
+                                :disabled="!valid"
                                 color="success"
                                 class="mr-4"
-                                @click="validate"
+                                @click="connectionRabbitmq()"
                         >
                             Send command
                         </v-btn>
                     </v-form>
                 </div>
-            </template>
         </div>
     </v-app>
 </div>
