@@ -36,6 +36,7 @@
                         </tr>
                         </thead>
                         <tbody>
+                        
                         <tr v-for="(hotel, index) in listHotels" scope="row">
                             <td class="align-middle">{{hotel.name}}</td>
                             <td class="align-middle">{{hotel.label}}</td>
