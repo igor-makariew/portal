@@ -60,9 +60,9 @@ class RabbitmqController extends Controller
     public function actionPdf()
     {
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
-        $commands = new Commands();
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
 
-        return $commands->createFPDF();
+        return $data;
     }
 
 }

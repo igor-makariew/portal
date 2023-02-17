@@ -21,9 +21,9 @@ class Commands extends Model
     }
 
     /**
-     * создание pdf файла
+     * оздание pdf файла
      *
-     * @return string
+     * @param string $name
      */
     public function createFPDF(string $name): void
     {
@@ -92,8 +92,8 @@ class Commands extends Model
             Yii::$app
                 ->mailer
                 ->compose(
-//                    ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
-//                    ['user' => $user]
+                    ['html' => 'rabbitmq-html', 'text' => 'rabbitmq-text'],
+                    ['user' => $user]
                 )
                 ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
                 ->setTo($user['email'])
@@ -102,16 +102,5 @@ class Commands extends Model
                 ->send();
         }
 
-//
-//        return Yii::$app
-//            ->mailer
-//            ->compose(
-//                ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
-//                ['user' => $user]
-//            )
-//            ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
-//            ->setTo($this->email)
-//            ->setSubject('Account registration at ' . Yii::$app->name)
-//            ->send();
     }
 }
