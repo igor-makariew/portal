@@ -15,28 +15,37 @@ $this->params['breadcrumbs'][] = $this->title;
     <v-app id="inspire">
         <div class="container-rabbitmq">
             <div class="form-rabbitmq align-self-start">
-                    <v-form
-                            ref="form"
-                            v-model="valid"
-                    >
-                        <v-text-field
-                                v-model="command"
-                                :counter="20"
-                                :rules="commandRules"
-                                label="Command"
-                                required
-                        ></v-text-field>
+                <v-form
+                        ref="form"
+                        v-model="valid"
+                >
+                    <v-text-field
+                            v-model="command"
+                            :counter="20"
+                            :rules="commandRules"
+                            label="Command"
+                            required
+                    ></v-text-field>
 
-                        <v-btn
-                                :disabled="!valid"
-                                color="success"
-                                class="mr-4"
-                                @click="connectionRabbitmq()"
-                        >
-                            Send command
-                        </v-btn>
-                    </v-form>
-                </div>
+                    <v-btn
+                            :disabled="!valid"
+                            color="success"
+                            class="mr-4"
+                            @click="connectionRabbitmq()"
+                    >
+                        Send command
+                    </v-btn>
+                </v-form>
+
+                <br>
+                <v-btn
+                        color="success"
+                        class="mr-4"
+                        @click="fpdf"
+                >
+                    create
+                </v-btn>
+            </div>
         </div>
     </v-app>
 </div>

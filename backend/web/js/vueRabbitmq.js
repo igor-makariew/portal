@@ -27,7 +27,7 @@ new Vue({
 
     methods: {
         /**
-         * publish command
+         * connection rabbit_mq
          */
         connectionRabbitmq() {
             let data = {
@@ -41,6 +41,15 @@ new Vue({
                     console.log(response)
                 }).catch( (error) => {
                     console.log(error.message);
+            })
+        },
+
+        fpdf() {
+            axios.post('/admin/rabbitmq/pdf')
+                .then( (response) => {
+                    console.log(response.data)
+                }).catch( (error) => {
+                    console.log(error.message)
             })
         },
 

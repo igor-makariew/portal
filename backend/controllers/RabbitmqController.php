@@ -7,6 +7,7 @@ use Yii;
 use common\traits\BreadcrumbsTrait;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
+use console\models\Commands;
 
 class RabbitmqController extends Controller
 {
@@ -18,6 +19,12 @@ class RabbitmqController extends Controller
         return $this->render('index');
     }
 
+    /**
+     * connection rabbit
+     *
+     * @return int
+     * @throws \Exception
+     */
     public function actionRabbitmq()
     {
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
@@ -48,6 +55,14 @@ class RabbitmqController extends Controller
         }
 
         return 0;
+    }
+
+    public function actionPdf()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $commands = new Commands();
+
+        return $commands->createFPDF();
     }
 
 }
