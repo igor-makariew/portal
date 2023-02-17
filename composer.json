@@ -26,7 +26,9 @@
         "scotthuangzl/yii2-export2excel": "dev-master",
         "yiiplus/yii2-websocket": "^1.0.0",
         "consik/yii2-websocket": "^1.0",
-        "mikemadisonweb/yii2-rabbitmq": "^2.5"
+        "mikemadisonweb/yii2-rabbitmq": "^2.5",
+        "mihaildev/yii2-ckeditor": "*",
+        "inquid/yii2-fpdf": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
