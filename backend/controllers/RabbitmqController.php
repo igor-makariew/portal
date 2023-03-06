@@ -14,6 +14,8 @@ class RabbitmqController extends Controller
     public $enableCsrfValidation = false;
     use BreadcrumbsTrait;
 
+    public $commands;
+
     public function actionIndex()
     {
         return $this->render('index');
@@ -57,12 +59,49 @@ class RabbitmqController extends Controller
         return 0;
     }
 
-    public function actionPdf()
+    /**
+     * connection rabbit_rpc
+     *
+     * @return int
+     * @throws \Exception
+     */
+    public function actionRabbitmqRpc()
     {
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
         $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
 
-        return $data;
+        $this->commands = new Commands();
+
+        $connection_params = array(
+            'host' => 'localhost',
+            'port' => 5672,
+            'vhost' => '/',
+            'login' => 'igor',
+            'password' => 'admin'
+        );
+
+        $this->commands->connection = new AMQPStreamConnection(
+            $connection_params['host'],
+            $connection_params['port'],
+            $connection_params['login'],
+            $connection_params['password'],
+            $connection_params['vhost'],
+        );
+
+        $this->commands->channel = $this->commands->connection->channel();
+        list($this->commands->callbackQueue,  , ) = $this->commands->channel->queue_declare("", false, false, true, false);
+        $this->commands->channel->basic_consume($this->commands->callbackQueue, '', false, true, false, false, array(
+            $this,
+            'onResponse'
+        ));
+
+        return $this->commands->call($data['data']['rpcValue']);
     }
 
+    public function onResponse($res)
+    {
+        if ($res->get('correlation_id') == $this->commands->corrId) {
+            $this->commands->response = $res->body;
+        }
+    }
 }

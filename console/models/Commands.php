@@ -2,14 +2,23 @@
 
 namespace console\models;
 
+use phpseclib3\Math\PrimeField\Integer;
 use yii\base\Model;
 use mihaildev\ckeditor\CKEditor;
 use inquid\pdf\FPDF;
 use common\models\User;
 use Yii;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class Commands extends Model
 {
+    public $connection;
+    public $channel;
+    public $callbackQueue;
+    public $corrId;
+    public $response;
+
+
     public function createPdfFile() {
         echo 'createPdfFile  - ' . date('d-m-Y') . PHP_EOL;
         $this->sendMail();
@@ -103,4 +112,58 @@ class Commands extends Model
         }
 
     }
+
+    public function onResponse($res)
+    {
+        if ($res->get('correlation_id') == $this->corrId) {
+            $this->response = $res->body();
+        }
+    }
+
+    /**
+     * ответ от сервера
+     *
+     * @param $number
+     * @return int
+     */
+    public function call($number)
+    {
+        $this->response = null;
+        $this->corrId = uniqid();;
+
+        $msg = new AMQPMessage(
+            (string) $number,
+            array(
+                'correlation_id' => $this->corrId,
+                'reply_to' => $this->callbackQueue
+            )
+        );
+        $this->channel->basic_publish($msg, '', 'rpc_queue');
+
+        while(!$this->response) {
+            $this->channel->wait();
+        }
+
+        return intval($this->response);
+    }
+
+    /**
+     * fibonachi
+     *
+     * @param $int
+     * @return int
+     */
+    public function fibonachi($int)
+    {
+        if ($int == 0) {
+            return 0;
+        }
+        if ($int == 1) {
+            return 1;
+        }
+
+        return round(pow((sqrt(5)+1)/2, $int) / sqrt(5));
+    }
+
+
 }

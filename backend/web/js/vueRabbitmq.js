@@ -9,7 +9,14 @@ new Vue({
             v => !!v || 'Command is required',
             v => /[a-zA-Z]/.test(v) || 'Command must be valid',
         ],
-        command: ''
+        command: '',
+
+        validRpc: true,
+        rpcRules: [
+            v => !!v || 'Command is required',
+        ],
+        rpcValue: '',
+        fibonachiValue: 0,
 
     }),
 
@@ -38,18 +45,27 @@ new Vue({
             })
                 .then( (response) => {
                     this.command = '';
-                    console.log(response)
+                    console.log(response);
                 }).catch( (error) => {
                     console.log(error.message);
             })
         },
 
-        fpdf() {
-            axios.post('/admin/rabbitmq/pdf')
-                .then( (response) => {
-                    console.log(response.data)
-                }).catch( (error) => {
-                    console.log(error.message)
+        /**
+         * connection rabbit_mq_rpc
+         */
+        connectionRabbitmqRpc() {
+            let data = {
+                'rpcValue': this.rpcValue
+            };
+            axios.post('/admin/rabbitmq/rabbitmq-rpc', {
+                'data': data
+            }).then( (response) => {
+                this.rpcValue = '';
+                this.fibonachiValue = response.data;
+                console.log(response.data)
+            }).catch( (error) => {
+                console.log(error.message)
             })
         },
 

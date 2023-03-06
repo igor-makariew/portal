@@ -14,6 +14,10 @@ $this->params['breadcrumbs'][] = $this->title;
     <div id="appRabbitmq">
         <v-app id="inspire">
             <div class="container-rabbitmq">
+                <div>
+                    <h4 class="h4">Рассылка сообщений с вложенными файлами</h4>
+                </div>
+
                 <div class="form-rabbitmq align-self-start">
                     <v-form
                             ref="form"
@@ -36,15 +40,36 @@ $this->params['breadcrumbs'][] = $this->title;
                             Send command
                         </v-btn>
                     </v-form>
+                </div>
 
-                    <br>
-                    <v-btn
-                            color="success"
-                            class="mr-4"
-                            @click="fpdf"
+                <div>
+                    <h4 class="h4">RPC</h4>
+                </div>
+
+                <div class="form-rabbitmq align-self-start">
+
+                    <h4 class="text-primary"> Value Fibonachi - {{fibonachiValue}}</h4>
+
+                    <v-form
+                            ref="formRpc"
+                            v-model="validRpc"
                     >
-                        create
-                    </v-btn>
+                        <v-text-field
+                                v-model="rpcValue"
+                                :rules="rpcRules"
+                                label="RPC value"
+                                required
+                        ></v-text-field>
+
+                        <v-btn
+                                :disabled="!validRpc"
+                                color="success"
+                                class="mr-4"
+                                @click="connectionRabbitmqRpc()"
+                        >
+                            value RPC
+                        </v-btn>
+                    </v-form>
                 </div>
             </div>
         </v-app>
