@@ -48,6 +48,7 @@
                     ['label' => 'Events', 'icon' => 'file', 'url' => ['/ev/index']],
                     ['label' => 'File manager', 'icon' => 'file', 'url' => ['/rabbit-send/index']],
                     ['label' => 'Pdf send', 'icon' => 'file', 'url' => ['/rabbitmq/index']],
+                    ['label' => 'Game', 'icon' => 'gamepad', 'url' => ['/game/index']],
                     ['label' => 'Module Settings', 'icon' => 'file', 'url' => ['settings/post-auto/index']],
                     ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug']],
                     ['label' => 'Login', 'url' => ['site/login'], 'visible' => \Yii::$app->user->isGuest],
