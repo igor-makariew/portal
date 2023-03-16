@@ -100,8 +100,129 @@
     height: 100px;
     margin-bottom: 15px;
     border-radius: 5px;
+    text-align: center;
+    padding: 25px 0;
 }
 
 .game-cell-two {
     background: #eee4da;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+    padding: 25px 0;
+}
+
+.game-cell-four {
+    background: #ede0c8;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+    padding: 25px 0;
+}
+
+.game-cell-eight {
+    background: #f2b179;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+    padding: 25px 0;
+}
+
+.game-cell-sixteen {
+    background: #f59563;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+    padding: 25px 0;
+}
+
+.game-cell-thirty-two {
+    background: #f67c5f;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+    padding: 25px 0;
+}
+
+.game-cell-sixty-four {
+    background: #f65e3b;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+    padding: 25px 0;
+}
+
+.chislo {
+    font-size: 30px;
+}
+
+.control {
+    display: flex;
+    justify-content: end;
+    margin-right: 100px;
+    position: relative;
+    bottom: 200px;
+}
+
+.button-control-vertical {
+     background: #FF4500;
+     color: #f2b179;
+     width: 30px;
+     height: 50px;
+     border-radius: 5px;
+     position: relative;
+    left: 80px;
+}
+
+.button-control-vertical:hover {
+    background: #FF4530;
+    box-shadow: 0 0 5px rgba(0,0,0, 0.5);
+}
+
+.button-control-horizontal {
+    background: #FF4500;
+    color: #f2b179;
+    width: 50px;
+    height: 30px;
+    border-radius: 5px;
+}
+
+.button-control-horizontal:hover {
+    background: #FF4530;
+    box-shadow: 0 0 5px rgba(0,0,0, 0.5);
+}
+
+.horizontal {
+    width: 130px;
+    margin-top: 60px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.button-control-vertical-down {
+    background: #FF4500;
+    color: #f2b179;
+    width: 30px;
+    height: 50px;
+    border-radius: 5px;
+    position: relative;
+    left: -80px;
+    top: 100px;
+}
+
+.button-control-vertical-down:hover {
+    background: #FF4530;
+    box-shadow: 0 0 5px rgba(0,0,0, 0.5);
 }
