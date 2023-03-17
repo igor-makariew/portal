@@ -3,25 +3,27 @@
 namespace backend\models;
 
 use phpDocumentor\Reflection\Types\Boolean;
+use phpDocumentor\Reflection\Types\Void_;
 use yii\base\Model;
 
 class Game2048 extends Model
 {
     const ROW = 4;
     const COLUMN = 4;
+    public $total;
+
+    public function __construct($total)
+    {
+        $this->total = $total;
+    }
 
     public $values = [
-        [2, 4, 0, 8],
-        [0, 4, 2, 0],
-        [2, 2, 0, 8],
-        [2, 2, 2, 4]
+        [0, 2, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 2, 0],
+        [0, 0, 0, 0]
     ];
-    public $itemsColumns = [
-        0 => [],
-        1 => [],
-        2 => [],
-        3 => [],
-    ];
+
 
     /**
      * create new array
@@ -32,61 +34,32 @@ class Game2048 extends Model
      */
     public function createNewArr(array $arr, $param): array
     {
-
-            $this->values = $this->changedPositionElementsInArr($arr, $param);
-
-//        $array = array(1, 2, 3, 4);
-//        foreach ($this->values as &$array) {
-//            foreach ($array as &$value) {
-//                $value = $value * 2;
-//            }
-//        }
-
+        $this->values = $this->changedPositionElementsInArr($arr, $param);
 
         return $this->values;
 
     }
 
-    public function changedPositionElementsInArr(array $arr, $param)
+    public function changedPositionElementsInArr(array $arr, $param): array
     {
-        $emptyElem = [];
-        $numberElem = [];
-
         if ($param == 'left') {
-            foreach ($arr as $index => $array) {
-                foreach ($array as $index => $number) {
-                    if ($number == 0) {
-                        $emptyElem[] = $number;
-                    } else {
-                        $numberElem[] = $number;
-                    }
-                }
-            }
-
-            if (count($numberElem) > 0) {
-                $arr = array_merge($numberElem, $emptyElem);
-            }
-
+            $newArr = $this->delNullBetweenValueInArr($arr, true);
+            $newArr = $this->setKeys($newArr);
+            $newArr = $this->sumElementArray($newArr, true);
+            $newArr = $this->addNewElemInArr($newArr);
+            $arr = $this->setKeys($newArr);
         } else if ($param == 'right') {
-
-            foreach ($arr as $index => $array) {
-                foreach ($array as $index => $number) {
-                    if ($number == 0) {
-                        $emptyElem[] = $number;
-                    } else {
-                        $numberElem[] = $number;
-                    }
-                }
-            }
-
-            if (count($numberElem) > 0) {
-                $arr = array_merge($emptyElem, $numberElem);
-            }
+            $newArr = $this->delNullBetweenValueInArr($arr, false);
+            $newArr = $this->setKeys($newArr);
+            $newArr = $this->sumElementArray($newArr, false);
+            $newArr = $this->addNewElemInArr($newArr);
+            $arr = $this->setKeys($newArr);
         } else if ($param == 'up') {
             $newArr = $this->createArrFromKeyArray($arr, true);
             $newArr = $this->delNullBetweenValueInArr($newArr, true);
             $newArr = $this->setKeys($newArr);
             $newArr = $this->sumElementArray($newArr, true);
+            $newArr = $this->addNewElemInArr($newArr);
             $newArr = $this->setKeys($newArr);
             $arr = $this->createArrFromKeyArray($newArr, true);
         } else if ($param == 'down') {
@@ -94,71 +67,12 @@ class Game2048 extends Model
             $newArr = $this->delNullBetweenValueInArr($newArr, false);
             $newArr = $this->setKeys($newArr);
             $newArr = $this->sumElementArray($newArr, false);
+            $newArr = $this->addNewElemInArr($newArr);
             $newArr = $this->setKeys($newArr);
             $arr = $this->createArrFromKeyArray($newArr, true);
         }
 
         return $arr;
-    }
-
-    /**
-     * get items columns and value
-     *
-     * @param array $arr
-     * @return array
-     */
-    public function getItemsColumns(array $arr): array
-    {
-        $valueParams = [];
-        for ($row = 0; $row < count($arr); $row++) {
-            for ($column = 0; $column < count($arr[$row]); $column++) {
-                if ($arr[$row][$column] != 0) {
-                    $valueParams[] = [$column, $arr[$row][$column]];
-                }
-            }
-        }
-
-        return $valueParams;
-    }
-
-    /**
-     * передвигает ячейки наверх игрового поля
-     *
-     * @param array $arr
-     */
-    public function moveUp(array $arr): array
-    {
-        for ($index = 0; $index < count($arr); $index++ ) {
-
-            if ($arr[$index][0] == 0) {
-                array_push($this->itemsColumns[0], $arr[$index][1]);
-            } else if ($arr[$index][0] == 1) {
-                array_push($this->itemsColumns[1], $arr[$index][1]);
-            } else if ($arr[$index][0] == 2) {
-                array_push($this->itemsColumns[2], $arr[$index][1]);
-            } else if ($arr[$index][0] == 3) {
-                array_push($this->itemsColumns[3], $arr[$index][1]);
-            }
-        }
-
-         $values = [
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0]
-        ];
-
-        for($row = 0; $row < count($values); $row++) {
-            for($column = 0; $column < count($values[$row]); $column++) {
-                if (empty($this->itemsColumns[$column][$row])) {
-                    $values[$row][$column] = 0;
-                } else {
-                    $values[$row][$column] = $this->itemsColumns[$column][$row];
-                }
-            }
-        }
-
-        return $values;
     }
 
     /**
@@ -178,8 +92,8 @@ class Game2048 extends Model
         ];
 
         if ($keyParam) {
-            for ($row = 0;  $row < count($arr); $row++ ) {
-                for ($column = 0; $column < count($arr[$row]); $column++) {
+            for ($row = 0;  $row < self::ROW; $row++ ) {
+                for ($column = 0; $column < self::COLUMN; $column++) {
                     if ($column == 0) {
                         array_push($newArr[$column], $arr[$row][$column] == NULL ? 0 : $arr[$row][$column] );
                     } else if ($column == 1) {
@@ -192,8 +106,8 @@ class Game2048 extends Model
                 }
             }
         } else {
-            for ($row = (count($arr) - 1);  $row > -1; $row-- ) {
-                for ($column = (count($arr[$row]) - 1); $column > -1; $column--) {
+            for ($row = (self::ROW - 1);  $row > -1; $row-- ) {
+                for ($column = (self::COLUMN - 1); $column > -1; $column--) {
                     if ($column == 3) {
                         array_push($newArr[$column], $arr[$row][$column] == NULL ? 0 : $arr[$row][$column]);
                     } else if ($column == 2) {
@@ -234,7 +148,6 @@ class Game2048 extends Model
                 for ($column = (self::COLUMN - 1); $column > -1; $column--) {
                     if ($arr[$row][$column] == 0) {
                         unset($arr[$row][$column]);
-//                        array_unshift($arr[$row], 0);
                         array_unshift($addValsArr, 0);
                     }
                 }
@@ -281,6 +194,7 @@ class Game2048 extends Model
                 for ($column = 0; $column < (count($arr[$row]) - 1); $column++) {
                     if ($arr[$row][$column] == $arr[$row][$column + 1] && $arr[$row][$column] != 0) {
                         $arr[$row][$column] = $arr[$row][$column] * 2;
+                        $this->setTotalPoint($arr[$row][$column]);
                         unset($arr[$row][$column + 1]);
                         array_push($arr[$row], 0);
                     }
@@ -291,6 +205,7 @@ class Game2048 extends Model
                 for ($column = (self::COLUMN - 1); $column > -1; $column--) {
                     if ($arr[$row][$column] == $arr[$row][$column + 1] && $arr[$row][$column] != 0) {
                         $arr[$row][$column] = $arr[$row][$column] * 2;
+                        $this->setTotalPoint($arr[$row][$column]);
                         unset($arr[$row][$column + 1]);
                         array_unshift($arr[$row], 0);
                     }
@@ -298,7 +213,57 @@ class Game2048 extends Model
             }
         }
 
-
         return $arr;
+    }
+
+    /**
+     * создание нового значения на поле
+     *
+     * @param array $arr
+     * @return int
+     */
+    public function addNewElemInArr(array $arr): array
+    {
+        $arrEmptyVal = [];
+
+        foreach ($arr as $indexRow => $array) {
+            foreach ($array as $indexColumn => $number) {
+                if ($number == 0) {
+                    $arrEmptyVal[] = [$indexRow, $indexColumn];
+                }
+            }
+        }
+
+        $randVal = rand(0, (count($arrEmptyVal) - 1));
+        $indexesNewVal =  $arrEmptyVal[$randVal];
+        $arr[$indexesNewVal[0]][$indexesNewVal[1]] = $this->newElem();
+        return $arr;
+    }
+
+    /**
+     * случайное число 2 или 4
+     *
+     * @return int
+     */
+    public function newElem(): int
+    {
+        $randNum = rand(2, 4);
+        return $randNum == 3 ? 2 : $randNum;
+    }
+
+    /**
+     * запись набранных очков
+     *
+     * @param int $total
+     * @param int $number
+     */
+    private function setTotalPoint(int $number): void
+    {
+        $this->total += $number;
+    }
+
+    public function getTotalPoint(): int
+    {
+        return $this->total;
     }
 }

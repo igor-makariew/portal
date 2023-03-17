@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <div class="game-params">
                 <div class="game-check">
-                    <span>Check <br> <strong>0</strong> </span>
+                    <span>Check <br> <strong>{{total}}</strong> </span>
                 </div>
                 <div class="game-best-player">
                     <span>Best <br> <strong>0</strong> </span>

@@ -164,6 +164,38 @@
     padding: 25px 0;
 }
 
+.game-cell-hundred-twenty-eight {
+    background: #edcf72;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+    padding: 25px 0;
+}
+
+.game-cell-two-hundred-fifty-six {
+    background: #edcc61;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+    padding: 25px 0;
+}
+
+.game-cell-five-hundred-twelve {
+    background: #edc850;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+    padding: 25px 0;
+}
+
+
+
 .chislo {
     font-size: 30px;
 }
