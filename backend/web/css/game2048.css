@@ -83,6 +83,7 @@
     width: 475px;
     height: 475px;
     padding: 15px 15px;
+    position: relative;
 }
 
 .game-row {
@@ -216,6 +217,17 @@
      border-radius: 5px;
      position: relative;
     left: 80px;
+    cursor: pointer;
+}
+
+.button-control-vertical-gameover {
+    background: #515359;
+    color: #f2b179;
+    width: 30px;
+    height: 50px;
+    border-radius: 5px;
+    position: relative;
+    left: 80px;
 }
 
 .button-control-vertical:hover {
@@ -225,6 +237,15 @@
 
 .button-control-horizontal {
     background: #FF4500;
+    color: #f2b179;
+    width: 50px;
+    height: 30px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.button-control-horizontal-gameover {
+    background: #515359;
     color: #f2b179;
     width: 50px;
     height: 30px;
@@ -252,9 +273,44 @@
     position: relative;
     left: -80px;
     top: 100px;
+    cursor: pointer;
+}
+
+.button-control-vertical-down-gameover {
+    background: #515359;
+    color: #f2b179;
+    width: 30px;
+    height: 50px;
+    border-radius: 5px;
+    position: relative;
+    left: -80px;
+    top: 100px;
 }
 
 .button-control-vertical-down:hover {
     background: #FF4530;
     box-shadow: 0 0 5px rgba(0,0,0, 0.5);
+}
+
+.alert-gameover {
+    position: absolute;
+    top: 140px;
+    left: 0px;
+    z-index: 100;
+    background: grey;
+    width: 475px;
+    height: 200px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+
+}
+
+.text-gameover
+{
+    color: darkred;
+    font-weight: bolder;
+    font-family: sans-serif;
+    font-size: xx-large;
+    margin-top: 70px;
+    margin-left: 140px;
 }

@@ -17,6 +17,8 @@ new Vue({
             512: 'five-hundred-twelve'
         },
         total: 0,
+        gamestart: true,
+        gameover: false,
     }),
 
     created() {
@@ -86,16 +88,33 @@ new Vue({
                 'param': direction,
                 'total': this.total
             };
-            console.log(this.total);
             axios.post('/admin/game-2048/control', {
                 'data': data
             }).then( (response) => {
                 this.valuesSquares = response.data.value;
-                console.log(response.data.total);
                 this.total = response.data.total;
+                if (response.data.gameover) {
+                    this.gameover = response.data.gameover;
+                    this.gamestart = !response.data.gameover;
+                }
+
             }).catch( (error) => {
                 console.log(error.message)
             })
+        },
+
+        restart() {
+            location.reload();
+            // let data = {
+            //
+            // };
+            //
+            // axios.post('/admin/game-2048/restart')
+            //     .then( (response) => {
+            //         console.log(response.data);
+            // }).catch( (error) => {
+            //     console.log(error.message);
+            // })
         },
 
         /**

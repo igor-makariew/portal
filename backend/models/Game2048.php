@@ -11,6 +11,8 @@ class Game2048 extends Model
     const ROW = 4;
     const COLUMN = 4;
     public $total;
+    public $gameover = false;
+    public $countNotNullElem = 0;
 
     public function __construct($total)
     {
@@ -40,26 +42,40 @@ class Game2048 extends Model
 
     }
 
-    public function changedPositionElementsInArr(array $arr, $param): array
+    /**
+     * @param array $arr
+     * @param $param
+     * @return array
+     */
+    public function changedPositionElementsInArr(array $arr, $param): ?array
     {
         if ($param == 'left') {
             $newArr = $this->delNullBetweenValueInArr($arr, true);
             $newArr = $this->setKeys($newArr);
             $newArr = $this->sumElementArray($newArr, true);
-            $newArr = $this->addNewElemInArr($newArr);
+            if (!$this->gameOver($newArr)) {
+                $newArr = $this->addNewElemInArr($newArr);
+            }
+
             $arr = $this->setKeys($newArr);
         } else if ($param == 'right') {
             $newArr = $this->delNullBetweenValueInArr($arr, false);
             $newArr = $this->setKeys($newArr);
             $newArr = $this->sumElementArray($newArr, false);
-            $newArr = $this->addNewElemInArr($newArr);
+            if (!$this->gameOver($newArr)) {
+                $newArr = $this->addNewElemInArr($newArr);
+            }
+
             $arr = $this->setKeys($newArr);
         } else if ($param == 'up') {
             $newArr = $this->createArrFromKeyArray($arr, true);
             $newArr = $this->delNullBetweenValueInArr($newArr, true);
             $newArr = $this->setKeys($newArr);
             $newArr = $this->sumElementArray($newArr, true);
-            $newArr = $this->addNewElemInArr($newArr);
+            if (!$this->gameOver($newArr)) {
+                $newArr = $this->addNewElemInArr($newArr);
+            }
+
             $newArr = $this->setKeys($newArr);
             $arr = $this->createArrFromKeyArray($newArr, true);
         } else if ($param == 'down') {
@@ -67,7 +83,10 @@ class Game2048 extends Model
             $newArr = $this->delNullBetweenValueInArr($newArr, false);
             $newArr = $this->setKeys($newArr);
             $newArr = $this->sumElementArray($newArr, false);
-            $newArr = $this->addNewElemInArr($newArr);
+            if (!$this->gameOver($newArr)) {
+                $newArr = $this->addNewElemInArr($newArr);
+            }
+
             $newArr = $this->setKeys($newArr);
             $arr = $this->createArrFromKeyArray($newArr, true);
         }
@@ -181,7 +200,7 @@ class Game2048 extends Model
     }
 
     /**
-     * сложение элеиентов массива
+     * сложение элементов массива
      *
      * @param array $arr
      * @param bool $keyParam
@@ -262,8 +281,53 @@ class Game2048 extends Model
         $this->total += $number;
     }
 
+    /**
+     * вывод очков
+     *
+     * @return int
+     */
     public function getTotalPoint(): int
     {
         return $this->total;
+    }
+
+
+    /**
+     * окончание игры
+     *
+     * @param $arr
+     * @return bool
+     */
+    public function gameOver($arr)
+    {
+        for ($row = 0; $row < self::ROW; $row++) {
+            for ($column = 0; $column < self::COLUMN; $column++) {
+                if ($arr[$row][$column] != 0) {
+                    $this->countNotNullElem++;
+                }
+            }
+        }
+
+        if ($this->countNotNullElem++ >= 16) {
+            $this->gameover = true;
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * получение результата о продолжении игры
+     *
+     * @return bool
+     */
+    public function getResultGameover(): bool
+    {
+        return $this->gameover;
+    }
+
+    public function restartGame()
+    {
+
     }
 }

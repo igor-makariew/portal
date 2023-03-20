@@ -30,6 +30,11 @@ class Game2048Controller extends Controller
         return $game2048->values;
     }
 
+    /**
+     * control game
+     *
+     * @return array
+     */
     public function actionControl()
     {
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
@@ -37,7 +42,8 @@ class Game2048Controller extends Controller
 
         $response = [
             'value' => [],
-            'total' => 0
+            'total' => 0,
+            'gameover' => false,
         ];
 
         $game2048 = new Game2048($data['data']['total']);
@@ -47,8 +53,15 @@ class Game2048Controller extends Controller
             $data['data']['param']
         );
         $response['total'] = $game2048->getTotalPoint();
+        $response['gameover'] = $game2048->getResultGameover();
 
         return $response;
+    }
+
+    public function actionRestart()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
     }
 
 }
