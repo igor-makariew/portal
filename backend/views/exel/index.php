@@ -8,15 +8,27 @@ $this->title = 'Excel';
 ?>
 <?= $this->registerCssFile(Yii::$app->urlManager->createUrl('/css/excel.css', ['depends' => ['backend\assets\AppAsset']])); ?>
 
-<nav aria-label="breadcrumb">
-    <?= Breadcrumbs::widget(
-        $breadcrumbs
-    );?>
-</nav>
+<!--<nav aria-label="breadcrumb">-->
+<!--    --><?//= Breadcrumbs::widget(
+//        $breadcrumbs
+//    );?>
+<!--</nav>-->
 
-<?php var_dump($nameDir);?>
 <div id="appExcel">
     <v-app id="inspire">
+
+        <div class="width-input position-input">
+            <v-file-input
+                    v-model="file"
+                    accept=".xls"
+                    placeholder="Upload your file"
+                    label="File input"
+                    prepend-icon="mdi-paperclip"
+                    @change="uploadFile"
+            >
+            </v-file-input>
+        </div>
+
         <!--   start day     -->
         <div class="width-select mb-12">
             <v-text-field

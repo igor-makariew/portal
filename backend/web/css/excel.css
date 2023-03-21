@@ -24,3 +24,13 @@
 .width-select {
     width: 33%;
 }
+
+.width-input {
+    width: 25%;
+}
+
+.position-input
+{
+    margin-top: 20px;
+    margin-left: 10px;
+}

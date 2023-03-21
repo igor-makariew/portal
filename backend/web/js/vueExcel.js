@@ -25,13 +25,41 @@ new Vue({
         allTime: '',
         breakTime: '',
         sotrudnic: '',
+
+        //excel file
+        file: [],
     }),
 
     created() {
-        this.getNamesModels();
+        // this.getNamesModels();
     },
 
     methods: {
+        /**
+         * загрузка файла на сервер
+         */
+        uploadFile( ) {
+            let formData = new FormData();
+            let file = this.file;
+            formData.append('file', file);
+
+            if (this.file.name != undefined) {
+                axios.post('/admin/exel/upload-file', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }).then( (response) => {
+                    console.log(response.data);
+                    if (response.data.response) {
+                        this.file = [];
+                    }
+                }).catch( (error) => {
+                    console.log(error.message);
+                })
+            }
+        },
+
+
         /**
          * получение списка имен моделей
          */
@@ -60,7 +88,7 @@ new Vue({
                     this.tableHidden = response.data.res;
                     this.dataProvider = response.data.dataProvider;
                     this.tableName = response.data.nameTable.from[0];
-                    this.createColumns(this.dataProvider[0]);
+                    // this.createColumns(this.dataProvider[0]);
                     console.log(this.headers)
                 }
                 console.log(response);

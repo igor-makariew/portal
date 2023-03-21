@@ -8,23 +8,19 @@ use scotthuangzl\export2excel\Export2ExcelBehavior;
 use common\traits\BreadcrumbsTrait;
 use common\traits\ListModelsTrait;
 use common\models\User;
-use common\models\comments\Comments;
-use common\models\customers\Customers;
-use common\models\hotels\Hotels;
-use common\models\listCountry\ListCountry;
 use common\models\listResorts\ListResorts;
-use common\models\rating\Rating;
-use common\models\users\Users;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use common\models\workTimeUsers\WorkTimeUsers;
 use yiiplus\websocket\ChannelInterface;
+use backend\models\Excel;
 
 class ExelController extends Controller implements ChannelInterface
 {
     public $enableCsrfValidation = false;
     public $User;
+    public $fileName;
     use BreadcrumbsTrait;
     use ListModelsTrait;
 
@@ -49,7 +45,7 @@ class ExelController extends Controller implements ChannelInterface
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'get-names-models', 'get-model', 'start-day', 'start', 'stop', 'stop-day'],
+                        'actions' => ['index', 'download', 'get-names-models', 'get-model', 'start-day', 'start', 'stop', 'stop-day', 'upload-file'],
                         'roles' => [User::ROLE_ADMIN],
 
                     ],
@@ -76,29 +72,29 @@ class ExelController extends Controller implements ChannelInterface
             //above is your existing behaviors
             //new add export2excel behaviors
             'export2excel' => [
-                'class' => Export2ExcelBehavior::className(),
+                'class' => Export2ExcelBehavior::class,
                 //'prefixStr' => yii::$app->user->identity->username,
                 //'suffixStr' => date('Ymd-His'),
             ],
         ];
     }
 
-    public function actions()
-    {
-        return [
-            'error' => [
-                'class' => 'yii\web\ErrorAction',
-            ],
-            'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-            ],
+//    public function actions()
+//    {
+//        return [
+//            'error' => [
+//                'class' => 'yii\web\ErrorAction',
+//            ],
+//            'captcha' => [
+//                'class' => 'yii\captcha\CaptchaAction',
+//                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+//            ],
             //new add download action
-            'download' => [
-                'class' => 'scotthuangzl\export2excel\DownloadAction',
-            ],
-        ];
-    }
+//            'download' => [
+//                'class' => 'scotthuangzl\export2excel\DownloadAction',
+//            ],
+//        ];
+//    }
 
     public function actionIndex()
     {
@@ -111,9 +107,9 @@ class ExelController extends Controller implements ChannelInterface
         $nameDir = $this->getParamsFiles();
 
 
-        $phpExcel = PHPExcel_IOFactory::load($_SERVER['DOCUMENT_ROOT'] . '/backend/web/images/uploadExcel/testing.xlsx');
-        $sheetData = $phpExcel->getActiveSheet()->toArray(null, true, true, true);
-
+//        $phpExcel = PHPExcel_IOFactory::load($_SERVER['DOCUMENT_ROOT'] . '/backend/web/images/uploadExcel/testing.xlsx');
+//        $sheetData = $phpExcel->getActiveSheet()->toArray(null, true, true, true);
+//
 //        $excel_data = Export2ExcelBehavior::excelDataFormat(User::find()->asArray()->all());
 //        $excel_title = $excel_data['excel_title'];
 //        $excel_ceils = $excel_data['excel_ceils'];
@@ -144,9 +140,45 @@ class ExelController extends Controller implements ChannelInterface
 //        $this->export2excel($excel_content, $excel_file);
         return $this->render('index', [
             'breadcrumbs' => $this->breadcrumbs,
-            'nameDir' => $this->listModels,
         ]);
     }
+
+    /**
+     * Запись файла на сервер и
+     *
+     * @return array
+     */
+    public function actionUploadFile(): array
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $response = [
+            'data' => [],
+            'response' => false,
+            'error' => '',
+        ];
+
+        $rootDir = $_SERVER['DOCUMENT_ROOT'] . '/backend/web/images/uploadExcel/';
+
+        try {
+            if ($_FILES['file'] != 0) {
+                $this->fileName = $_FILES['file']['name'];
+                if (!move_uploaded_file($_FILES['file']['tmp_name'], $rootDir . $_FILES['file']['name'])) {
+                    $response['error'] = 'Error upload file - ' . $_FILES['file']['name'];
+                    return $response;
+                }
+
+                $model = new Excel();
+
+                $response['data'] = $model->getDataFile($rootDir . $this->fileName);
+                $model->delFile($rootDir . $this->fileName);
+                $response['response'] = true;
+                return $response;
+            }
+        } catch(\Exception $e) {
+            $response['error'] = $e->getMessage();
+        }
+    }
+
 
     /**
      * получение списка моделей
