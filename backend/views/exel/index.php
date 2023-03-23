@@ -16,23 +16,128 @@ $this->title = 'Excel';
 
 <div id="appExcel">
     <v-app id="inspire">
+        <div class="container-exel">
+            <div class="width-input">
+                <v-file-input
+                        ref="file"
+                        v-model="file"
+                        accept=".xls"
+                        placeholder="Upload your file"
+                        label="File input"
+                        prepend-icon="mdi-paperclip"
+                        @change="uploadFile"
+                >
+                </v-file-input>
+            </div>
 
-        <div class="width-input position-input">
-            <v-file-input
-                    v-model="file"
-                    accept=".xls"
-                    placeholder="Upload your file"
-                    label="File input"
-                    prepend-icon="mdi-paperclip"
-                    @change="uploadFile"
-            >
-            </v-file-input>
+            <!-- start preloader not work!!!-->
+            <div class="loader-wrap text-center mt-12" v-if="loader">
+                <v-progress-circular
+                        :rotate="-90"
+                        :size="100"
+                        :width="15"
+                        :value="value"
+                        :indeterminate="true"
+                        color="success"
+                >
+                </v-progress-circular>
+            </div>
+            <!-- end preloader -->
+
+            <template v-if="hiddenTable">
+                <div class="" >
+                    <p class="title-file">File - </p>
+
+                    <v-data-table
+                            :headers="headers"
+                            :items="desserts"
+                            class="elevation-1"
+                    >
+                        <template v-slot:top>
+                            <v-toolbar flat color="white">
+                                <v-toolbar-title>My CRUD</v-toolbar-title>
+                                <v-divider
+                                        class="mx-4"
+                                        inset
+                                        vertical
+                                ></v-divider>
+                                <v-spacer></v-spacer>
+                                <v-dialog
+                                        v-model="dialog"
+                                        max-width="500px"
+                                        persistent
+                                        scrollable
+                                >
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn
+                                                color="primary"
+                                                dark
+                                                class="mb-2"
+                                                v-bind="attrs"
+                                                v-on="on"
+                                        >New Item</v-btn>
+                                    </template>
+                                    <v-card>
+                                        <v-card-title>
+                                            <span class="headline">{{ formTitle }}</span>
+                                        </v-card-title>
+
+                                        <v-card-text>
+                                            <v-row>
+                                                <template v-for="(item, key)  in editedItem">
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <v-text-field v-model="editedItem[key]" :label=`Column-${key}`></v-text-field>
+                                                    </v-col>
+                                                </template>
+                                            </v-row>
+                                        </v-card-text>
+
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+                                            <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-dialog>
+                            </v-toolbar>
+                        </template>
+
+                        <template v-slot:item.actions="{ item }">
+                            <v-icon
+                                    small
+                                    class="mr-2"
+                                    @click="editItem(item)"
+                            >
+                                mdi-pencil
+                            </v-icon>
+                            <v-icon
+                                    small
+                                    @click="deleteItem(item)"
+                            >
+                                mdi-delete
+                            </v-icon>
+                        </template>
+                        <template v-slot:no-data>
+                            <v-btn color="primary" @click="initialize">Reset</v-btn>
+                        </template>
+                    </v-data-table>
+                </div>
+
+                <div class="button-end">
+                    <v-btn
+                        color="success"
+                    >
+                        Save and Download
+                    </v-btn>
+                </div>
+            </template>
         </div>
+
 
         <!--   start day     -->
         <div class="width-select mb-12">
             <v-text-field
-                v-model="fullName"
+                    v-model="fullName"
             ></v-text-field>
             <v-row
                     align="center"

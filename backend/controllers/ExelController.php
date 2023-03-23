@@ -148,11 +148,12 @@ class ExelController extends Controller implements ChannelInterface
      *
      * @return array
      */
-    public function actionUploadFile(): array
+    public function actionUploadFile()
     {
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
         $response = [
             'data' => [],
+            'namesColumns' => [],
             'response' => false,
             'error' => '',
         ];
@@ -171,12 +172,40 @@ class ExelController extends Controller implements ChannelInterface
 
                 $response['data'] = $model->getDataFile($rootDir . $this->fileName);
                 $model->delFile($rootDir . $this->fileName);
+                $response['namesColumns'] = $model->getNameColumn($response['data'][1]);
                 $response['response'] = true;
                 return $response;
             }
+
+            return $response;
         } catch(\Exception $e) {
             $response['error'] = $e->getMessage();
         }
+    }
+
+    public function actionParams()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+        $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
+
+        $response = [
+                [
+                    'name' =>  'Frozen Yogurt',
+                    'calories' =>  159,
+                    'fat' => 6.0,
+                    'carbs' => 24,
+                    'protein' => 4.0,
+                ],
+                [
+                    'name' => 'Ice cream sandwich',
+                    'calories' => 237,
+                    'fat' => 9.0,
+                    'carbs' => 37,
+                    'protein' => 4.3,
+                ]
+        ];
+
+        return $response;
     }
 
 

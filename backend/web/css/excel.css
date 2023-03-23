@@ -25,12 +25,23 @@
     width: 33%;
 }
 
+.container-exel
+{
+    padding: 20px 20px 20px 20px;
+}
+
 .width-input {
     width: 25%;
 }
 
-.position-input
+.title-file
 {
+    font-size: xx-large;
+}
+
+.button-end {
     margin-top: 20px;
-    margin-left: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
 }

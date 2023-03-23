@@ -15,7 +15,7 @@ class Excel extends Model
      * @throws \PHPExcel_Exception
      * @throws \PHPExcel_Reader_Exception
      */
-    public function getDataFile($file)
+    public function getDataFile($file): array
     {
         $objPHPExcel = PHPExcel_IOFactory::load($file);
         $sheetData = $objPHPExcel->getActiveSheet()->toArray(null, true, true, true);
@@ -31,5 +31,16 @@ class Excel extends Model
     public function delFile($file): bool
     {
         return unlink($file);
+    }
+
+    /**
+     * возвращает массив имен полей
+     *
+     * @param $array
+     * @return array
+     */
+    public function getNameColumn($array): array
+    {
+        return array_keys($array);
     }
 }
