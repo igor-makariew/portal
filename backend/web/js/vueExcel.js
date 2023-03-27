@@ -49,20 +49,9 @@ new Vue({
         loader: false,
         hiddenTable: false,
         editedIndex: -1,
-        editedItem: {
-            // name: '',
-            // calories: 0,
-            // fat: 0,
-            // carbs: 0,
-            // protein: 0,
-        },
-        defaultItem: {
-            name: '',
-            calories: 0,
-            fat: 0,
-            carbs: 0,
-            protein: 0,
-        },
+        editedItem: {},
+        defaultItem: {},
+        newObject: {},
     }),
 
     computed: {
@@ -103,6 +92,8 @@ new Vue({
                 if (response.data.response) {
                     this.setNameColumns(response.data.namesColumns);
                     this.setValuesRows(response.data.data);
+                    this.newObject = response.data.data[1];
+                    this.createFieldObject(null);
                     this.file = [];
                     this.loader = false;
                     this.hiddenTable = true;
@@ -153,11 +144,40 @@ new Vue({
          * @param object
          */
         createFieldObject(object) {
-            for ( let index in object) {
-                this.editedItem[index] = null;
+            if (object != null) {
+                for ( let index in object) {
+                    this.editedItem[index] = null;
+                }
+            } else {
+                for ( let index in this.newObject) {
+                    this.defaultItem[index] = null;
+                }
             }
         },
 
+        saveDownload() {
+            let data = {
+                'headers': this.headers,
+                'desserts': this.desserts,
+            };
+            axios.post('/admin/exel/save-download', {
+                'data': data
+            }).then( (response) => {
+                console.log(response.data);
+                if (response.data) {
+                    console.log(this.$refs);
+                    this.$refs.linkHidden.firstChild.click();
+                }
+            }).catch( (error) => {
+                console.log(error.message);
+            });
+        },
+
+        /**
+         * редактирование строк
+         *
+         * @param item
+         */
         editItem (item) {
             this.createFieldObject(item);
             this.editedIndex = this.desserts.indexOf(item);

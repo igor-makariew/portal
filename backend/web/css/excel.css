@@ -45,3 +45,7 @@
     flex-direction: row;
     justify-content: flex-end;
 }
+
+.block-hidden {
+    display: none;
+}

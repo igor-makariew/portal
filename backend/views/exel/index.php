@@ -3,6 +3,8 @@
 
 use yii\widgets\Breadcrumbs;
 use yii\grid\GridView;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 $this->title = 'Excel';
 ?>
@@ -126,9 +128,13 @@ $this->title = 'Excel';
                 <div class="button-end">
                     <v-btn
                         color="success"
+                        @click="saveDownload"
                     >
                         Save and Download
                     </v-btn>
+                    <div class="block-hidden" ref="linkHidden">
+                        <?= Html::a('Download', [Url::to(['../exel/downloads']), ], ['class' => 'nav-link link-promotions_color_lightblue']); ?>
+                    </div>
                 </div>
             </template>
         </div>

@@ -21,10 +21,12 @@ class ExelController extends Controller implements ChannelInterface
     public $enableCsrfValidation = false;
     public $User;
     public $fileName;
+
+
     use BreadcrumbsTrait;
     use ListModelsTrait;
 
-//    public function __construct($id, $module, $config = [])
+//    public function __construct()
 //    {
 //        parent::__construct($id, $module, $config);
 //        $this->path = $_SERVER['DOCUMENT_ROOT'] . '/common/models/';
@@ -45,7 +47,9 @@ class ExelController extends Controller implements ChannelInterface
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'download', 'get-names-models', 'get-model', 'start-day', 'start', 'stop', 'stop-day', 'upload-file'],
+                        'actions' => [
+                            'index', 'download', 'get-names-models', 'get-model', 'start-day', 'start', 'stop', 'stop-day', 'upload-file', 'save-download', 'downloads'
+                        ],
                         'roles' => [User::ROLE_ADMIN],
 
                     ],
@@ -79,23 +83,28 @@ class ExelController extends Controller implements ChannelInterface
         ];
     }
 
-//    public function actions()
-//    {
-//        return [
-//            'error' => [
-//                'class' => 'yii\web\ErrorAction',
-//            ],
-//            'captcha' => [
-//                'class' => 'yii\captcha\CaptchaAction',
-//                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-//            ],
-            //new add download action
-//            'download' => [
-//                'class' => 'scotthuangzl\export2excel\DownloadAction',
-//            ],
-//        ];
-//    }
+    public function actions()
+    {
+        return [
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
+            ],
+            'captcha' => [
+                'class' => 'yii\captcha\CaptchaAction',
+                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+            ],
+//            new add download action
+            'download' => [
+                'class' => 'scotthuangzl\export2excel\DownloadAction',
+            ],
+        ];
+    }
 
+    /**
+     * @return string
+     * @throws \yii\console\Exception
+     * @throws \yii\web\NotFoundHttpException
+     */
     public function actionIndex()
     {
         $this->sessionUrl();
@@ -109,7 +118,7 @@ class ExelController extends Controller implements ChannelInterface
 
 //        $phpExcel = PHPExcel_IOFactory::load($_SERVER['DOCUMENT_ROOT'] . '/backend/web/images/uploadExcel/testing.xlsx');
 //        $sheetData = $phpExcel->getActiveSheet()->toArray(null, true, true, true);
-//
+
 //        $excel_data = Export2ExcelBehavior::excelDataFormat(User::find()->asArray()->all());
 //        $excel_title = $excel_data['excel_title'];
 //        $excel_ceils = $excel_data['excel_ceils'];
@@ -138,6 +147,7 @@ class ExelController extends Controller implements ChannelInterface
 //        );
 //        $excel_file = "testing";
 //        $this->export2excel($excel_content, $excel_file);
+
         return $this->render('index', [
             'breadcrumbs' => $this->breadcrumbs,
         ]);
@@ -183,29 +193,60 @@ class ExelController extends Controller implements ChannelInterface
         }
     }
 
-    public function actionParams()
+    /**
+     *
+     *
+     * @return string
+     */
+    public function actionSaveDownload()
     {
         Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
         $data = \yii\helpers\Json::decode(Yii::$app->request->getRawBody());
 
-        $response = [
-                [
-                    'name' =>  'Frozen Yogurt',
-                    'calories' =>  159,
-                    'fat' => 6.0,
-                    'carbs' => 24,
-                    'protein' => 4.0,
-                ],
-                [
-                    'name' => 'Ice cream sandwich',
-                    'calories' => 237,
-                    'fat' => 9.0,
-                    'carbs' => 37,
-                    'protein' => 4.3,
-                ]
-        ];
+        $model = new Excel();
+        $model->session->set('headers', $model->getExcelTitle($data['data']['headers']));
+        $model->session->set('desserts', $model->getExcelСeils($data['data']['desserts']));
 
-        return $response;
+        return true;
+    }
+
+    /**
+     * скачивание файла формата xls
+     *
+     * @return string
+     */
+    public function actionDownloads()
+    {
+        $model = new Excel();
+        $excel_title = $model->session->get('headers');
+        $excel_ceils = $model->session->get('desserts');
+        $excel_content = array(
+            array(
+                'sheet_name' => 'User',
+                'sheet_title' => $excel_title,
+                'ceils' => $excel_ceils,
+                'freezePane' => 'B2',
+                'headerColor' => Export2ExcelBehavior::getCssClass("header"),
+                'headerColumnCssClass' => array(
+                    'id' => Export2ExcelBehavior::getCssClass('blue'),
+                    'Status_Description' => Export2ExcelBehavior::getCssClass('grey'),
+                ), //define each column's cssClass for header line only.  You can set as blank.
+                'oddCssClass' => Export2ExcelBehavior::getCssClass("odd"),
+                'evenCssClass' => Export2ExcelBehavior::getCssClass("even"),
+            ),
+            array(
+                'sheet_name' => 'Important Note',
+                'sheet_title' => array("Important Note For Region Template"),
+                'ceils' => array(
+                    array("1.Column Platform,Part,Region must need update.")
+                , array("2.Column Regional_Status only as Regional_Green,Regional_Yellow,Regional_Red,Regional_Ready.")
+                , array("3.Column RTS_Date, Master_Desc, Functional_Desc, Commodity, Part_Status are only for your reference, will not be uploaded into NPI tracking system."))
+            ),
+        );
+        $excel_file = "download-file";
+        $this->export2excel($excel_content, $excel_file);
+
+        return $this->render('downloads');
     }
 
 
