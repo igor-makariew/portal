@@ -24,3 +24,28 @@
 .width-select {
     width: 33%;
 }
+
+.container-exel
+{
+    padding: 20px 20px 20px 20px;
+}
+
+.width-input {
+    width: 25%;
+}
+
+.title-file
+{
+    font-size: xx-large;
+}
+
+.button-end {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.block-hidden {
+    display: none;
+}
